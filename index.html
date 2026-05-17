@@ -1,0 +1,406 @@
+<!DOCTYPE html>
+<html lang="uz">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Perfection English School</title>
+    <!-- Phosphor Icons -->
+    <script src="https://unpkg.com/@phosphor-icons/web"></script>
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <!-- Custom CSS -->
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <div class="app-container">
+        <!-- Header -->
+        <header class="app-header">
+            <div class="header-left">
+                <i class="ph ph-text-align-left" id="menu-btn"></i>
+                <h1 class="app-title">Perfection School</h1>
+            </div>
+            <div class="header-right">
+                <div class="streak-badge">
+                    <i class="ph-fill ph-fire"></i>
+                    <span>12</span>
+                </div>
+                <i class="ph ph-bell"></i>
+            </div>
+        </header>
+
+        <main class="app-main">
+            <!-- SECTION: AUTH (Registration) -->
+            <section id="auth-section" class="app-section active">
+                <div class="welcome-area text-center" style="margin-top: 40px;">
+                    <div class="profile-avatar mx-auto mb-4" style="margin: 0 auto 20px;">
+                        <img src="https://illustrations.popsy.co/blue/student.svg" alt="Student" style="border:none; box-shadow:none;">
+                    </div>
+                    <h2>Maktabga Xush Kelibsiz!</h2>
+                    <p>Ilovadan foydalanish uchun ro'yxatdan o'ting</p>
+                </div>
+
+                <form id="reg-form" class="auth-form" style="margin-top: 30px;">
+                    <div class="form-group mb-4">
+                        <label>To'liq ismingiz</label>
+                        <input type="text" id="reg-name" placeholder="Masalan: Azizbek Rustamov" required>
+                    </div>
+                    <div class="form-group mb-4">
+                        <label>Telefon raqamingiz</label>
+                        <input type="tel" id="reg-phone" placeholder="+998" required>
+                    </div>
+                    <div class="form-group mb-4">
+                        <label>Ingliz tili darajangiz</label>
+                        <select id="reg-level" required>
+                            <option value="" disabled selected>Darajani tanlang</option>
+                            <option value="Beginner">Beginner</option>
+                            <option value="Elementary">Elementary</option>
+                            <option value="Pre-Intermediate">Pre-Intermediate</option>
+                            <option value="Pre-IELTS">Pre-IELTS</option>
+                        </select>
+                    </div>
+                    <button type="submit" class="btn-primary w-100" style="width: 100%; padding: 14px; font-size: 16px;">Ro'yxatdan o'tish</button>
+                </form>
+            </section>
+
+            <!-- SECTION: HOME -->
+            <section id="home-section" class="app-section">
+                <div class="welcome-area">
+                    <h2>Salom, Azizbek 👋</h2>
+                    <p>Bugun nimalarni o'rganamiz?</p>
+                </div>
+
+                <!-- Vocabulary of the Day Widget -->
+                <div class="vocab-widget">
+                    <div class="vocab-header">
+                        <span class="vocab-title"><i class="ph-fill ph-star"></i> Kun so'zi</span>
+                        <span class="vocab-date">Bugun</span>
+                    </div>
+                    <div class="vocab-content">
+                        <div class="vocab-word">Perseverance</div>
+                        <div class="vocab-pronunciation">/ˌpɜːrsəˈvɪrəns/</div>
+                        <div class="vocab-meaning">Qat'iyatlilik, maqsad sari tinimsiz harakat qilish.</div>
+                    </div>
+                </div>
+
+                <!-- Main Banner -->
+                <div class="banner-card" onclick="switchTab('lessons')">
+                    <div class="banner-content">
+                        <h2>INGLIZ TILINI<br>BIZ BILAN<br>O'RGANING!</h2>
+                        <div class="progress-container mt-2">
+                            <div class="progress-text">
+                                <span>Pre-IELTS kursi</span>
+                                <span>65%</span>
+                            </div>
+                            <div class="progress-bar">
+                                <div class="progress-fill" style="width: 65%;"></div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="banner-image">
+                        <img src="https://illustrations.popsy.co/blue/student-going-to-school.svg" alt="Education">
+                    </div>
+                </div>
+
+                <!-- Grid Cards -->
+                <div class="grid-container">
+                    <div class="grid-card" onclick="switchTab('lessons')">
+                        <div class="card-icon-wrapper blue-icon">
+                            <i class="ph ph-books"></i>
+                        </div>
+                        <span class="card-title">Darslar</span>
+                    </div>
+                    <div class="grid-card" onclick="switchTab('rating')">
+                        <div class="card-icon-wrapper orange-icon">
+                            <i class="ph ph-trophy"></i>
+                        </div>
+                        <span class="card-title">Reyting</span>
+                    </div>
+                    <div class="grid-card" onclick="switchTab('resources')">
+                        <div class="card-icon-wrapper green-icon">
+                            <i class="ph ph-folder-open"></i>
+                        </div>
+                        <span class="card-title">Materiallar</span>
+                    </div>
+                    <div class="grid-card">
+                        <div class="card-icon-wrapper purple-icon">
+                            <i class="ph ph-calendar-check"></i>
+                        </div>
+                        <span class="card-title">Jadval</span>
+                    </div>
+                </div>
+            </section>
+
+            <!-- SECTION: LESSONS -->
+            <section id="lessons-section" class="app-section">
+                <div class="section-header">
+                    <h2>Mening Darslarim</h2>
+                    <p>Sizning joriy darajangiz: <strong>Pre-IELTS</strong></p>
+                </div>
+                
+                <div class="lessons-list">
+                    <div class="lesson-card completed">
+                        <div class="lesson-icon"><i class="ph-fill ph-check-circle"></i></div>
+                        <div class="lesson-info">
+                            <h3>1-dars: Present Simple vs Continuous</h3>
+                            <p>Grammatika va amaliyot</p>
+                        </div>
+                        <div class="lesson-action">
+                            <button class="btn-icon"><i class="ph ph-play"></i></button>
+                        </div>
+                    </div>
+
+                    <div class="lesson-card active">
+                        <div class="lesson-icon"><i class="ph-fill ph-play-circle"></i></div>
+                        <div class="lesson-info">
+                            <h3>2-dars: IELTS Speaking Part 1</h3>
+                            <p>Eng ko'p tushadigan savollar</p>
+                        </div>
+                        <div class="lesson-action">
+                            <button class="btn-primary">Boshlash</button>
+                        </div>
+                    </div>
+
+                    <div class="lesson-card locked">
+                        <div class="lesson-icon"><i class="ph-fill ph-lock-key"></i></div>
+                        <div class="lesson-info">
+                            <h3>3-dars: Writing Task 1 Asoslari</h3>
+                            <p>Avvalgi darsni tugating</p>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- SECTION: RATING (LEADERBOARD) -->
+            <section id="rating-section" class="app-section">
+                <div class="section-header text-center">
+                    <h2>Umumiy Reyting</h2>
+                    <p>Eng faol o'quvchilar ro'yxati</p>
+                </div>
+
+                <div class="podium-container">
+                    <div class="podium-item second">
+                        <div class="avatar-circle"><img src="https://i.pravatar.cc/150?u=a042581f4e29026704d" alt="Avatar"></div>
+                        <div class="podium-rank silver">2</div>
+                        <div class="podium-name">Malika</div>
+                        <div class="podium-score">1240 xp</div>
+                    </div>
+                    <div class="podium-item first">
+                        <div class="avatar-circle"><img src="https://i.pravatar.cc/150?u=a042581f4e29026024d" alt="Avatar"></div>
+                        <div class="podium-rank gold">1</div>
+                        <div class="podium-name">Sardor</div>
+                        <div class="podium-score">1450 xp</div>
+                    </div>
+                    <div class="podium-item third">
+                        <div class="avatar-circle"><img src="https://i.pravatar.cc/150?u=a048581f4e29026701d" alt="Avatar"></div>
+                        <div class="podium-rank bronze">3</div>
+                        <div class="podium-name">Jasur</div>
+                        <div class="podium-score">1120 xp</div>
+                    </div>
+                </div>
+
+                <div class="leaderboard-list">
+                    <div class="lb-item">
+                        <div class="lb-rank">4</div>
+                        <div class="lb-user">
+                            <div class="lb-avatar"><img src="https://i.pravatar.cc/150?u=1" alt="Avatar"></div>
+                            <span class="lb-name">Zarina</span>
+                        </div>
+                        <div class="lb-score">980 xp</div>
+                    </div>
+                    <div class="lb-item current-user">
+                        <div class="lb-rank">5</div>
+                        <div class="lb-user">
+                            <div class="lb-avatar"><img src="https://i.pravatar.cc/150?u=2" alt="Avatar"></div>
+                            <span class="lb-name">Siz (Azizbek)</span>
+                        </div>
+                        <div class="lb-score">850 xp</div>
+                    </div>
+                    <div class="lb-item">
+                        <div class="lb-rank">6</div>
+                        <div class="lb-user">
+                            <div class="lb-avatar"><img src="https://i.pravatar.cc/150?u=3" alt="Avatar"></div>
+                            <span class="lb-name">Murod</span>
+                        </div>
+                        <div class="lb-score">720 xp</div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- SECTION: RESOURCES -->
+            <section id="resources-section" class="app-section">
+                <div class="section-header">
+                    <h2>Qo'shimcha Materiallar</h2>
+                    <!-- Search inside resources -->
+                    <div class="search-box mb-4">
+                        <i class="ph ph-magnifying-glass search-icon"></i>
+                        <input type="text" placeholder="Mavzularni qidirish..." class="search-input">
+                    </div>
+                </div>
+
+                <div class="resource-grid">
+                    <div class="resource-card" onclick="openResource('alphabet')">
+                        <div class="r-icon bg-blue"><i class="ph ph-text-aa"></i></div>
+                        <h4>Alifbo</h4>
+                        <p>Harflar va talaffuz</p>
+                    </div>
+                    <div class="resource-card" onclick="openResource('numbers')">
+                        <div class="r-icon bg-green"><i class="ph ph-list-numbers"></i></div>
+                        <h4>Sonlar</h4>
+                        <p>1 dan 1000 gacha</p>
+                    </div>
+                    <div class="resource-card">
+                        <div class="r-icon bg-orange"><i class="ph ph-chat-circle-text"></i></div>
+                        <h4>Iboralar</h4>
+                        <p>Kundalik suhbat uchun</p>
+                    </div>
+                    <div class="resource-card">
+                        <div class="r-icon bg-purple"><i class="ph ph-books"></i></div>
+                        <h4>Grammatika</h4>
+                        <p>Asosiy qoidalar</p>
+                    </div>
+                </div>
+            </section>
+
+            <!-- SECTION: ALPHABET DETAIL -->
+            <section id="alphabet-section" class="app-section">
+                <div class="section-header" style="display: flex; align-items: center; gap: 10px;">
+                    <button class="btn-icon" onclick="switchTab('resources')" style="background:transparent; color:var(--text-main);"><i class="ph ph-arrow-left"></i></button>
+                    <div>
+                        <h2 style="margin:0;">Ingliz alifbosi</h2>
+                        <p>26 ta harf va talaffuz</p>
+                    </div>
+                </div>
+                
+                <div class="dictionary-list">
+                    <!-- Javascript will populate this -->
+                </div>
+            </section>
+
+            <!-- SECTION: NUMBERS DETAIL -->
+            <section id="numbers-section" class="app-section">
+                <div class="section-header" style="display: flex; align-items: center; gap: 10px;">
+                    <button class="btn-icon" onclick="switchTab('resources')" style="background:transparent; color:var(--text-main);"><i class="ph ph-arrow-left"></i></button>
+                    <div>
+                        <h2 style="margin:0;">Raqamlar</h2>
+                        <p>Inglizcha sonlarni o'rganamiz</p>
+                    </div>
+                </div>
+                
+                <div class="dictionary-list" id="numbers-list">
+                    <!-- Javascript will populate this -->
+                </div>
+            </section>
+
+            <!-- SECTION: PROFILE -->
+            <section id="profile-section" class="app-section">
+                <div class="profile-header">
+                    <div class="profile-avatar">
+                        <img src="https://i.pravatar.cc/150?u=2" alt="Profile">
+                        <button class="edit-avatar"><i class="ph ph-camera"></i></button>
+                    </div>
+                    <h2 class="profile-name">Azizbek Rustamov</h2>
+                    <p class="profile-role">O'quvchi • Pre-IELTS</p>
+                    <!-- Role Switcher for Demo -->
+                    <button class="role-switch-btn" onclick="toggleRole()">O'qituvchi profiliga o'tish (Demo)</button>
+                </div>
+
+                <!-- Student Profile Stats -->
+                <div id="student-stats" class="profile-stats">
+                    <div class="stat-box">
+                        <i class="ph-fill ph-fire text-orange"></i>
+                        <span class="stat-value">12</span>
+                        <span class="stat-label">Kun stryk</span>
+                    </div>
+                    <div class="stat-box">
+                        <i class="ph-fill ph-star text-yellow"></i>
+                        <span class="stat-value">850</span>
+                        <span class="stat-label">Umumiy XP</span>
+                    </div>
+                    <div class="stat-box">
+                        <i class="ph-fill ph-book-open text-blue"></i>
+                        <span class="stat-value">24</span>
+                        <span class="stat-label">Darslar</span>
+                    </div>
+                </div>
+
+                <!-- Teacher Profile Stats (Hidden by default) -->
+                <div id="teacher-stats" class="profile-stats" style="display: none;">
+                    <div class="stat-box">
+                        <i class="ph-fill ph-users text-blue"></i>
+                        <span class="stat-value">145</span>
+                        <span class="stat-label">O'quvchilar</span>
+                    </div>
+                    <div class="stat-box">
+                        <i class="ph-fill ph-chalkboard-teacher text-green"></i>
+                        <span class="stat-value">6</span>
+                        <span class="stat-label">Guruhlar</span>
+                    </div>
+                    <div class="stat-box">
+                        <i class="ph-fill ph-star text-yellow"></i>
+                        <span class="stat-value">4.9</span>
+                        <span class="stat-label">Reyting</span>
+                    </div>
+                </div>
+
+                <div class="profile-menu">
+                    <div class="menu-item">
+                        <div class="menu-item-left">
+                            <div class="menu-icon"><i class="ph ph-user"></i></div>
+                            <span>Shaxsiy ma'lumotlar</span>
+                        </div>
+                        <i class="ph ph-caret-right"></i>
+                    </div>
+                    <div class="menu-item">
+                        <div class="menu-item-left">
+                            <div class="menu-icon"><i class="ph ph-bell"></i></div>
+                            <span>Bildirishnomalar</span>
+                        </div>
+                        <i class="ph ph-caret-right"></i>
+                    </div>
+                    <div class="menu-item">
+                        <div class="menu-item-left">
+                            <div class="menu-icon"><i class="ph ph-gear"></i></div>
+                            <span>Sozlamalar</span>
+                        </div>
+                        <i class="ph ph-caret-right"></i>
+                    </div>
+                    <div class="menu-item text-red">
+                        <div class="menu-item-left">
+                            <div class="menu-icon"><i class="ph ph-sign-out"></i></div>
+                            <span>Tizimdan chiqish</span>
+                        </div>
+                    </div>
+                </div>
+            </section>
+        </main>
+
+        <!-- Bottom Navigation -->
+        <nav class="bottom-nav">
+            <a href="#" class="nav-item active" data-target="home">
+                <i class="ph ph-house"></i>
+                <span>Asosiy</span>
+            </a>
+            <a href="#" class="nav-item" data-target="lessons">
+                <i class="ph ph-play-circle"></i>
+                <span>Darslar</span>
+            </a>
+            <a href="#" class="nav-item" data-target="rating">
+                <i class="ph ph-ranking"></i>
+                <span>Reyting</span>
+            </a>
+            <a href="#" class="nav-item" data-target="resources">
+                <i class="ph ph-books"></i>
+                <span>Material</span>
+            </a>
+            <a href="#" class="nav-item" data-target="profile">
+                <i class="ph ph-user"></i>
+                <span>Profil</span>
+            </a>
+        </nav>
+    </div>
+
+    <script src="app.js"></script>
+</body>
+</html>
