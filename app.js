@@ -185,9 +185,8 @@ document.addEventListener('DOMContentLoaded', () => {
             checkWritingBtn.disabled = true;
 
             try {
-                // Diqqat: Production (haqiqiy ishlash) uchun manzilni haqiqiy server urliga almashtirish kerak
-                // Masalan: https://mening-api-serverim.onrender.com/api/check_writing
-                const backendUrl = 'http://127.0.0.1:8000/api/check_writing';
+                // Production URL for the backend server
+                const backendUrl = 'https://perfection-webapp.onrender.com/api/check_writing';
                 
                 const response = await fetch(backendUrl, {
                     method: 'POST',
