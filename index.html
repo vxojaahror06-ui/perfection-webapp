@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="uz">
+<html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
@@ -34,68 +34,63 @@
             <!-- SECTION: AUTH (Registration) -->
             <section id="auth-section" class="app-section active">
                 <div class="welcome-area text-center" style="margin-top: 40px;">
-                                       <div class="brand-logo-container mx-auto mb-4" style="margin: 0 auto 20px; text-align: center;">
-                        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 400 120" style="max-width: 250px; width: 100%; border-radius: 8px; box-shadow: 0 4px 15px rgba(0,0,0,0.1);">
-                            <rect width="400" height="120" fill="#02003c" rx="8" />
-                            <text x="200" y="70" font-family="system-ui, -apple-system, sans-serif" font-size="52" font-weight="700" fill="#ffffff" text-anchor="middle" letter-spacing="1">Perfection</text>
-                            <text x="200" y="100" font-family="system-ui, -apple-system, sans-serif" font-size="16" font-weight="500" fill="#ffffff" text-anchor="middle" letter-spacing="4">— English School —</text>
-                        </svg>
+                    <div class="brand-logo-container mx-auto mb-4" style="margin: 0 auto 20px; text-align: center;">
+                        <img src="assets/logo.svg" alt="Perfection English School" style="max-width: 250px; width: 100%; border-radius: 8px; box-shadow: 0 4px 15px rgba(0,0,0,0.1);">
                     </div>
-
-                    <h2>Maktabga Xush Kelibsiz!</h2>
-                    <p>Ilovadan foydalanish uchun ro'yxatdan o'ting</p>
+                    <h2>Welcome to our School!</h2>
+                    <p>Please register to use the app</p>
                 </div>
 
                 <form id="reg-form" class="auth-form" style="margin-top: 30px;">
                     <div class="form-group mb-4">
-                        <label>To'liq ismingiz</label>
-                        <input type="text" id="reg-name" placeholder="Masalan: Azizbek Rustamov" required>
+                        <label>Full Name</label>
+                        <input type="text" id="reg-name" placeholder="e.g., Azizbek Rustamov" required>
                     </div>
                     <div class="form-group mb-4">
-                        <label>Telefon raqamingiz</label>
+                        <label>Phone Number</label>
                         <input type="tel" id="reg-phone" placeholder="+998" required>
                     </div>
                     <div class="form-group mb-4">
-                        <label>Ingliz tili darajangiz</label>
+                        <label>English Level</label>
                         <select id="reg-level" required>
-                            <option value="" disabled selected>Darajani tanlang</option>
+                            <option value="" disabled selected>Select your level</option>
                             <option value="Beginner">Beginner</option>
                             <option value="Elementary">Elementary</option>
                             <option value="Pre-Intermediate">Pre-Intermediate</option>
                             <option value="Pre-IELTS">Pre-IELTS</option>
                         </select>
                     </div>
-                    <button type="submit" class="btn-primary w-100" style="width: 100%; padding: 14px; font-size: 16px;">Ro'yxatdan o'tish</button>
+                    <button type="submit" class="btn-primary w-100" style="width: 100%; padding: 14px; font-size: 16px;">Sign Up</button>
                 </form>
             </section>
 
             <!-- SECTION: HOME -->
             <section id="home-section" class="app-section">
                 <div class="welcome-area">
-                    <h2>Salom, Azizbek 👋</h2>
-                    <p>Bugun nimalarni o'rganamiz?</p>
+                    <h2>Hello, Azizbek 👋</h2>
+                    <p>What are we learning today?</p>
                 </div>
 
                 <!-- Vocabulary of the Day Widget -->
                 <div class="vocab-widget">
                     <div class="vocab-header">
-                        <span class="vocab-title"><i class="ph-fill ph-star"></i> Kun so'zi</span>
-                        <span class="vocab-date">Bugun</span>
+                        <span class="vocab-title"><i class="ph-fill ph-star"></i> Word of the Day</span>
+                        <span class="vocab-date">Today</span>
                     </div>
                     <div class="vocab-content">
                         <div class="vocab-word">Perseverance</div>
                         <div class="vocab-pronunciation">/ˌpɜːrsəˈvɪrəns/</div>
-                        <div class="vocab-meaning">Qat'iyatlilik, maqsad sari tinimsiz harakat qilish.</div>
+                        <div class="vocab-meaning">Persistence in doing something despite difficulty.</div>
                     </div>
                 </div>
 
                 <!-- Main Banner -->
                 <div class="banner-card" onclick="switchTab('lessons')">
                     <div class="banner-content">
-                        <h2>INGLIZ TILINI<br>BIZ BILAN<br>O'RGANING!</h2>
+                        <h2>LEARN<br>ENGLISH<br>WITH US!</h2>
                         <div class="progress-container mt-2">
                             <div class="progress-text">
-                                <span>Pre-IELTS kursi</span>
+                                <span>Pre-IELTS Course</span>
                                 <span>65%</span>
                             </div>
                             <div class="progress-bar">
@@ -114,25 +109,25 @@
                         <div class="card-icon-wrapper blue-icon">
                             <i class="ph ph-books"></i>
                         </div>
-                        <span class="card-title">Darslar</span>
+                        <span class="card-title">Lessons</span>
                     </div>
                     <div class="grid-card" onclick="switchTab('rating')">
                         <div class="card-icon-wrapper orange-icon">
                             <i class="ph ph-trophy"></i>
                         </div>
-                        <span class="card-title">Reyting</span>
+                        <span class="card-title">Leaderboard</span>
                     </div>
                     <div class="grid-card" onclick="switchTab('resources')">
                         <div class="card-icon-wrapper green-icon">
                             <i class="ph ph-folder-open"></i>
                         </div>
-                        <span class="card-title">Materiallar</span>
+                        <span class="card-title">Resources</span>
                     </div>
-                    <div class="grid-card">
+                    <div class="grid-card" onclick="switchTab('writing')">
                         <div class="card-icon-wrapper purple-icon">
-                            <i class="ph ph-calendar-check"></i>
+                            <i class="ph ph-robot"></i>
                         </div>
-                        <span class="card-title">Jadval</span>
+                        <span class="card-title">Writing</span>
                     </div>
                 </div>
             </section>
@@ -140,16 +135,16 @@
             <!-- SECTION: LESSONS -->
             <section id="lessons-section" class="app-section">
                 <div class="section-header">
-                    <h2>Mening Darslarim</h2>
-                    <p>Sizning joriy darajangiz: <strong>Pre-IELTS</strong></p>
+                    <h2>My Lessons</h2>
+                    <p>Your current level: <strong>Pre-IELTS</strong></p>
                 </div>
                 
                 <div class="lessons-list">
                     <div class="lesson-card completed">
                         <div class="lesson-icon"><i class="ph-fill ph-check-circle"></i></div>
                         <div class="lesson-info">
-                            <h3>1-dars: Present Simple vs Continuous</h3>
-                            <p>Grammatika va amaliyot</p>
+                            <h3>Lesson 1: Present Simple vs Continuous</h3>
+                            <p>Grammar and Practice</p>
                         </div>
                         <div class="lesson-action">
                             <button class="btn-icon"><i class="ph ph-play"></i></button>
@@ -159,19 +154,19 @@
                     <div class="lesson-card active">
                         <div class="lesson-icon"><i class="ph-fill ph-play-circle"></i></div>
                         <div class="lesson-info">
-                            <h3>2-dars: IELTS Speaking Part 1</h3>
-                            <p>Eng ko'p tushadigan savollar</p>
+                            <h3>Lesson 2: IELTS Speaking Part 1</h3>
+                            <p>Most common questions</p>
                         </div>
                         <div class="lesson-action">
-                            <button class="btn-primary">Boshlash</button>
+                            <button class="btn-primary">Start</button>
                         </div>
                     </div>
 
                     <div class="lesson-card locked">
                         <div class="lesson-icon"><i class="ph-fill ph-lock-key"></i></div>
                         <div class="lesson-info">
-                            <h3>3-dars: Writing Task 1 Asoslari</h3>
-                            <p>Avvalgi darsni tugating</p>
+                            <h3>Lesson 3: Writing Task 1 Basics</h3>
+                            <p>Complete previous lesson</p>
                         </div>
                     </div>
                 </div>
@@ -180,8 +175,8 @@
             <!-- SECTION: RATING (LEADERBOARD) -->
             <section id="rating-section" class="app-section">
                 <div class="section-header text-center">
-                    <h2>Umumiy Reyting</h2>
-                    <p>Eng faol o'quvchilar ro'yxati</p>
+                    <h2>Leaderboard</h2>
+                    <p>Most active students</p>
                 </div>
 
                 <div class="podium-container">
@@ -218,7 +213,7 @@
                         <div class="lb-rank">5</div>
                         <div class="lb-user">
                             <div class="lb-avatar"><img src="https://i.pravatar.cc/150?u=2" alt="Avatar"></div>
-                            <span class="lb-name">Siz (Azizbek)</span>
+                            <span class="lb-name">You (Azizbek)</span>
                         </div>
                         <div class="lb-score">850 xp</div>
                     </div>
@@ -236,34 +231,34 @@
             <!-- SECTION: RESOURCES -->
             <section id="resources-section" class="app-section">
                 <div class="section-header">
-                    <h2>Qo'shimcha Materiallar</h2>
+                    <h2>Extra Resources</h2>
                     <!-- Search inside resources -->
                     <div class="search-box mb-4">
                         <i class="ph ph-magnifying-glass search-icon"></i>
-                        <input type="text" placeholder="Mavzularni qidirish..." class="search-input">
+                        <input type="text" placeholder="Search topics..." class="search-input">
                     </div>
                 </div>
 
                 <div class="resource-grid">
                     <div class="resource-card" onclick="openResource('alphabet')">
                         <div class="r-icon bg-blue"><i class="ph ph-text-aa"></i></div>
-                        <h4>Alifbo</h4>
-                        <p>Harflar va talaffuz</p>
+                        <h4>Alphabet</h4>
+                        <p>Letters and pronunciation</p>
                     </div>
                     <div class="resource-card" onclick="openResource('numbers')">
                         <div class="r-icon bg-green"><i class="ph ph-list-numbers"></i></div>
-                        <h4>Sonlar</h4>
-                        <p>1 dan 1000 gacha</p>
+                        <h4>Numbers</h4>
+                        <p>From 1 to 1000</p>
                     </div>
                     <div class="resource-card">
                         <div class="r-icon bg-orange"><i class="ph ph-chat-circle-text"></i></div>
-                        <h4>Iboralar</h4>
-                        <p>Kundalik suhbat uchun</p>
+                        <h4>Phrases</h4>
+                        <p>For daily conversation</p>
                     </div>
                     <div class="resource-card">
                         <div class="r-icon bg-purple"><i class="ph ph-books"></i></div>
-                        <h4>Grammatika</h4>
-                        <p>Asosiy qoidalar</p>
+                        <h4>Grammar</h4>
+                        <p>Basic rules</p>
                     </div>
                 </div>
             </section>
@@ -273,8 +268,8 @@
                 <div class="section-header" style="display: flex; align-items: center; gap: 10px;">
                     <button class="btn-icon" onclick="switchTab('resources')" style="background:transparent; color:var(--text-main);"><i class="ph ph-arrow-left"></i></button>
                     <div>
-                        <h2 style="margin:0;">Ingliz alifbosi</h2>
-                        <p>26 ta harf va talaffuz</p>
+                        <h2 style="margin:0;">English Alphabet</h2>
+                        <p>26 letters and pronunciation</p>
                     </div>
                 </div>
                 
@@ -288,13 +283,78 @@
                 <div class="section-header" style="display: flex; align-items: center; gap: 10px;">
                     <button class="btn-icon" onclick="switchTab('resources')" style="background:transparent; color:var(--text-main);"><i class="ph ph-arrow-left"></i></button>
                     <div>
-                        <h2 style="margin:0;">Raqamlar</h2>
-                        <p>Inglizcha sonlarni o'rganamiz</p>
+                        <h2 style="margin:0;">Numbers</h2>
+                        <p>Let's learn English numbers</p>
                     </div>
                 </div>
                 
                 <div class="dictionary-list" id="numbers-list">
                     <!-- Javascript will populate this -->
+                </div>
+            </section>
+
+            <!-- SECTION: WRITING AI -->
+            <section id="writing-section" class="app-section">
+                <div class="section-header" style="display: flex; align-items: center; gap: 10px;">
+                    <button class="btn-icon" onclick="switchTab('home')" style="background:transparent; color:var(--text-main);"><i class="ph ph-arrow-left"></i></button>
+                    <div>
+                        <h2 style="margin:0;">Writing Checker</h2>
+                        <p>Check your essay and get a score</p>
+                    </div>
+                </div>
+                
+                <div class="writing-container">
+                    <div class="form-group mb-4">
+                        <label>Task Type:</label>
+                        <select id="writing-type" class="w-100" style="padding: 10px; border-radius: 8px;">
+                            <option value="IELTS Task 1">IELTS Task 1 (Report)</option>
+                            <option value="IELTS Task 2" selected>IELTS Task 2 (Essay)</option>
+                            <option value="General">Free topic / General</option>
+                        </select>
+                    </div>
+                    
+                    <div class="form-group mb-4">
+                        <label>Write your essay here:</label>
+                        <textarea id="writing-text" class="w-100" rows="10" placeholder="I think that..." style="padding: 12px; border-radius: 8px; border: 1px solid var(--border-color); background: var(--bg-main); color: var(--text-main); font-family: inherit; resize: vertical;"></textarea>
+                    </div>
+                    
+                    <button id="check-writing-btn" class="btn-primary w-100" style="padding: 14px; font-size: 16px; display: flex; align-items: center; justify-content: center; gap: 8px;">
+                        <i class="ph ph-sparkle"></i> Check
+                    </button>
+                    
+                    <!-- Loading State -->
+                    <div id="writing-loading" class="text-center mt-4" style="display: none;">
+                        <i class="ph ph-spinner ph-spin" style="font-size: 32px; color: var(--primary-color);"></i>
+                        <p style="margin-top: 10px; font-size: 14px; color: var(--text-muted);">Checking your essay... Please wait.</p>
+                    </div>
+                    
+                    <!-- Results Area -->
+                    <div id="writing-results" class="mt-4" style="display: none;">
+                        <div class="result-card band-card mb-4">
+                            <h3>Overall Band</h3>
+                            <div class="band-score" id="res-band">6.5</div>
+                        </div>
+                        
+                        <div class="result-card mb-4">
+                            <h4><i class="ph ph-text-aa text-blue"></i> Grammar</h4>
+                            <p id="res-grammar">Loading...</p>
+                        </div>
+                        
+                        <div class="result-card mb-4">
+                            <h4><i class="ph ph-book text-green"></i> Vocabulary</h4>
+                            <p id="res-vocab">Loading...</p>
+                        </div>
+                        
+                        <div class="result-card mb-4">
+                            <h4><i class="ph ph-link text-orange"></i> Coherence & Cohesion</h4>
+                            <p id="res-coherence">Loading...</p>
+                        </div>
+                        
+                        <div class="result-card mb-4">
+                            <h4><i class="ph ph-lightbulb text-yellow"></i> General Feedback</h4>
+                            <p id="res-general">Loading...</p>
+                        </div>
+                    </div>
                 </div>
             </section>
 
@@ -306,9 +366,9 @@
                         <button class="edit-avatar"><i class="ph ph-camera"></i></button>
                     </div>
                     <h2 class="profile-name">Azizbek Rustamov</h2>
-                    <p class="profile-role">O'quvchi • Pre-IELTS</p>
+                    <p class="profile-role">Student • Pre-IELTS</p>
                     <!-- Role Switcher for Demo -->
-                    <button class="role-switch-btn" onclick="toggleRole()">O'qituvchi profiliga o'tish (Demo)</button>
+                    <button class="role-switch-btn" onclick="toggleRole()">Switch to Teacher Profile (Demo)</button>
                 </div>
 
                 <!-- Student Profile Stats -->
@@ -316,17 +376,17 @@
                     <div class="stat-box">
                         <i class="ph-fill ph-fire text-orange"></i>
                         <span class="stat-value">12</span>
-                        <span class="stat-label">Kun stryk</span>
+                        <span class="stat-label">Day streak</span>
                     </div>
                     <div class="stat-box">
                         <i class="ph-fill ph-star text-yellow"></i>
                         <span class="stat-value">850</span>
-                        <span class="stat-label">Umumiy XP</span>
+                        <span class="stat-label">Total XP</span>
                     </div>
                     <div class="stat-box">
                         <i class="ph-fill ph-book-open text-blue"></i>
                         <span class="stat-value">24</span>
-                        <span class="stat-label">Darslar</span>
+                        <span class="stat-label">Lessons</span>
                     </div>
                 </div>
 
@@ -335,17 +395,17 @@
                     <div class="stat-box">
                         <i class="ph-fill ph-users text-blue"></i>
                         <span class="stat-value">145</span>
-                        <span class="stat-label">O'quvchilar</span>
+                        <span class="stat-label">Students</span>
                     </div>
                     <div class="stat-box">
                         <i class="ph-fill ph-chalkboard-teacher text-green"></i>
                         <span class="stat-value">6</span>
-                        <span class="stat-label">Guruhlar</span>
+                        <span class="stat-label">Groups</span>
                     </div>
                     <div class="stat-box">
                         <i class="ph-fill ph-star text-yellow"></i>
                         <span class="stat-value">4.9</span>
-                        <span class="stat-label">Reyting</span>
+                        <span class="stat-label">Ranking</span>
                     </div>
                 </div>
 
@@ -353,28 +413,28 @@
                     <div class="menu-item">
                         <div class="menu-item-left">
                             <div class="menu-icon"><i class="ph ph-user"></i></div>
-                            <span>Shaxsiy ma'lumotlar</span>
+                            <span>Personal Info</span>
                         </div>
                         <i class="ph ph-caret-right"></i>
                     </div>
                     <div class="menu-item">
                         <div class="menu-item-left">
                             <div class="menu-icon"><i class="ph ph-bell"></i></div>
-                            <span>Bildirishnomalar</span>
+                            <span>Notifications</span>
                         </div>
                         <i class="ph ph-caret-right"></i>
                     </div>
                     <div class="menu-item">
                         <div class="menu-item-left">
                             <div class="menu-icon"><i class="ph ph-gear"></i></div>
-                            <span>Sozlamalar</span>
+                            <span>Settings</span>
                         </div>
                         <i class="ph ph-caret-right"></i>
                     </div>
                     <div class="menu-item text-red">
                         <div class="menu-item-left">
                             <div class="menu-icon"><i class="ph ph-sign-out"></i></div>
-                            <span>Tizimdan chiqish</span>
+                            <span>Log Out</span>
                         </div>
                     </div>
                 </div>
@@ -385,23 +445,23 @@
         <nav class="bottom-nav">
             <a href="#" class="nav-item active" data-target="home">
                 <i class="ph ph-house"></i>
-                <span>Asosiy</span>
+                <span>Home</span>
             </a>
             <a href="#" class="nav-item" data-target="lessons">
                 <i class="ph ph-play-circle"></i>
-                <span>Darslar</span>
+                <span>Lessons</span>
             </a>
             <a href="#" class="nav-item" data-target="rating">
                 <i class="ph ph-ranking"></i>
-                <span>Reyting</span>
+                <span>Ranking</span>
             </a>
             <a href="#" class="nav-item" data-target="resources">
                 <i class="ph ph-books"></i>
-                <span>Material</span>
+                <span>Resources</span>
             </a>
             <a href="#" class="nav-item" data-target="profile">
                 <i class="ph ph-user"></i>
-                <span>Profil</span>
+                <span>Profile</span>
             </a>
         </nav>
     </div>
