@@ -10,7 +10,6 @@ import json
 
 app = FastAPI(title="Perfection English School API")
 
-# GitHub Pages dagi ilovamiz bu serverga ulana olishi uchun CORS ruxsatnomasi
 app.add_middleware(
     CORSMiddleware,
     allow_origins=["*"],
@@ -24,13 +23,11 @@ class WritingRequest(BaseModel):
     task_type: str = "General" 
     image_data: Optional[str] = None
 
-# Gemini API ni sozlash (Yangi google-genai kutubxonasi)
 GEMINI_API_KEY = os.environ.get("GEMINI_API_KEY")
 if GEMINI_API_KEY:
     client = genai.Client(api_key=GEMINI_API_KEY)
 else:
     client = None
-    print("OGOHLANTIRISH: GEMINI_API_KEY topilmadi.")
 
 @app.post("/api/check_writing")
 async def check_writing(req: WritingRequest):
@@ -40,28 +37,28 @@ async def check_writing(req: WritingRequest):
     if not client:
         return {
             "overall_band": "6.5",
-            "grammar_feedback": "Asosiy zamonlarni to'g'ri qo'llagansiz, lekin artikllarda (a/an/the) xatolar bor.",
-            "vocabulary_feedback": "So'z boyligingiz yaxshi. 'Good' yoki 'Bad' o'rniga akademik so'zlarni ishlating.",
-            "coherence_feedback": "Fikrlar mantiqan bir-biriga bog'langan. Paragraflarga ajratishni unutmang.",
-            "general_feedback": "Yaxshi harakat! Bu hozircha test rejimidagi javob, rasm funksiyasi ishlashi uchun API kalit kerak."
+            "grammar_feedback": "Asosiy zamonlarni to'g'ri qo'llagansiz, lekin artikllarda xatolar bor.",
+            "vocabulary_feedback": "So'z boyligingiz yaxshi. Akademik so'zlarni ishlating.",
+            "coherence_feedback": "Fikrlar mantiqan bir-biriga bog'langan.",
+            "general_feedback": "DIQQAT: GEMINI_API_KEY topilmadi, shuning uchun bu test javob."
         }
         
     prompt = f"""
     Siz IELTS/CEFR examiner va malakali Ingliz tili o'qituvchisisiz. 
-    Quyidagi o'quvchi yozgan inshoni tekshiring. Agar rasm bo'lsa, rasmdagi qo'lyozmani o'qib tahlil qiling.
+    Quyidagi o'quvchi yozgan inshoni tekshiring.
     Vazifa turi: {req.task_type}
     Matn:
     \"\"\"{req.text}\"\"\"
     
     Quyidagi JSON formatda javob qaytaring (hech qanday boshqa so'zlarsiz, faqat JSON formatda):
     {{
-        "overall_band": "Masalan: 6.5 yoki B2",
-        "grammar_feedback": "Grammatika bo'yicha xatolar va ularni tuzatish",
+        "overall_band": "Masalan: 6.5",
+        "grammar_feedback": "Grammatika bo'yicha xatolar",
         "vocabulary_feedback": "So'z boyligi bo'yicha maslahatlar",
         "coherence_feedback": "Matn mantiqiyligi bo'yicha izoh",
-        "general_feedback": "Umumiy xulosa va ruhlantiruvchi fikrlar"
+        "general_feedback": "Umumiy xulosa"
     }}
-    Barcha izohlaringiz o'zbek tilida yozilsin va do'stona ohangda bo'lsin.
+    Barcha izohlaringiz o'zbek tilida yozilsin.
     """
     
     contents = []
@@ -84,18 +81,26 @@ async def check_writing(req: WritingRequest):
                 )
             )
         except Exception as e:
-            raise HTTPException(status_code=400, detail="Rasm formatida xatolik.")
+            return {
+                "overall_band": "XATO",
+                "grammar_feedback": "Rasm formatida xatolik.",
+                "vocabulary_feedback": "",
+                "coherence_feedback": "",
+                "general_feedback": str(e)
+            }
     
     contents.append(prompt)
     
     try:
         response = client.models.generate_content(
             model='gemini-2.0-flash',
-            contents=contents
+            contents=contents,
+            config=types.GenerateContentConfig(
+                response_mime_type="application/json",
+            )
         )
         response_text = response.text.strip()
         
-        # JSON o'qish uchun ortiqcha belgilarni tozalash
         if response_text.startswith("```json"):
             response_text = response_text[7:-3]
         elif response_text.startswith("```"):
@@ -104,8 +109,15 @@ async def check_writing(req: WritingRequest):
         result = json.loads(response_text)
         return result
     except Exception as e:
-        print(f"Gemini API xatoligi: {e}")
-        raise HTTPException(status_code=500, detail="AI xizmati bilan ulanishda xatolik yuz berdi. Iltimos keyinroq qayta urining.")
+        error_msg = str(e)
+        print(f"Gemini API xatoligi: {error_msg}")
+        return {
+            "overall_band": "XATO",
+            "grammar_feedback": "AI xizmati bilan ulanishda xatolik yuz berdi.",
+            "vocabulary_feedback": "Sabab:",
+            "coherence_feedback": error_msg,
+            "general_feedback": f"Xatolik: {error_msg}"
+        }
 
 if __name__ == "__main__":
     import uvicorn
