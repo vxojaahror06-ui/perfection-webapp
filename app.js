@@ -147,6 +147,7 @@ document.addEventListener('DOMContentLoaded', () => {
                     currentImageData = event.target.result; // Data URL (Base64)
                     previewImg.src = currentImageData;
                     previewContainer.style.display = 'block';
+                    document.getElementById('upload-label').style.display = 'none';
                 };
                 reader.readAsDataURL(file);
             }
@@ -158,6 +159,7 @@ document.addEventListener('DOMContentLoaded', () => {
             currentImageData = null;
             previewImg.src = '';
             previewContainer.style.display = 'none';
+            document.getElementById('upload-label').style.display = 'flex';
         });
     }
 
