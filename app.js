@@ -131,6 +131,36 @@ document.addEventListener('DOMContentLoaded', () => {
         document.querySelector('.app-title').innerText = type === 'alphabet' ? 'Alphabet' : 'Numbers';
     };
 
+    // Image Upload Logic
+    let currentImageData = null;
+    const imageInput = document.getElementById('writing-image');
+    const previewContainer = document.getElementById('image-preview-container');
+    const previewImg = document.getElementById('preview-img');
+    const removeImageBtn = document.getElementById('remove-image-btn');
+
+    if (imageInput) {
+        imageInput.addEventListener('change', (e) => {
+            const file = e.target.files[0];
+            if (file) {
+                const reader = new FileReader();
+                reader.onload = function(event) {
+                    currentImageData = event.target.result; // Data URL (Base64)
+                    previewImg.src = currentImageData;
+                    previewContainer.style.display = 'block';
+                };
+                reader.readAsDataURL(file);
+            }
+        });
+
+        removeImageBtn.addEventListener('click', (e) => {
+            e.preventDefault();
+            imageInput.value = '';
+            currentImageData = null;
+            previewImg.src = '';
+            previewContainer.style.display = 'none';
+        });
+    }
+
     // AI Writing Validation Logic
     const checkWritingBtn = document.getElementById('check-writing-btn');
     if (checkWritingBtn) {
@@ -138,11 +168,11 @@ document.addEventListener('DOMContentLoaded', () => {
             const text = document.getElementById('writing-text').value;
             const type = document.getElementById('writing-type').value;
             
-            if (text.length < 10) {
+            if (text.trim().length < 10 && !currentImageData) {
                 if (window.Telegram && window.Telegram.WebApp) {
-                    window.Telegram.WebApp.showAlert("Please write a longer text (at least 10 characters).");
+                    window.Telegram.WebApp.showAlert("Please write an essay or upload an image of your writing.");
                 } else {
-                    alert("Please write a longer text.");
+                    alert("Please write an essay or upload an image of your writing.");
                 }
                 return;
             }
@@ -164,7 +194,8 @@ document.addEventListener('DOMContentLoaded', () => {
                     },
                     body: JSON.stringify({
                         text: text,
-                        task_type: type
+                        task_type: type,
+                        image_data: currentImageData
                     })
                 });
 
