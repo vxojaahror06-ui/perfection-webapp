@@ -323,24 +323,26 @@
                     </div>
                     
                     <div class="form-group mb-4">
-                        <label>Upload Image (Optional):</label>
+                        <label>Write your essay here:</label>
+                        <textarea id="writing-text" class="w-100" rows="10" placeholder="I think that..." style="padding: 12px; border-radius: 8px; border: 1px solid var(--border-color); background: var(--bg-main); color: var(--text-main); font-family: inherit; resize: vertical;"></textarea>
+                    </div>
+
+                    <div class="form-group mb-4">
+                        <label>Or Upload Image of your writing (Optional):</label>
                         <div class="upload-zone-wrapper mt-2">
                             <input type="file" id="writing-image" accept="image/*" hidden>
                             <label for="writing-image" class="upload-label" id="upload-label">
-                                <div class="upload-icon"><i class="ph ph-image"></i></div>
-                                <div class="upload-title">Upload an image</div>
-                                <div class="upload-subtitle">Tap here to select from gallery</div>
+                                <div class="upload-icon"><i class="ph ph-camera"></i></div>
+                                <div class="upload-text-content">
+                                    <div class="upload-title">Snap a photo</div>
+                                    <div class="upload-subtitle">Take a picture of your notebook</div>
+                                </div>
                             </label>
                         </div>
                         <div id="image-preview-container" class="image-preview-wrapper" style="display: none;">
                             <img id="preview-img" src="" alt="Preview">
                             <button id="remove-image-btn" class="btn-remove-img" type="button"><i class="ph ph-x"></i></button>
                         </div>
-                    </div>
-                    
-                    <div class="form-group mb-4">
-                        <label>Or write your essay here:</label>
-                        <textarea id="writing-text" class="w-100" rows="10" placeholder="I think that..." style="padding: 12px; border-radius: 8px; border: 1px solid var(--border-color); background: var(--bg-main); color: var(--text-main); font-family: inherit; resize: vertical;"></textarea>
                     </div>
                     
                     <button id="check-writing-btn" class="btn-primary w-100" style="padding: 14px; font-size: 16px; display: flex; align-items: center; justify-content: center; gap: 8px;">
