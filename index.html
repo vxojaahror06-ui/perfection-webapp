@@ -306,15 +306,35 @@
                 <div class="writing-container">
                     <div class="form-group mb-4">
                         <label>Task Type:</label>
-                        <select id="writing-type" class="w-100" style="padding: 10px; border-radius: 8px;">
-                            <option value="IELTS Task 1">IELTS Task 1 (Report)</option>
-                            <option value="IELTS Task 2" selected>IELTS Task 2 (Essay)</option>
-                            <option value="General">Free topic / General</option>
+                        <select id="writing-type" class="w-100" style="padding: 10px; border-radius: 8px; border: 1px solid var(--border-color); background: var(--bg-main); color: var(--text-main);">
+                            <optgroup label="CEFR (Multilevel)">
+                                <option value="CEFR Part 1.1">Part 1.1 Norasmiy xat (min 50 words)</option>
+                                <option value="CEFR Part 1.2">Part 1.2 Rasmiy xat (120-150 words)</option>
+                                <option value="CEFR Part 2">Part 2 Blogpost (180-200 words)</option>
+                            </optgroup>
+                            <optgroup label="IELTS (Academic)">
+                                <option value="IELTS Task 1">Task 1 (150 words)</option>
+                                <option value="IELTS Task 2" selected>Task 2 (250 words)</option>
+                            </optgroup>
+                            <optgroup label="Other">
+                                <option value="General">Free topic / General</option>
+                            </optgroup>
                         </select>
                     </div>
                     
                     <div class="form-group mb-4">
-                        <label>Write your essay here:</label>
+                        <label>Upload Image (Optional):</label>
+                        <input type="file" id="writing-image" accept="image/*" class="w-100" style="padding: 10px; border-radius: 8px; border: 1px dashed var(--primary-color); background: var(--bg-card); color: var(--text-main); cursor: pointer;">
+                        <div id="image-preview-container" style="margin-top: 10px; display: none;">
+                            <img id="preview-img" src="" alt="Preview" style="max-width: 100%; max-height: 200px; border-radius: 8px; border: 1px solid var(--border-color);">
+                            <div style="margin-top: 5px;">
+                                <button id="remove-image-btn" style="background: transparent; border: none; color: #ef4444; font-size: 14px; cursor: pointer; display: flex; align-items: center; gap: 5px;"><i class="ph ph-trash"></i> Remove Image</button>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="form-group mb-4">
+                        <label>Or write your essay here:</label>
                         <textarea id="writing-text" class="w-100" rows="10" placeholder="I think that..." style="padding: 12px; border-radius: 8px; border: 1px solid var(--border-color); background: var(--bg-main); color: var(--text-main); font-family: inherit; resize: vertical;"></textarea>
                     </div>
                     
