@@ -63,7 +63,7 @@ async def check_writing(req: WritingRequest):
     try:
         if req.image_data:
             # Agar rasm yuborilgan bo'lsa, maxsus Vision modelidan foydalanamiz
-            model_name = "llama-3.2-11b-vision-preview"
+            model_name = "llama-3.2-90b-vision-preview"
             messages = [
                 {
                     "role": "user",
