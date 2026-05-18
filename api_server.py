@@ -7,9 +7,10 @@ from google.genai import types
 import base64
 import os
 import json
-
+ 
 app = FastAPI(title="Perfection English School API")
-
+ 
+# GitHub Pages dagi ilovamiz bu serverga ulana olishi uchun CORS ruxsatnomasi
 app.add_middleware(
     CORSMiddleware,
     allow_origins=["*"],
@@ -17,18 +18,20 @@ app.add_middleware(
     allow_methods=["*"],
     allow_headers=["*"],
 )
-
+ 
 class WritingRequest(BaseModel):
     text: Optional[str] = ""
     task_type: str = "General" 
     image_data: Optional[str] = None
-
+ 
+# Gemini API ni sozlash (Yangi google-genai kutubxonasi)
 GEMINI_API_KEY = os.environ.get("GEMINI_API_KEY")
 if GEMINI_API_KEY:
     client = genai.Client(api_key=GEMINI_API_KEY)
 else:
     client = None
-
+    print("OGOHLANTIRISH: GEMINI_API_KEY topilmadi.")
+ 
 @app.post("/api/check_writing")
 async def check_writing(req: WritingRequest):
     if (not req.text or len(req.text.strip()) < 10) and not req.image_data:
@@ -93,7 +96,7 @@ async def check_writing(req: WritingRequest):
     
     try:
         response = client.models.generate_content(
-            model='gemini-2.0-flash',
+            model='gemini-1.5-flash-8b',
             contents=contents,
             config=types.GenerateContentConfig(
                 response_mime_type="application/json",
@@ -118,7 +121,7 @@ async def check_writing(req: WritingRequest):
             "coherence_feedback": error_msg,
             "general_feedback": f"Xatolik: {error_msg}"
         }
-
+ 
 if __name__ == "__main__":
     import uvicorn
     uvicorn.run(app, host="0.0.0.0", port=8000)
