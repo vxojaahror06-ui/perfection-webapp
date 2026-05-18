@@ -306,11 +306,11 @@
                 <div class="writing-container">
                     <div class="form-group mb-4">
                         <label>Task Type:</label>
-                        <select id="writing-type" class="w-100" style="padding: 10px; border-radius: 8px; border: 1px solid var(--border-color); background: var(--bg-main); color: var(--text-main);">
+                        <select id="writing-type" class="custom-select">
                             <optgroup label="CEFR (Multilevel)">
-                                <option value="CEFR Part 1.1">Part 1.1 Norasmiy xat (min 50 words)</option>
-                                <option value="CEFR Part 1.2">Part 1.2 Rasmiy xat (120-150 words)</option>
-                                <option value="CEFR Part 2">Part 2 Blogpost (180-200 words)</option>
+                                <option value="CEFR Part 1.1">Informal Letter (min 50 words)</option>
+                                <option value="CEFR Part 1.2">Formal Letter (120-150 words)</option>
+                                <option value="CEFR Part 2">Blogpost (180-200 words)</option>
                             </optgroup>
                             <optgroup label="IELTS (Academic)">
                                 <option value="IELTS Task 1">Task 1 (150 words)</option>
@@ -324,12 +324,17 @@
                     
                     <div class="form-group mb-4">
                         <label>Upload Image (Optional):</label>
-                        <input type="file" id="writing-image" accept="image/*" class="w-100" style="padding: 10px; border-radius: 8px; border: 1px dashed var(--primary-color); background: var(--bg-card); color: var(--text-main); cursor: pointer;">
-                        <div id="image-preview-container" style="margin-top: 10px; display: none;">
-                            <img id="preview-img" src="" alt="Preview" style="max-width: 100%; max-height: 200px; border-radius: 8px; border: 1px solid var(--border-color);">
-                            <div style="margin-top: 5px;">
-                                <button id="remove-image-btn" style="background: transparent; border: none; color: #ef4444; font-size: 14px; cursor: pointer; display: flex; align-items: center; gap: 5px;"><i class="ph ph-trash"></i> Remove Image</button>
-                            </div>
+                        <div class="upload-zone-wrapper mt-2">
+                            <input type="file" id="writing-image" accept="image/*" hidden>
+                            <label for="writing-image" class="upload-label" id="upload-label">
+                                <div class="upload-icon"><i class="ph ph-image"></i></div>
+                                <div class="upload-title">Upload an image</div>
+                                <div class="upload-subtitle">Tap here to select from gallery</div>
+                            </label>
+                        </div>
+                        <div id="image-preview-container" class="image-preview-wrapper" style="display: none;">
+                            <img id="preview-img" src="" alt="Preview">
+                            <button id="remove-image-btn" class="btn-remove-img" type="button"><i class="ph ph-x"></i></button>
                         </div>
                     </div>
                     
