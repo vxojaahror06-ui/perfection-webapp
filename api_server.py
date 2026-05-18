@@ -2,7 +2,8 @@ from fastapi import FastAPI, HTTPException
 from fastapi.middleware.cors import CORSMiddleware
 from pydantic import BaseModel
 from typing import Optional
-import google.generativeai as genai
+from google import genai
+from google.genai import types
 import base64
 import os
 import json
@@ -12,7 +13,7 @@ app = FastAPI(title="Perfection English School API")
 # GitHub Pages dagi ilovamiz bu serverga ulana olishi uchun CORS ruxsatnomasi
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=["*"], # Barcha saytlardan so'rovlarni qabul qilish (Xavfsizlik uchun keyin cheklash mumkin)
+    allow_origins=["*"],
     allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"],
@@ -23,22 +24,20 @@ class WritingRequest(BaseModel):
     task_type: str = "General" 
     image_data: Optional[str] = None
 
-# Gemini API ni sozlash (GEMINI_API_KEY muhit o'zgaruvchisidan olinadi)
+# Gemini API ni sozlash (Yangi google-genai kutubxonasi)
 GEMINI_API_KEY = os.environ.get("GEMINI_API_KEY")
 if GEMINI_API_KEY:
-    genai.configure(api_key=GEMINI_API_KEY)
-    model = genai.GenerativeModel('gemini-1.5-flash')
+    client = genai.Client(api_key=GEMINI_API_KEY)
 else:
-    model = None
-    print("OGOHLANTIRISH: GEMINI_API_KEY topilmadi. Mock ma'lumotlar qaytariladi.")
+    client = None
+    print("OGOHLANTIRISH: GEMINI_API_KEY topilmadi.")
 
 @app.post("/api/check_writing")
 async def check_writing(req: WritingRequest):
     if (not req.text or len(req.text.strip()) < 10) and not req.image_data:
         raise HTTPException(status_code=400, detail="Matn yoki rasm yuborilmadi.")
         
-    if not model:
-        # Agar API kalit bo'lmasa, sinov uchun soxta (mock) javob qaytarish
+    if not client:
         return {
             "overall_band": "6.5",
             "grammar_feedback": "Asosiy zamonlarni to'g'ri qo'llagansiz, lekin artikllarda (a/an/the) xatolar bor.",
@@ -49,7 +48,7 @@ async def check_writing(req: WritingRequest):
         
     prompt = f"""
     Siz IELTS/CEFR examiner va malakali Ingliz tili o'qituvchisisiz. 
-    Quyidagi o'quvchi yozgan inshoni tekshiring. Agar foydalanuvchi rasm yuborgan bo'lsa, rasmdagi qo'lyozmani o'qing va uni ham tahlil qiling.
+    Quyidagi o'quvchi yozgan inshoni tekshiring. Agar rasm bo'lsa, rasmdagi qo'lyozmani o'qib tahlil qiling.
     Vazifa turi: {req.task_type}
     Matn:
     \"\"\"{req.text}\"\"\"
@@ -67,12 +66,10 @@ async def check_writing(req: WritingRequest):
     
     contents = []
     if req.image_data:
-        # Remove data URI prefix if it exists
         b64_data = req.image_data
         mime_type = "image/jpeg"
         if "," in b64_data:
             mime_part, b64_data = b64_data.split(",", 1)
-            # Optional: parse exact mime type from mime_part
             try:
                 mime_type = mime_part.split(":")[1].split(";")[0]
             except Exception:
@@ -80,17 +77,22 @@ async def check_writing(req: WritingRequest):
             
         try:
             image_bytes = base64.b64decode(b64_data)
-            contents.append({
-                "mime_type": mime_type,
-                "data": image_bytes
-            })
+            contents.append(
+                types.Part.from_bytes(
+                    data=image_bytes,
+                    mime_type=mime_type,
+                )
+            )
         except Exception as e:
             raise HTTPException(status_code=400, detail="Rasm formatida xatolik.")
     
     contents.append(prompt)
     
     try:
-        response = model.generate_content(contents)
+        response = client.models.generate_content(
+            model='gemini-2.5-flash',
+            contents=contents
+        )
         response_text = response.text.strip()
         
         # JSON o'qish uchun ortiqcha belgilarni tozalash
@@ -107,5 +109,4 @@ async def check_writing(req: WritingRequest):
 
 if __name__ == "__main__":
     import uvicorn
-    # Test qilish uchun: python api_server.py
     uvicorn.run(app, host="0.0.0.0", port=8000)
