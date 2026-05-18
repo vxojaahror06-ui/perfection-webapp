@@ -39,10 +39,10 @@ document.addEventListener('DOMContentLoaded', () => {
         // Update Title dynamically based on section
         const titles = {
             'home': 'Perfection School',
-            'lessons': 'Darslar',
-            'rating': 'Reyting',
-            'resources': 'Materiallar',
-            'profile': 'Mening Profilim'
+            'lessons': 'Lessons',
+            'rating': 'Ranking',
+            'resources': 'Resources',
+            'profile': 'My Profile'
         };
         
         if (titles[targetId]) {
@@ -62,15 +62,15 @@ document.addEventListener('DOMContentLoaded', () => {
             // Switch to Teacher
             studentStats.style.display = 'none';
             teacherStats.style.display = 'flex';
-            roleText.innerText = "O'qituvchi • Senior";
-            roleBtn.innerText = "O'quvchi profiliga o'tish (Demo)";
+            roleText.innerText = "Teacher • Senior";
+            roleBtn.innerText = "Switch to Student Profile (Demo)";
             titleName.innerText = "Miss Malika";
         } else {
             // Switch to Student
             studentStats.style.display = 'flex';
             teacherStats.style.display = 'none';
-            roleText.innerText = "O'quvchi • Pre-IELTS";
-            roleBtn.innerText = "O'qituvchi profiliga o'tish (Demo)";
+            roleText.innerText = "Student • Pre-IELTS";
+            roleBtn.innerText = "Switch to Teacher Profile (Demo)";
             titleName.innerText = "Azizbek Rustamov";
         }
     };
@@ -109,9 +109,9 @@ document.addEventListener('DOMContentLoaded', () => {
             const level = document.getElementById('reg-level').value;
 
             // Update UI with user data
-            document.querySelector('.welcome-area h2').innerText = 'Salom, ' + name.split(' ')[0] + ' 👋';
+            document.querySelector('.welcome-area h2').innerText = 'Hello, ' + name.split(' ')[0] + ' 👋';
             document.querySelector('.profile-name').innerText = name;
-            document.querySelector('.profile-role').innerText = "O'quvchi • " + level;
+            document.querySelector('.profile-role').innerText = "Student • " + level;
             
             // Switch to Home Section
             switchTab('home');
@@ -128,8 +128,9 @@ document.addEventListener('DOMContentLoaded', () => {
         document.querySelectorAll('.app-section').forEach(sec => sec.classList.remove('active'));
         const target = document.getElementById(type + '-section');
         if(target) target.classList.add('active');
-        document.querySelector('.app-title').innerText = type === 'alphabet' ? 'Alifbo' : 'Sonlar';
+        document.querySelector('.app-title').innerText = type === 'alphabet' ? 'Alphabet' : 'Numbers';
     };
+
     // AI Writing Validation Logic
     const checkWritingBtn = document.getElementById('check-writing-btn');
     if (checkWritingBtn) {
@@ -139,9 +140,9 @@ document.addEventListener('DOMContentLoaded', () => {
             
             if (text.length < 10) {
                 if (window.Telegram && window.Telegram.WebApp) {
-                    window.Telegram.WebApp.showAlert("Iltimos, to'liqroq matn yozing (kamida 10 ta belgi).");
+                    window.Telegram.WebApp.showAlert("Please write a longer text (at least 10 characters).");
                 } else {
-                    alert("Iltimos, to'liqroq matn yozing.");
+                    alert("Please write a longer text.");
                 }
                 return;
             }
@@ -153,26 +154,32 @@ document.addEventListener('DOMContentLoaded', () => {
 
             try {
                 // Diqqat: Production (haqiqiy ishlash) uchun manzilni haqiqiy server urliga almashtirish kerak
+                // Masalan: https://mening-api-serverim.onrender.com/api/check_writing
                 const backendUrl = 'http://127.0.0.1:8000/api/check_writing';
                 
                 const response = await fetch(backendUrl, {
                     method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({ text: text, task_type: type })
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({
+                        text: text,
+                        task_type: type
+                    })
                 });
 
                 if (!response.ok) {
-                    throw new Error("Server xatolik qaytardi. Balki server ishlamayotgan bo'lishi mumkin.");
+                    throw new Error("Server returned an error. It might be offline.");
                 }
 
                 const result = await response.json();
                 
                 // Natijalarni ekranga chiqarish
                 document.getElementById('res-band').innerText = result.overall_band || 'N/A';
-                document.getElementById('res-grammar').innerText = result.grammar_feedback || "Ma'lumot yo'q";
-                document.getElementById('res-vocab').innerText = result.vocabulary_feedback || "Ma'lumot yo'q";
-                document.getElementById('res-coherence').innerText = result.coherence_feedback || "Ma'lumot yo'q";
-                document.getElementById('res-general').innerText = result.general_feedback || "Ma'lumot yo'q";
+                document.getElementById('res-grammar').innerText = result.grammar_feedback || "No data";
+                document.getElementById('res-vocab').innerText = result.vocabulary_feedback || "No data";
+                document.getElementById('res-coherence').innerText = result.coherence_feedback || "No data";
+                document.getElementById('res-general').innerText = result.general_feedback || "No data";
 
                 // Show results
                 document.getElementById('writing-loading').style.display = 'none';
@@ -182,9 +189,9 @@ document.addEventListener('DOMContentLoaded', () => {
                 console.error("Fetch xatolik:", error);
                 document.getElementById('writing-loading').style.display = 'none';
                 if (window.Telegram && window.Telegram.WebApp) {
-                    window.Telegram.WebApp.showAlert("Xatolik: " + error.message);
+                    window.Telegram.WebApp.showAlert("Error: " + error.message);
                 } else {
-                    alert("Xatolik: " + error.message);
+                    alert("Error: " + error.message);
                 }
             } finally {
                 checkWritingBtn.disabled = false;
