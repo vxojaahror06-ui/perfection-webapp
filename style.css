@@ -810,3 +810,45 @@ body {
     color: var(--text-main);
     margin-top: 4px;
 }
+/* AI Writing Result Styles */
+.result-card {
+    background-color: var(--bg-card);
+    border-radius: var(--border-radius-md);
+    padding: 16px;
+    box-shadow: 0 4px 15px rgba(0,0,0,0.03);
+    border-left: 4px solid var(--primary-color);
+}
+
+.result-card.band-card {
+    border-left: none;
+    text-align: center;
+    background: linear-gradient(135deg, var(--bg-card), var(--bg-main));
+    border: 2px solid var(--primary-color);
+}
+
+.result-card h3 {
+    font-size: 16px;
+    color: var(--text-muted);
+    margin-bottom: 8px;
+}
+
+.result-card h4 {
+    font-size: 14px;
+    font-weight: 700;
+    margin-bottom: 8px;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+}
+
+.band-score {
+    font-size: 42px;
+    font-weight: 800;
+    color: var(--primary-color);
+}
+
+.result-card p {
+    font-size: 14px;
+    color: var(--text-main);
+    line-height: 1.5;
+}
