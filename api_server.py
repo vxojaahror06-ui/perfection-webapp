@@ -90,7 +90,7 @@ async def check_writing(req: WritingRequest):
     
     try:
         response = client.models.generate_content(
-            model='gemini-2.5-flash',
+            model='gemini-2.0-flash',
             contents=contents
         )
         response_text = response.text.strip()
