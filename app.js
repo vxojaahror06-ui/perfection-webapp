@@ -130,6 +130,67 @@ document.addEventListener('DOMContentLoaded', () => {
         if(target) target.classList.add('active');
         document.querySelector('.app-title').innerText = type === 'alphabet' ? 'Alifbo' : 'Sonlar';
     };
+    // AI Writing Validation Logic
+    const checkWritingBtn = document.getElementById('check-writing-btn');
+    if (checkWritingBtn) {
+        checkWritingBtn.addEventListener('click', async () => {
+            const text = document.getElementById('writing-text').value;
+            const type = document.getElementById('writing-type').value;
+            
+            if (text.length < 10) {
+                if (window.Telegram && window.Telegram.WebApp) {
+                    window.Telegram.WebApp.showAlert("Iltimos, to'liqroq matn yozing (kamida 10 ta belgi).");
+                } else {
+                    alert("Iltimos, to'liqroq matn yozing.");
+                }
+                return;
+            }
+
+            // Show loading
+            document.getElementById('writing-loading').style.display = 'block';
+            document.getElementById('writing-results').style.display = 'none';
+            checkWritingBtn.disabled = true;
+
+            try {
+                // Diqqat: Production (haqiqiy ishlash) uchun manzilni haqiqiy server urliga almashtirish kerak
+                const backendUrl = 'http://127.0.0.1:8000/api/check_writing';
+                
+                const response = await fetch(backendUrl, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ text: text, task_type: type })
+                });
+
+                if (!response.ok) {
+                    throw new Error("Server xatolik qaytardi. Balki server ishlamayotgan bo'lishi mumkin.");
+                }
+
+                const result = await response.json();
+                
+                // Natijalarni ekranga chiqarish
+                document.getElementById('res-band').innerText = result.overall_band || 'N/A';
+                document.getElementById('res-grammar').innerText = result.grammar_feedback || "Ma'lumot yo'q";
+                document.getElementById('res-vocab').innerText = result.vocabulary_feedback || "Ma'lumot yo'q";
+                document.getElementById('res-coherence').innerText = result.coherence_feedback || "Ma'lumot yo'q";
+                document.getElementById('res-general').innerText = result.general_feedback || "Ma'lumot yo'q";
+
+                // Show results
+                document.getElementById('writing-loading').style.display = 'none';
+                document.getElementById('writing-results').style.display = 'block';
+                
+            } catch (error) {
+                console.error("Fetch xatolik:", error);
+                document.getElementById('writing-loading').style.display = 'none';
+                if (window.Telegram && window.Telegram.WebApp) {
+                    window.Telegram.WebApp.showAlert("Xatolik: " + error.message);
+                } else {
+                    alert("Xatolik: " + error.message);
+                }
+            } finally {
+                checkWritingBtn.disabled = false;
+            }
+        });
+    }
 
     // Populate Dictionaries
     populateDictionaries();
