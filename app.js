@@ -103,6 +103,7 @@ document.addEventListener('DOMContentLoaded', () => {
     // User Data & XP System
     let userXP = parseInt(localStorage.getItem('user_xp') || '0');
     let userName = localStorage.getItem('user_name') || '';
+    let userPhone = localStorage.getItem('user_phone') || '';
     let userLevel = localStorage.getItem('user_level') || '';
     
     window.nextAuthStep = function(stepNumber) {
@@ -119,6 +120,22 @@ document.addEventListener('DOMContentLoaded', () => {
         if (userLevel) {
             document.querySelector('.profile-role').innerText = "Student • " + userLevel;
         }
+        if (userPhone) {
+            let phoneEl = document.querySelector('.profile-phone');
+            if(phoneEl) phoneEl.innerText = userPhone;
+        }
+        
+        let avatar = localStorage.getItem('user_avatar');
+        if(avatar) {
+            document.querySelector('.profile-avatar img').src = avatar;
+        }
+
+        if (localStorage.getItem('dark_mode') === 'true') {
+            document.body.classList.add('dark-mode');
+            let dmToggle = document.getElementById('dark-mode-toggle');
+            if(dmToggle) dmToggle.checked = true;
+        }
+
         document.querySelectorAll('.stat-value').forEach(el => {
             if (el.nextElementSibling && el.nextElementSibling.innerText.includes('Total XP')) {
                 el.innerText = userXP;
@@ -175,14 +192,17 @@ document.addEventListener('DOMContentLoaded', () => {
         regLevelForm.addEventListener('submit', (e) => {
             e.preventDefault();
             const name = document.getElementById('reg-name').value;
+            const phone = document.getElementById('reg-phone').value;
             const level = document.getElementById('reg-level').value;
 
             localStorage.setItem('registered', 'true');
             localStorage.setItem('user_name', name);
+            localStorage.setItem('user_phone', phone);
             localStorage.setItem('user_level', level);
             localStorage.setItem('last_login', new Date().toDateString());
             
             userName = name;
+            userPhone = phone;
             userLevel = level;
             
             addXP(50); // Welcome bonus
@@ -535,4 +555,77 @@ function populateDictionaries() {
             </div>
         `).join('');
     }
+
+    // Add Phrases
+    const phrases = [
+        { en: "Hello / Hi", uz: "Salom" },
+        { en: "Good morning", uz: "Xayrli tong" },
+        { en: "How are you?", uz: "Qandaysiz?" },
+        { en: "Thank you", uz: "Rahmat" },
+        { en: "You're welcome", uz: "Arzimaydi" },
+        { en: "Excuse me", uz: "Kechirasiz" },
+        { en: "I don't understand", uz: "Men tushunmadim" }
+    ];
+    const phrasesContainer = document.querySelector('#phrases-list');
+    if (phrasesContainer) {
+        phrasesContainer.innerHTML = phrases.map(p => `
+            <div class="dict-item">
+                <div class="dict-info" style="width:100%;">
+                    <div class="dict-pron" style="font-size:16px; color:var(--text-main); font-weight:600;">${p.en}</div>
+                    <div class="dict-trans">${p.uz}</div>
+                </div>
+            </div>
+        `).join('');
+    }
+
+    // Add Grammar
+    const grammar = [
+        { topic: "Present Simple", desc: "Doimiy harakatlar uchun (I work)" },
+        { topic: "Present Continuous", desc: "Hozirgi harakatlar uchun (I am working)" },
+        { topic: "Past Simple", desc: "O'tgan zamondagi tugallangan harakatlar (I worked)" },
+        { topic: "Future Simple", desc: "Kelajakdagi maqsadlar (I will work)" },
+        { topic: "Articles (a/an/the)", desc: "Otlar oldida qo'llaniladi (a book, the sun)" }
+    ];
+    const grammarContainer = document.querySelector('#grammar-list');
+    if (grammarContainer) {
+        grammarContainer.innerHTML = grammar.map(g => `
+            <div class="dict-item">
+                <div class="dict-info" style="width:100%;">
+                    <div class="dict-pron" style="font-size:16px; color:var(--text-main); font-weight:600;">${g.topic}</div>
+                    <div class="dict-trans">${g.desc}</div>
+                </div>
+            </div>
+        `).join('');
+    }
 }
+
+// Global functions for new settings
+window.toggleDarkMode = function() {
+    let isDark = document.body.classList.toggle('dark-mode');
+    localStorage.setItem('dark_mode', isDark);
+};
+
+window.logOut = function() {
+    if(confirm("Tizimdan chiqmoqchimisiz? (Barcha xp va ma'lumotlar o'chib ketadi)")) {
+        localStorage.clear();
+        location.reload();
+    }
+};
+
+window.uploadAvatar = function(event) {
+    const file = event.target.files[0];
+    if (file) {
+        const reader = new FileReader();
+        reader.onload = function(e) {
+            const base64Str = e.target.result;
+            try {
+                localStorage.setItem('user_avatar', base64Str);
+                document.querySelector('.profile-avatar img').src = base64Str;
+                alert("Profil rasmi o'zgartirildi!");
+            } catch (err) {
+                alert("Rasm hajmi juda katta! Iltimos, kichikroq hajmdagi rasm tanlang.");
+            }
+        };
+        reader.readAsDataURL(file);
+    }
+};
