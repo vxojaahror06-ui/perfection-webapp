@@ -32,54 +32,60 @@
 
         <main class="app-main">
             <!-- SECTION: AUTH (Registration) -->
-            <section id="auth-section" class="app-section active">
+            <!-- SECTION: AUTH NAME -->
+            <section id="auth-name-section" class="app-section active">
                 <div class="welcome-area text-center" style="margin-top: 40px;">
                     <div class="brand-logo-container mx-auto mb-4" style="margin: 0 auto 20px; text-align: center;">
                         <img src="logo.jpg" alt="Perfection English School" style="max-width: 250px; width: 100%; border-radius: 8px; box-shadow: 0 4px 15px rgba(0,0,0,0.1);">
                     </div>
                     <h2>Welcome to our School!</h2>
-                    <p>Please register to use the app</p>
+                    <p>Let's set up your profile</p>
                 </div>
-
-                <form id="reg-form" class="auth-form glass-card" style="margin-top: 30px; position: relative; overflow: hidden; min-height: 250px;">
-                    <!-- Step 1 -->
-                    <div class="auth-step active" id="auth-step-1">
-                        <div class="form-group mb-4">
-                            <label>What's your full name?</label>
-                            <input type="text" id="reg-name" placeholder="e.g., Azizbek Rustamov" required>
-                        </div>
-                        <button type="button" class="btn-primary w-100" onclick="nextAuthStep(2)" style="padding: 14px; font-size: 16px; display:flex; justify-content:center; align-items:center; gap:8px;">Next <i class="ph ph-arrow-right"></i></button>
+                <form id="reg-name-form" class="auth-form glass-card" style="margin-top: 30px;">
+                    <div class="form-group mb-4">
+                        <label>What's your full name?</label>
+                        <input type="text" id="reg-name" placeholder="e.g., Azizbek Rustamov" required>
                     </div>
+                    <button type="submit" class="btn-primary w-100" style="padding: 14px; font-size: 16px; display:flex; justify-content:center; align-items:center; gap:8px;">Next <i class="ph ph-arrow-right"></i></button>
+                </form>
+            </section>
 
-                    <!-- Step 2 -->
-                    <div class="auth-step" id="auth-step-2">
-                        <div class="form-group mb-4">
-                            <label>Your Phone Number</label>
-                            <input type="tel" id="reg-phone" placeholder="+998" required>
-                        </div>
-                        <div style="display:flex; gap: 10px;">
-                            <button type="button" class="btn-primary" onclick="nextAuthStep(1)" style="padding: 14px; background: var(--border-color); color: var(--text-main);"><i class="ph ph-arrow-left"></i></button>
-                            <button type="button" class="btn-primary w-100" onclick="nextAuthStep(3)" style="padding: 14px; font-size: 16px; display:flex; justify-content:center; align-items:center; gap:8px;">Next <i class="ph ph-arrow-right"></i></button>
-                        </div>
+            <!-- SECTION: AUTH PHONE -->
+            <section id="auth-phone-section" class="app-section">
+                <div class="section-header" style="display: flex; align-items: center; gap: 10px; margin-top: 20px;">
+                    <button type="button" class="btn-icon" onclick="switchTab('auth-name')" style="background:transparent; color:var(--text-main);"><i class="ph ph-arrow-left"></i></button>
+                    <h2 style="margin:0;">Contact Info</h2>
+                </div>
+                <form id="reg-phone-form" class="auth-form glass-card" style="margin-top: 20px;">
+                    <div class="form-group mb-4">
+                        <label>Your Phone Number</label>
+                        <input type="tel" id="reg-phone" placeholder="+998" required>
                     </div>
+                    <button type="submit" class="btn-primary w-100" style="padding: 14px; font-size: 16px; display:flex; justify-content:center; align-items:center; gap:8px;">Next <i class="ph ph-arrow-right"></i></button>
+                </form>
+            </section>
 
-                    <!-- Step 3 -->
-                    <div class="auth-step" id="auth-step-3">
-                        <div class="form-group mb-4">
-                            <label>Current English Level</label>
-                            <select id="reg-level" required>
-                                <option value="" disabled selected>Select your level</option>
-                                <option value="Beginner">Beginner</option>
-                                <option value="Elementary">Elementary</option>
-                                <option value="Pre-Intermediate">Pre-Intermediate</option>
-                                <option value="Pre-IELTS">Pre-IELTS</option>
-                            </select>
-                        </div>
-                        <div style="display:flex; gap: 10px;">
-                            <button type="button" class="btn-primary" onclick="nextAuthStep(2)" style="padding: 14px; background: var(--border-color); color: var(--text-main);"><i class="ph ph-arrow-left"></i></button>
-                            <button type="submit" class="btn-primary w-100" style="padding: 14px; font-size: 16px; background: var(--success-color); display:flex; justify-content:center; align-items:center; gap:8px;">Finish <i class="ph ph-check"></i></button>
-                        </div>
+            <!-- SECTION: AUTH LEVEL -->
+            <section id="auth-level-section" class="app-section">
+                <div class="section-header" style="display: flex; align-items: center; gap: 10px; margin-top: 20px;">
+                    <button type="button" class="btn-icon" onclick="switchTab('auth-phone')" style="background:transparent; color:var(--text-main);"><i class="ph ph-arrow-left"></i></button>
+                    <h2 style="margin:0;">English Level</h2>
+                </div>
+                <form id="reg-level-form" class="auth-form glass-card" style="margin-top: 20px;">
+                    <div class="form-group mb-4">
+                        <label>Select your current level</label>
+                        <select id="reg-level" required>
+                            <option value="" disabled selected>Select level</option>
+                            <option value="Beginner">Beginner</option>
+                            <option value="Elementary">Elementary</option>
+                            <option value="Pre-Intermediate">Pre-Intermediate</option>
+                            <option value="Intermediate">Intermediate</option>
+                            <option value="Upper-Intermediate">Upper-Intermediate</option>
+                            <option value="Pre-IELTS">Pre-IELTS</option>
+                            <option value="IELTS">IELTS</option>
+                        </select>
                     </div>
+                    <button type="submit" class="btn-primary w-100" style="padding: 14px; font-size: 16px; background: var(--success-color); display:flex; justify-content:center; align-items:center; gap:8px;">Finish <i class="ph ph-check"></i></button>
                 </form>
             </section>
 
