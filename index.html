@@ -41,26 +41,45 @@
                     <p>Please register to use the app</p>
                 </div>
 
-                <form id="reg-form" class="auth-form" style="margin-top: 30px;">
-                    <div class="form-group mb-4">
-                        <label>Full Name</label>
-                        <input type="text" id="reg-name" placeholder="e.g., Azizbek Rustamov" required>
+                <form id="reg-form" class="auth-form glass-card" style="margin-top: 30px; position: relative; overflow: hidden; min-height: 250px;">
+                    <!-- Step 1 -->
+                    <div class="auth-step active" id="auth-step-1">
+                        <div class="form-group mb-4">
+                            <label>What's your full name?</label>
+                            <input type="text" id="reg-name" placeholder="e.g., Azizbek Rustamov" required>
+                        </div>
+                        <button type="button" class="btn-primary w-100" onclick="nextAuthStep(2)" style="padding: 14px; font-size: 16px; display:flex; justify-content:center; align-items:center; gap:8px;">Next <i class="ph ph-arrow-right"></i></button>
                     </div>
-                    <div class="form-group mb-4">
-                        <label>Phone Number</label>
-                        <input type="tel" id="reg-phone" placeholder="+998" required>
+
+                    <!-- Step 2 -->
+                    <div class="auth-step" id="auth-step-2">
+                        <div class="form-group mb-4">
+                            <label>Your Phone Number</label>
+                            <input type="tel" id="reg-phone" placeholder="+998" required>
+                        </div>
+                        <div style="display:flex; gap: 10px;">
+                            <button type="button" class="btn-primary" onclick="nextAuthStep(1)" style="padding: 14px; background: var(--border-color); color: var(--text-main);"><i class="ph ph-arrow-left"></i></button>
+                            <button type="button" class="btn-primary w-100" onclick="nextAuthStep(3)" style="padding: 14px; font-size: 16px; display:flex; justify-content:center; align-items:center; gap:8px;">Next <i class="ph ph-arrow-right"></i></button>
+                        </div>
                     </div>
-                    <div class="form-group mb-4">
-                        <label>English Level</label>
-                        <select id="reg-level" required>
-                            <option value="" disabled selected>Select your level</option>
-                            <option value="Beginner">Beginner</option>
-                            <option value="Elementary">Elementary</option>
-                            <option value="Pre-Intermediate">Pre-Intermediate</option>
-                            <option value="Pre-IELTS">Pre-IELTS</option>
-                        </select>
+
+                    <!-- Step 3 -->
+                    <div class="auth-step" id="auth-step-3">
+                        <div class="form-group mb-4">
+                            <label>Current English Level</label>
+                            <select id="reg-level" required>
+                                <option value="" disabled selected>Select your level</option>
+                                <option value="Beginner">Beginner</option>
+                                <option value="Elementary">Elementary</option>
+                                <option value="Pre-Intermediate">Pre-Intermediate</option>
+                                <option value="Pre-IELTS">Pre-IELTS</option>
+                            </select>
+                        </div>
+                        <div style="display:flex; gap: 10px;">
+                            <button type="button" class="btn-primary" onclick="nextAuthStep(2)" style="padding: 14px; background: var(--border-color); color: var(--text-main);"><i class="ph ph-arrow-left"></i></button>
+                            <button type="submit" class="btn-primary w-100" style="padding: 14px; font-size: 16px; background: var(--success-color); display:flex; justify-content:center; align-items:center; gap:8px;">Finish <i class="ph ph-check"></i></button>
+                        </div>
                     </div>
-                    <button type="submit" class="btn-primary w-100" style="width: 100%; padding: 14px; font-size: 16px;">Sign Up</button>
                 </form>
             </section>
 
@@ -111,23 +130,35 @@
                         </div>
                         <span class="card-title">Lessons</span>
                     </div>
-                    <div class="grid-card" onclick="switchTab('rating')">
+                    <div class="grid-card" onclick="switchTab('reading')">
                         <div class="card-icon-wrapper orange-icon">
-                            <i class="ph ph-trophy"></i>
+                            <i class="ph ph-book-open"></i>
                         </div>
-                        <span class="card-title">Leaderboard</span>
+                        <span class="card-title">Reading</span>
                     </div>
-                    <div class="grid-card" onclick="switchTab('resources')">
+                    <div class="grid-card" onclick="switchTab('listening')">
                         <div class="card-icon-wrapper green-icon">
-                            <i class="ph ph-folder-open"></i>
+                            <i class="ph ph-headphones"></i>
                         </div>
-                        <span class="card-title">Resources</span>
+                        <span class="card-title">Listening</span>
                     </div>
                     <div class="grid-card" onclick="switchTab('writing')">
                         <div class="card-icon-wrapper purple-icon">
                             <i class="ph ph-robot"></i>
                         </div>
                         <span class="card-title">Writing</span>
+                    </div>
+                    <div class="grid-card" onclick="switchTab('rating')">
+                        <div class="card-icon-wrapper" style="color:var(--secondary-color);">
+                            <i class="ph ph-trophy"></i>
+                        </div>
+                        <span class="card-title">Ranking</span>
+                    </div>
+                    <div class="grid-card" onclick="switchTab('resources')">
+                        <div class="card-icon-wrapper" style="color:var(--danger-color);">
+                            <i class="ph ph-folder-open"></i>
+                        </div>
+                        <span class="card-title">Resources</span>
                     </div>
                 </div>
             </section>
@@ -465,6 +496,34 @@
                         </div>
                     </div>
                 </div>
+            </section>
+
+            <!-- SECTION: READING -->
+            <section id="reading-section" class="app-section">
+                <div class="section-header" style="display: flex; align-items: center; gap: 10px;">
+                    <button class="btn-icon" onclick="switchTab('home')" style="background:transparent; color:var(--text-main);"><i class="ph ph-arrow-left"></i></button>
+                    <div>
+                        <h2 style="margin:0;">Reading Practice</h2>
+                        <p>Improve your reading skills</p>
+                    </div>
+                </div>
+                
+                <!-- Container for levels or active test -->
+                <div id="reading-content-container"></div>
+            </section>
+
+            <!-- SECTION: LISTENING -->
+            <section id="listening-section" class="app-section">
+                <div class="section-header" style="display: flex; align-items: center; gap: 10px;">
+                    <button class="btn-icon" onclick="switchTab('home')" style="background:transparent; color:var(--text-main);"><i class="ph ph-arrow-left"></i></button>
+                    <div>
+                        <h2 style="margin:0;">Listening Practice</h2>
+                        <p>Enhance your listening</p>
+                    </div>
+                </div>
+                
+                <!-- Container for levels or active test -->
+                <div id="listening-content-container"></div>
             </section>
         </main>
 
