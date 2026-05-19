@@ -92,7 +92,7 @@
             <!-- SECTION: HOME -->
             <section id="home-section" class="app-section">
                 <div class="welcome-area">
-                    <h2>Hello, Azizbek 👋</h2>
+                    <h2>Hello, Student 👋</h2>
                     <p>What are we learning today?</p>
                 </div>
 
@@ -287,12 +287,12 @@
                         <h4>Numbers</h4>
                         <p>From 1 to 1000</p>
                     </div>
-                    <div class="resource-card">
+                    <div class="resource-card" onclick="openResource('phrases')">
                         <div class="r-icon bg-orange"><i class="ph ph-chat-circle-text"></i></div>
                         <h4>Phrases</h4>
                         <p>For daily conversation</p>
                     </div>
-                    <div class="resource-card">
+                    <div class="resource-card" onclick="openResource('grammar')">
                         <div class="r-icon bg-purple"><i class="ph ph-books"></i></div>
                         <h4>Grammar</h4>
                         <p>Basic rules</p>
@@ -429,8 +429,9 @@
                         <img src="https://i.pravatar.cc/150?u=2" alt="Profile">
                         <button class="edit-avatar"><i class="ph ph-camera"></i></button>
                     </div>
-                    <h2 class="profile-name">Azizbek Rustamov</h2>
-                    <p class="profile-role">Student • Pre-IELTS</p>
+                    <h2 class="profile-name">Student</h2>
+                    <p class="profile-phone" style="color:var(--text-muted); font-size:14px; margin-bottom:4px;"></p>
+                    <p class="profile-role">Student</p>
                     <!-- Role Switcher for Demo -->
                     <button class="role-switch-btn" onclick="toggleRole()">Switch to Teacher Profile (Demo)</button>
                 </div>
@@ -474,34 +475,69 @@
                 </div>
 
                 <div class="profile-menu">
-                    <div class="menu-item">
-                        <div class="menu-item-left">
-                            <div class="menu-icon"><i class="ph ph-user"></i></div>
-                            <span>Personal Info</span>
-                        </div>
-                        <i class="ph ph-caret-right"></i>
-                    </div>
-                    <div class="menu-item">
-                        <div class="menu-item-left">
-                            <div class="menu-icon"><i class="ph ph-bell"></i></div>
-                            <span>Notifications</span>
-                        </div>
-                        <i class="ph ph-caret-right"></i>
-                    </div>
-                    <div class="menu-item">
+                    <div class="menu-item" onclick="switchTab('settings')">
                         <div class="menu-item-left">
                             <div class="menu-icon"><i class="ph ph-gear"></i></div>
-                            <span>Settings</span>
+                            <span>Settings & Appearance</span>
                         </div>
                         <i class="ph ph-caret-right"></i>
                     </div>
-                    <div class="menu-item text-red">
+                    <div class="menu-item text-red" onclick="logOut()">
                         <div class="menu-item-left">
                             <div class="menu-icon"><i class="ph ph-sign-out"></i></div>
                             <span>Log Out</span>
                         </div>
                     </div>
                 </div>
+            </section>
+
+            <!-- SECTION: SETTINGS -->
+            <section id="settings-section" class="app-section">
+                <div class="section-header" style="display: flex; align-items: center; gap: 10px;">
+                    <button class="btn-icon" onclick="switchTab('profile')" style="background:transparent; color:var(--text-main);"><i class="ph ph-arrow-left"></i></button>
+                    <h2 style="margin:0;">Settings</h2>
+                </div>
+                <div class="profile-menu mt-4">
+                    <div class="menu-item" style="display:flex; justify-content:space-between; align-items:center;">
+                        <div class="menu-item-left">
+                            <div class="menu-icon bg-purple" style="background:#8b5cf6; color:white;"><i class="ph ph-moon"></i></div>
+                            <span>Dark Mode</span>
+                        </div>
+                        <input type="checkbox" id="dark-mode-toggle" onchange="toggleDarkMode()" style="width:20px; height:20px;">
+                    </div>
+                    <div class="menu-item" onclick="document.getElementById('avatar-upload').click()">
+                        <div class="menu-item-left">
+                            <div class="menu-icon bg-blue" style="background:#2563eb; color:white;"><i class="ph ph-image"></i></div>
+                            <span>Change Profile Picture</span>
+                            <input type="file" id="avatar-upload" accept="image/*" style="display:none;" onchange="uploadAvatar(event)">
+                        </div>
+                        <i class="ph ph-caret-right"></i>
+                    </div>
+                </div>
+            </section>
+
+            <!-- SECTION: PHRASES DETAIL -->
+            <section id="phrases-section" class="app-section">
+                <div class="section-header" style="display: flex; align-items: center; gap: 10px;">
+                    <button class="btn-icon" onclick="switchTab('resources')" style="background:transparent; color:var(--text-main);"><i class="ph ph-arrow-left"></i></button>
+                    <div>
+                        <h2 style="margin:0;">Phrases</h2>
+                        <p>Daily English Conversations</p>
+                    </div>
+                </div>
+                <div class="dictionary-list" id="phrases-list"></div>
+            </section>
+
+            <!-- SECTION: GRAMMAR DETAIL -->
+            <section id="grammar-section" class="app-section">
+                <div class="section-header" style="display: flex; align-items: center; gap: 10px;">
+                    <button class="btn-icon" onclick="switchTab('resources')" style="background:transparent; color:var(--text-main);"><i class="ph ph-arrow-left"></i></button>
+                    <div>
+                        <h2 style="margin:0;">Grammar</h2>
+                        <p>Basic English Rules</p>
+                    </div>
+                </div>
+                <div class="dictionary-list" id="grammar-list"></div>
             </section>
 
             <!-- SECTION: READING -->
