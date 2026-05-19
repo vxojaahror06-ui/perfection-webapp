@@ -154,9 +154,25 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     // Registration Form Submit
-    const regForm = document.getElementById('reg-form');
-    if (regForm) {
-        regForm.addEventListener('submit', (e) => {
+    const regNameForm = document.getElementById('reg-name-form');
+    if (regNameForm) {
+        regNameForm.addEventListener('submit', (e) => {
+            e.preventDefault();
+            switchTab('auth-phone');
+        });
+    }
+
+    const regPhoneForm = document.getElementById('reg-phone-form');
+    if (regPhoneForm) {
+        regPhoneForm.addEventListener('submit', (e) => {
+            e.preventDefault();
+            switchTab('auth-level');
+        });
+    }
+
+    const regLevelForm = document.getElementById('reg-level-form');
+    if (regLevelForm) {
+        regLevelForm.addEventListener('submit', (e) => {
             e.preventDefault();
             const name = document.getElementById('reg-name').value;
             const level = document.getElementById('reg-level').value;
@@ -338,14 +354,35 @@ document.addEventListener('DOMContentLoaded', () => {
         container.innerHTML = html;
     };
 
-    window.openTest = function(type, level, testNumber) {
-        if (testNumber !== 1) {
-            alert(`Test #${testNumber} is not available in the demo. Please use Test #1.`);
-            return;
-        }
+    let practiceTestsData = null;
 
+    async function loadTestsData() {
+        if (practiceTestsData) return practiceTestsData;
+        try {
+            const res = await fetch('tests.json');
+            practiceTestsData = await res.json();
+            return practiceTestsData;
+        } catch (e) {
+            console.error("Failed to load tests", e);
+            return null;
+        }
+    }
+
+    window.openTest = async function(type, level, testNumber) {
         const container = document.getElementById(`${type}-content-container`);
         if (!container) return;
+
+        const data = await loadTestsData();
+        let testData = null;
+        
+        if (data && data[type] && data[type][level]) {
+            testData = data[type][level].find(t => t.id === testNumber);
+        }
+
+        if (!testData) {
+            alert(`Test #${testNumber} for ${level} is coming soon! Try the ones available (e.g. A2, B2, IELTS 6.0, IELTS 8.0, Test 1).`);
+            return;
+        }
 
         let html = `
             <div style="display:flex; align-items:center; gap:10px; margin-bottom: 20px;">
@@ -356,65 +393,44 @@ document.addEventListener('DOMContentLoaded', () => {
 
         if (type === 'reading') {
             html += `
+                <h4 style="margin-bottom:12px;">${testData.title}</h4>
                 <div class="passage-box glass-card">
-                    <strong>The Future of Technology</strong><br><br>
-                    Technology is evolving at an unprecedented rate. Artificial intelligence and machine learning are revolutionizing industries ranging from healthcare to finance. In the near future, autonomous vehicles are expected to reduce traffic accidents significantly. However, these advancements also raise important ethical questions regarding privacy and job security. It is crucial for society to find a balance between innovation and regulation to ensure that technology benefits everyone.
+                    ${testData.content}
                 </div>
-                <div class="quiz-question glass-card">
-                    <h4>1. What is the main idea of the passage?</h4>
-                    <div class="quiz-options">
-                        <label><input type="radio" name="rq1" value="A"> A) Technology only affects healthcare.</label>
-                        <label><input type="radio" name="rq1" value="B"> B) AI is dangerous and should be stopped.</label>
-                        <label><input type="radio" name="rq1" value="C"> C) Technology is advancing rapidly, bringing both benefits and challenges.</label>
-                    </div>
-                </div>
-                <button class="btn-primary w-100" onclick="submitTest('${type}', '${level}', ${testNumber}, ['C'])" style="padding:14px; font-size:16px;">Submit Answers</button>
             `;
         } else if (type === 'listening') {
             html += `
-                <div class="audio-player-card glass-card">
-                    <button class="play-btn" id="audio-demo-btn" onclick="toggleAudioDemo()"><i class="ph-fill ph-play"></i></button>
-                    <div class="audio-timeline-wrapper">
-                        <div class="audio-timeline">
-                            <div class="audio-progress" id="audio-demo-progress"></div>
-                        </div>
-                        <div class="audio-time">
-                            <span>0:00</span>
-                            <span>1:30</span>
-                        </div>
-                    </div>
+                <h4 style="margin-bottom:12px;">${testData.title}</h4>
+                <div class="audio-player-card glass-card" style="padding:0; overflow:hidden; display:block;">
+                    <iframe width="100%" height="200" src="https://www.youtube.com/embed/${testData.youtube_id}?rel=0&modestbranding=1" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
                 </div>
-                <div class="quiz-question glass-card">
-                    <h4>1. Where are the speakers planning to go?</h4>
-                    <div class="quiz-options">
-                        <label><input type="radio" name="lq1" value="A"> A) To the library</label>
-                        <label><input type="radio" name="lq1" value="B"> B) To a coffee shop</label>
-                        <label><input type="radio" name="lq1" value="C"> C) To the cinema</label>
-                    </div>
-                </div>
-                <button class="btn-primary w-100" onclick="submitTest('${type}', '${level}', ${testNumber}, ['B'])" style="padding:14px; font-size:16px;">Submit Answers</button>
             `;
         }
         
+        let correctAnswersArray = [];
+        testData.questions.forEach((q, idx) => {
+            correctAnswersArray.push(q.answer);
+            html += `
+                <div class="quiz-question glass-card">
+                    <h4>${idx + 1}. ${q.q}</h4>
+                    <div class="quiz-options">
+            `;
+            q.options.forEach(opt => {
+                const optVal = opt.charAt(0);
+                html += `
+                    <label><input type="radio" name="q_${idx}" value="${optVal}"> ${opt}</label>
+                `;
+            });
+            html += `
+                    </div>
+                </div>
+            `;
+        });
+        
+        const ansJson = JSON.stringify(correctAnswersArray).replace(/"/g, '&quot;');
+        html += `<button class="btn-primary w-100" onclick="submitTest('${type}', '${level}', ${testNumber}, ${ansJson})" style="padding:14px; font-size:16px;">Submit Answers</button>`;
+        
         container.innerHTML = html;
-    };
-
-    let audioInterval;
-    window.toggleAudioDemo = function() {
-        const btn = document.getElementById('audio-demo-btn');
-        const prog = document.getElementById('audio-demo-progress');
-        if (btn.innerHTML.includes('play')) {
-            btn.innerHTML = '<i class="ph-fill ph-pause"></i>';
-            let width = parseFloat(prog.style.width || '0');
-            audioInterval = setInterval(() => {
-                width += 1;
-                if (width > 100) width = 0;
-                prog.style.width = width + '%';
-            }, 500);
-        } else {
-            btn.innerHTML = '<i class="ph-fill ph-play"></i>';
-            clearInterval(audioInterval);
-        }
     };
 
     window.submitTest = function(type, level, testNumber, correctAnswers) {
