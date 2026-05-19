@@ -100,6 +100,59 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     }
 
+    // User Data & XP System
+    let userXP = parseInt(localStorage.getItem('user_xp') || '0');
+    let userName = localStorage.getItem('user_name') || '';
+    let userLevel = localStorage.getItem('user_level') || '';
+    
+    window.nextAuthStep = function(stepNumber) {
+        document.querySelectorAll('.auth-step').forEach(step => step.classList.remove('active'));
+        const stepEl = document.getElementById('auth-step-' + stepNumber);
+        if (stepEl) stepEl.classList.add('active');
+    };
+
+    function updateUserUI() {
+        if (userName) {
+            document.querySelector('.welcome-area h2').innerText = 'Hello, ' + userName.split(' ')[0] + ' 👋';
+            document.querySelector('.profile-name').innerText = userName;
+        }
+        if (userLevel) {
+            document.querySelector('.profile-role').innerText = "Student • " + userLevel;
+        }
+        document.querySelectorAll('.stat-value').forEach(el => {
+            if (el.nextElementSibling && el.nextElementSibling.innerText.includes('Total XP')) {
+                el.innerText = userXP;
+            }
+        });
+        document.querySelectorAll('.lb-score').forEach(el => {
+            if (el.previousElementSibling && el.previousElementSibling.innerText.includes('You')) {
+                el.innerText = userXP + ' xp';
+            }
+        });
+    }
+
+    window.addXP = function(amount) {
+        userXP += amount;
+        localStorage.setItem('user_xp', userXP);
+        updateUserUI();
+        if (window.Telegram && window.Telegram.WebApp && window.Telegram.WebApp.HapticFeedback) {
+            window.Telegram.WebApp.HapticFeedback.notificationOccurred('success');
+        }
+    };
+
+    // Check Login & Daily XP
+    if (localStorage.getItem('registered') === 'true') {
+        const lastLogin = localStorage.getItem('last_login');
+        const today = new Date().toDateString();
+        if (lastLogin !== today) {
+            addXP(5); // Daily login
+            localStorage.setItem('last_login', today);
+            setTimeout(() => alert("Welcome back! +5 XP for daily login!"), 500);
+        }
+        updateUserUI();
+        setTimeout(() => switchTab('home'), 10);
+    }
+
     // Registration Form Submit
     const regForm = document.getElementById('reg-form');
     if (regForm) {
@@ -108,18 +161,19 @@ document.addEventListener('DOMContentLoaded', () => {
             const name = document.getElementById('reg-name').value;
             const level = document.getElementById('reg-level').value;
 
-            // Update UI with user data
-            document.querySelector('.welcome-area h2').innerText = 'Hello, ' + name.split(' ')[0] + ' 👋';
-            document.querySelector('.profile-name').innerText = name;
-            document.querySelector('.profile-role').innerText = "Student • " + level;
+            localStorage.setItem('registered', 'true');
+            localStorage.setItem('user_name', name);
+            localStorage.setItem('user_level', level);
+            localStorage.setItem('last_login', new Date().toDateString());
             
-            // Switch to Home Section
+            userName = name;
+            userLevel = level;
+            
+            addXP(50); // Welcome bonus
+            alert("Registration successful! +50 XP");
+            
+            updateUserUI();
             switchTab('home');
-            
-            // In a real bot, we would send this data back to the bot
-            // if (window.Telegram && window.Telegram.WebApp) {
-            //     window.Telegram.WebApp.sendData(JSON.stringify({name, level}));
-            // }
         });
     }
 
@@ -233,6 +287,161 @@ document.addEventListener('DOMContentLoaded', () => {
 
     // Populate Dictionaries
     populateDictionaries();
+
+    // Render Reading and Listening UI
+    window.renderPracticeLevels = function(type) {
+        const container = document.getElementById(`${type}-content-container`);
+        if (!container) return;
+
+        const ieltsLevels = ['5.0', '5.5', '6.0', '6.5', '7.0', '7.5', '8.0', '8.5', '9.0'];
+        const cefrLevels = ['A2', 'B1', 'B2', 'C1'];
+
+        let html = `<div class="mb-4">
+            <h4 style="margin-bottom:10px; color:var(--text-muted);">IELTS Levels</h4>
+            <div class="level-grid">`;
+        
+        ieltsLevels.forEach(l => {
+            html += `<button class="level-btn" onclick="renderPracticeTests('${type}', 'IELTS ${l}')">${l}</button>`;
+        });
+        
+        html += `</div></div><div class="mb-4">
+            <h4 style="margin-bottom:10px; color:var(--text-muted);">Multilevel (CEFR)</h4>
+            <div class="level-grid">`;
+            
+        cefrLevels.forEach(l => {
+            html += `<button class="level-btn" onclick="renderPracticeTests('${type}', '${l}')">${l}</button>`;
+        });
+        
+        html += `</div></div>`;
+        container.innerHTML = html;
+    };
+
+    window.renderPracticeTests = function(type, level) {
+        const container = document.getElementById(`${type}-content-container`);
+        if (!container) return;
+        
+        let html = `
+            <div style="display:flex; align-items:center; gap:10px; margin-bottom: 20px;">
+                <button class="btn-icon" onclick="renderPracticeLevels('${type}')"><i class="ph ph-arrow-left"></i></button>
+                <h3 style="margin:0;">${level}</h3>
+            </div>
+            <div class="tests-grid">
+        `;
+        
+        for (let i = 1; i <= 30; i++) {
+            const isCompleted = localStorage.getItem(`${type}_${level}_${i}`) === 'true';
+            const cls = isCompleted ? 'test-btn completed' : 'test-btn';
+            html += `<button class="${cls}" onclick="openTest('${type}', '${level}', ${i})">${i}</button>`;
+        }
+        
+        html += `</div>`;
+        container.innerHTML = html;
+    };
+
+    window.openTest = function(type, level, testNumber) {
+        if (testNumber !== 1) {
+            alert(`Test #${testNumber} is not available in the demo. Please use Test #1.`);
+            return;
+        }
+
+        const container = document.getElementById(`${type}-content-container`);
+        if (!container) return;
+
+        let html = `
+            <div style="display:flex; align-items:center; gap:10px; margin-bottom: 20px;">
+                <button class="btn-icon" onclick="renderPracticeTests('${type}', '${level}')"><i class="ph ph-arrow-left"></i></button>
+                <h3 style="margin:0;">${level} - Test #${testNumber}</h3>
+            </div>
+        `;
+
+        if (type === 'reading') {
+            html += `
+                <div class="passage-box glass-card">
+                    <strong>The Future of Technology</strong><br><br>
+                    Technology is evolving at an unprecedented rate. Artificial intelligence and machine learning are revolutionizing industries ranging from healthcare to finance. In the near future, autonomous vehicles are expected to reduce traffic accidents significantly. However, these advancements also raise important ethical questions regarding privacy and job security. It is crucial for society to find a balance between innovation and regulation to ensure that technology benefits everyone.
+                </div>
+                <div class="quiz-question glass-card">
+                    <h4>1. What is the main idea of the passage?</h4>
+                    <div class="quiz-options">
+                        <label><input type="radio" name="rq1" value="A"> A) Technology only affects healthcare.</label>
+                        <label><input type="radio" name="rq1" value="B"> B) AI is dangerous and should be stopped.</label>
+                        <label><input type="radio" name="rq1" value="C"> C) Technology is advancing rapidly, bringing both benefits and challenges.</label>
+                    </div>
+                </div>
+                <button class="btn-primary w-100" onclick="submitTest('${type}', '${level}', ${testNumber}, ['C'])" style="padding:14px; font-size:16px;">Submit Answers</button>
+            `;
+        } else if (type === 'listening') {
+            html += `
+                <div class="audio-player-card glass-card">
+                    <button class="play-btn" id="audio-demo-btn" onclick="toggleAudioDemo()"><i class="ph-fill ph-play"></i></button>
+                    <div class="audio-timeline-wrapper">
+                        <div class="audio-timeline">
+                            <div class="audio-progress" id="audio-demo-progress"></div>
+                        </div>
+                        <div class="audio-time">
+                            <span>0:00</span>
+                            <span>1:30</span>
+                        </div>
+                    </div>
+                </div>
+                <div class="quiz-question glass-card">
+                    <h4>1. Where are the speakers planning to go?</h4>
+                    <div class="quiz-options">
+                        <label><input type="radio" name="lq1" value="A"> A) To the library</label>
+                        <label><input type="radio" name="lq1" value="B"> B) To a coffee shop</label>
+                        <label><input type="radio" name="lq1" value="C"> C) To the cinema</label>
+                    </div>
+                </div>
+                <button class="btn-primary w-100" onclick="submitTest('${type}', '${level}', ${testNumber}, ['B'])" style="padding:14px; font-size:16px;">Submit Answers</button>
+            `;
+        }
+        
+        container.innerHTML = html;
+    };
+
+    let audioInterval;
+    window.toggleAudioDemo = function() {
+        const btn = document.getElementById('audio-demo-btn');
+        const prog = document.getElementById('audio-demo-progress');
+        if (btn.innerHTML.includes('play')) {
+            btn.innerHTML = '<i class="ph-fill ph-pause"></i>';
+            let width = parseFloat(prog.style.width || '0');
+            audioInterval = setInterval(() => {
+                width += 1;
+                if (width > 100) width = 0;
+                prog.style.width = width + '%';
+            }, 500);
+        } else {
+            btn.innerHTML = '<i class="ph-fill ph-play"></i>';
+            clearInterval(audioInterval);
+        }
+    };
+
+    window.submitTest = function(type, level, testNumber, correctAnswers) {
+        let correctCount = 0;
+        const radios = document.querySelectorAll('input[type="radio"]:checked');
+        radios.forEach((radio, index) => {
+            if (radio.value === correctAnswers[index]) {
+                correctCount++;
+            }
+        });
+        
+        if (radios.length < correctAnswers.length) {
+            alert("Please answer all questions.");
+            return;
+        }
+
+        const xpEarned = correctCount * 2;
+        addXP(xpEarned);
+        localStorage.setItem(`${type}_${level}_${testNumber}`, 'true');
+        
+        alert(`You got ${correctCount} correct! You earned +${xpEarned} XP.`);
+        renderPracticeTests(type, level);
+    };
+
+    // Initialize the Practice Views
+    renderPracticeLevels('reading');
+    renderPracticeLevels('listening');
 
 });
 
