@@ -201,6 +201,21 @@ document.addEventListener('DOMContentLoaded', () => {
             localStorage.setItem('user_level', level);
             localStorage.setItem('last_login', new Date().toDateString());
             
+            // Save to Firebase
+            if (window.firebaseDB) {
+                try {
+                    window.firebaseAddDoc(window.firebaseCollection(window.firebaseDB, "users"), {
+                        name: name,
+                        phone: phone,
+                        level: level,
+                        xp: 50,
+                        registered_at: new Date().toISOString()
+                    });
+                } catch (e) {
+                    console.log("Firebase not ready yet", e);
+                }
+            }
+
             userName = name;
             userPhone = phone;
             userLevel = level;
