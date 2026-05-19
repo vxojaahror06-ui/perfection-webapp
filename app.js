@@ -478,6 +478,7 @@ document.addEventListener('DOMContentLoaded', () => {
     // Initialize the Practice Views
     renderPracticeLevels('reading');
     renderPracticeLevels('listening');
+    populateDictionaries();
 
 });
 
@@ -560,11 +561,24 @@ function populateDictionaries() {
     const phrases = [
         { en: "Hello / Hi", uz: "Salom" },
         { en: "Good morning", uz: "Xayrli tong" },
+        { en: "Good evening", uz: "Xayrli kech" },
         { en: "How are you?", uz: "Qandaysiz?" },
-        { en: "Thank you", uz: "Rahmat" },
+        { en: "I'm fine, thank you", uz: "Men yaxshiman, rahmat" },
+        { en: "What is your name?", uz: "Ismingiz nima?" },
+        { en: "My name is...", uz: "Mening ismim..." },
+        { en: "Nice to meet you", uz: "Tanishganimdan xursandman" },
+        { en: "Please", uz: "Iltimos" },
+        { en: "Thank you very much", uz: "Katta rahmat" },
         { en: "You're welcome", uz: "Arzimaydi" },
-        { en: "Excuse me", uz: "Kechirasiz" },
-        { en: "I don't understand", uz: "Men tushunmadim" }
+        { en: "Excuse me", uz: "Kechirasiz (e'tibor qaratish uchun)" },
+        { en: "I'm sorry", uz: "Kechirasiz (uzr so'rash)" },
+        { en: "I don't understand", uz: "Men tushunmadim" },
+        { en: "Could you repeat that?", uz: "Qaytarib yubora olasizmi?" },
+        { en: "Do you speak English?", uz: "Inglizcha gapirasizmi?" },
+        { en: "How much is this?", uz: "Bu qancha turadi?" },
+        { en: "Where is the bathroom?", uz: "Hojatxona qayerda?" },
+        { en: "Help!", uz: "Yordam bering!" },
+        { en: "Goodbye", uz: "Xayr" }
     ];
     const phrasesContainer = document.querySelector('#phrases-list');
     if (phrasesContainer) {
@@ -580,11 +594,16 @@ function populateDictionaries() {
 
     // Add Grammar
     const grammar = [
-        { topic: "Present Simple", desc: "Doimiy harakatlar uchun (I work)" },
-        { topic: "Present Continuous", desc: "Hozirgi harakatlar uchun (I am working)" },
-        { topic: "Past Simple", desc: "O'tgan zamondagi tugallangan harakatlar (I worked)" },
-        { topic: "Future Simple", desc: "Kelajakdagi maqsadlar (I will work)" },
-        { topic: "Articles (a/an/the)", desc: "Otlar oldida qo'llaniladi (a book, the sun)" }
+        { topic: "Noun (Ot)", desc: "Shaxs, narsa, joy yoki g'oyani bildiradi. Masalan: dog, city, beauty." },
+        { topic: "Pronoun (Olmosh)", desc: "Otning o'rnida ishlatiladi. Masalan: he, she, it, they." },
+        { topic: "Verb (Fe'l)", desc: "Harakat yoki holatni bildiradi. Masalan: run, is, jump." },
+        { topic: "Adjective (Sifat)", desc: "Otni tasvirlaydi. Masalan: big, red, beautiful." },
+        { topic: "Present Simple", desc: "Doimiy va odatiy harakatlar uchun. (I work every day)" },
+        { topic: "Present Continuous", desc: "Ayni paytda sodir bo'layotgan harakatlar. (I am working now)" },
+        { topic: "Past Simple", desc: "O'tgan zamondagi tugallangan harakatlar. (I worked yesterday)" },
+        { topic: "Future Simple", desc: "Kelajakdagi maqsad va harakatlar. (I will work tomorrow)" },
+        { topic: "Articles (a/an/the)", desc: "Otlar oldida qo'llaniluvchi artikllar. Birlik otlar uchun 'a/an', aniq narsalar uchun 'the'." },
+        { topic: "Prepositions (Predloglar)", desc: "O'rin-joy yoki vaqtni ko'rsatadi. Masalan: in, on, at, under." }
     ];
     const grammarContainer = document.querySelector('#grammar-list');
     if (grammarContainer) {
