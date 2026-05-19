@@ -594,6 +594,34 @@
         </nav>
     </div>
 
-    <script src="app.js?v=2"></script>
+    <!-- Firebase Configuration and SDK -->
+    <script type="module">
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
+        import { getFirestore, collection, addDoc, getDocs, setDoc, doc, updateDoc, getDoc } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
+
+        const firebaseConfig = {
+            apiKey: "AIzaSyCl8oeI8yYddF-YuSuhCGN6fqZiEechjn8",
+            authDomain: "perfection-school.firebaseapp.com",
+            projectId: "perfection-school",
+            storageBucket: "perfection-school.firebasestorage.app",
+            messagingSenderId: "793168534663",
+            appId: "1:793168534663:web:ad375713f143481b4a2c22",
+            measurementId: "G-87NPRELTDH"
+        };
+
+        const app = initializeApp(firebaseConfig);
+        const db = getFirestore(app);
+
+        // Make db globally available
+        window.firebaseDB = db;
+        window.firebaseCollection = collection;
+        window.firebaseAddDoc = addDoc;
+        window.firebaseGetDocs = getDocs;
+        window.firebaseSetDoc = setDoc;
+        window.firebaseDoc = doc;
+        window.firebaseUpdateDoc = updateDoc;
+        window.firebaseGetDoc = getDoc;
+    </script>
+    <script src="app.js?v=3"></script>
 </body>
 </html>
