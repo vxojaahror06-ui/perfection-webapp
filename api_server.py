@@ -170,6 +170,101 @@ async def check_speaking(audio: UploadFile = File(...), target_text: str = Form(
     except Exception as e:
         return {"error": f"Gapirishni tekshirishda xatolik: {str(e)}"}
 
+@app.post("/api/evaluate_speaking")
+async def evaluate_speaking(
+    part: str = Form(...),
+    topic: str = Form(...),
+    questions: str = Form(...), # JSON list of questions
+    audios: list[UploadFile] = File(...)
+):
+    if not client:
+        return {
+            "error": "GROQ API kaliti ulanmagan!",
+            "overall_score": "N/A",
+            "detailed_scores": {"fluency": "0%", "pronunciation": "0%", "vocabulary": "0%", "grammar": "0%"},
+            "transcripts": ["API key missing"],
+            "feedback": "DIQQAT: Backendda GROQ_API_KEY topilmadi! Ovoz tahlili imkonsiz."
+        }
+        
+    try:
+        # Parse questions from JSON string
+        questions_list = json.loads(questions)
+        
+        # Concurrently transcribe all uploaded audios
+        async def transcribe_one(audio_file: UploadFile, index: int):
+            contents = await audio_file.read()
+            filename = audio_file.filename if audio_file.filename else f"part_{part}_q_{index}.webm"
+            # Groq's transcriptions endpoint
+            transcription = client.audio.transcriptions.create(
+                file=(filename, contents),
+                model="whisper-large-v3",
+                response_format="json",
+            )
+            return transcription.text
+        
+        import asyncio
+        tasks = [transcribe_one(audio, idx) for idx, audio in enumerate(audios)]
+        transcripts = await asyncio.gather(*tasks)
+        
+        # Formulate pairs for the prompt
+        q_a_pairs_str = ""
+        for idx, (q, t) in enumerate(zip(questions_list, transcripts)):
+            q_a_pairs_str += f"\nSavol {idx+1}: {q}\nTalaba javobi: \"{t}\"\n"
+            
+        prompt = f"""
+        Siz CEFR (DTM Multi-level) va IELTS standardlari bo'yicha professional Ingliz tili imtihon oluvchi (examiner) va malakali o'qituvchisiz.
+        Talaba quyidagi gapirish imtihoni topshirig'ini bajardi:
+        
+        Imtihon qismi (Part): {part}
+        Mavzu (Topic): {topic}
+        
+        Savollar va talabaning ovozli javoblaridan olingan matnlar (transcripts):
+        {q_a_pairs_str}
+        
+        Quyidagi mezonlar asosida talabaning nutqini tahlil qiling:
+        1. **Fluency & Coherence** (Ravonlik va izchillik): Nutqning ravonligi, to'xtalishlar, takrorlashlar, gaplar o'rtasidagi mantiqiy bog'liqlik.
+        2. **Pronunciation** (Talaffuz): So'zlarning to'g'ri talaffuz qilinishi va intonatsiya.
+        3. **Lexical Resource** (So'z boyligi): Mavzuga oid so'zlar va iboralar qo'llanishi, so'z takrorlaridan qochish.
+        4. **Grammatical Range & Accuracy** (Grammatik boylik va aniqlik): Grammatik xatolar, gaplar tuzilishi (sodda va murakkab gaplar).
+        
+        Iltimos, har bir mezon uchun 0 dan 100% gacha bo'lgan foiz ko'rsatkichida baho bering va umumiy natijaviy darajani (masalan, B1, B2, A2, C1) belgilang.
+        
+        Barcha tavsiyalaringiz va izohlaringizni **O'zbek tilida** yozing. Izohda talabaning asosiy xatolarini (grammatika, talaffuz) ko'rsating va ularni tuzatish bo'yicha aniq maslahat bering.
+        
+        Javobni faqat va faqat quyidagi JSON formatida qaytaring (hech qanday boshqa so'zlarsiz, markdown blocksiz):
+        {{
+            "overall_score": "Masalan: B1 yoki B2 (baho)",
+            "detailed_scores": {{
+                "fluency": "Masalan: 75%",
+                "pronunciation": "Masalan: 80%",
+                "vocabulary": "Masalan: 70%",
+                "grammar": "Masalan: 65%"
+            }},
+            "transcripts": {json.dumps(transcripts)},
+            "feedback": "Mavzu bo'yicha umumiy fikr, talabaning yutuq va kamchiliklari, grammatik va talaffuz xatolar tahlili hamda yaxshilash bo'yicha o'zbek tilidagi tavsiyalar."
+        }}
+        """
+        
+        chat_completion = client.chat.completions.create(
+            messages=[{"role": "user", "content": prompt}],
+            model="llama-3.3-70b-versatile",
+            temperature=0.15
+        )
+        
+        res_text = chat_completion.choices[0].message.content.strip()
+        if res_text.startswith("```json"):
+            res_text = res_text[7:-3].strip()
+        elif res_text.startswith("```"):
+            res_text = res_text[3:-3].strip()
+            
+        result = json.loads(res_text)
+        return result
+        
+    except Exception as e:
+        import traceback
+        traceback.print_exc()
+        return {"error": f"Gapirishni tahlil qilishda xatolik: {str(e)}"}
+
 if __name__ == "__main__":
     import uvicorn
     uvicorn.run(app, host="0.0.0.0", port=8000)
