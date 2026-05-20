@@ -1,4 +1,4 @@
-from fastapi import FastAPI, HTTPException
+from fastapi import FastAPI, HTTPException, UploadFile, File, Form
 from fastapi.middleware.cors import CORSMiddleware
 from pydantic import BaseModel
 from typing import Optional
@@ -115,6 +115,60 @@ async def check_writing(req: WritingRequest):
             "coherence_feedback": error_msg,
             "general_feedback": f"Groq xatosi: {error_msg}"
         }
+
+@app.post("/api/speak")
+async def check_speaking(audio: UploadFile = File(...), target_text: str = Form(...)):
+    if not client:
+        return {"error": "GROQ API kaliti ulanmagan!"}
+        
+    try:
+        file_contents = await audio.read()
+        
+        # 1. Transcribe the audio using Groq's whisper model
+        transcription = client.audio.transcriptions.create(
+            file=("audio.webm", file_contents),
+            model="whisper-large-v3",
+            response_format="json",
+        )
+        
+        transcript = transcription.text
+        
+        # 2. Score pronunciation by asking LLaMA
+        prompt = f"""
+        Siz Ingliz tili talaffuzini baholovchi mutaxassissiz.
+        O'quvchi quyidagi gapni o'qishi kerak edi:
+        "{target_text}"
+        
+        O'quvchi aytgan gap (AI eshitgan matn):
+        "{transcript}"
+        
+        Iltimos, o'quvchining talaffuziga 0 dan 100% gacha baho bering va qisqacha izoh yozing.
+        Agar gap umuman o'xshamasa, past foiz bering.
+        Javob faqat ushbu JSON formatda bo'lsin:
+        {{
+            "score": "Masalan: 85%",
+            "transcript": "{transcript}",
+            "feedback": "Talaffuz bo'yicha maslahat yoki maqtov (O'zbek tilida)"
+        }}
+        """
+        
+        chat_completion = client.chat.completions.create(
+            messages=[{"role": "user", "content": prompt}],
+            model="llama-3.3-70b-versatile",
+            temperature=0.1
+        )
+        
+        res_text = chat_completion.choices[0].message.content.strip()
+        if res_text.startswith("```json"):
+            res_text = res_text[7:-3].strip()
+        elif res_text.startswith("```"):
+            res_text = res_text[3:-3].strip()
+            
+        result = json.loads(res_text)
+        return result
+        
+    except Exception as e:
+        return {"error": f"Gapirishni tekshirishda xatolik: {str(e)}"}
 
 if __name__ == "__main__":
     import uvicorn
