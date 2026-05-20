@@ -490,6 +490,80 @@ document.addEventListener('DOMContentLoaded', () => {
         renderPracticeTests(type, level);
     };
 
+    // SPEAKING LOGIC
+    let mediaRecorder = null;
+    let audioChunks = [];
+    let isRecording = false;
+    const btnRecord = document.getElementById('btn-record');
+    
+    if (btnRecord) {
+        btnRecord.addEventListener('click', async () => {
+            if (!isRecording) {
+                try {
+                    const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
+                    mediaRecorder = new MediaRecorder(stream);
+                    audioChunks = [];
+                    
+                    mediaRecorder.ondataavailable = (e) => {
+                        if (e.data.size > 0) audioChunks.push(e.data);
+                    };
+                    
+                    mediaRecorder.onstop = async () => {
+                        const audioBlob = new Blob(audioChunks, { type: 'audio/webm' });
+                        // Stop all tracks to release mic
+                        stream.getTracks().forEach(track => track.stop());
+                        
+                        document.getElementById('speaking-loading').style.display = 'block';
+                        document.getElementById('speaking-results').style.display = 'none';
+                        document.getElementById('recording-status').innerText = 'Tap to start recording';
+                        btnRecord.style.background = '#ff6b6b';
+                        btnRecord.innerHTML = '<i class="ph-fill ph-microphone"></i>';
+                        
+                        const formData = new FormData();
+                        formData.append('audio', audioBlob, 'speaking.webm');
+                        
+                        const targetText = document.getElementById('speaking-target-text').innerText.replace(/["']/g, "").trim();
+                        formData.append('target_text', targetText);
+                        
+                        try {
+                            const res = await fetch('https://perfection-webapp.onrender.com/api/speak', {
+                                method: 'POST',
+                                body: formData
+                            });
+                            const data = await res.json();
+                            
+                            document.getElementById('speaking-loading').style.display = 'none';
+                            if (data.error) {
+                                alert(data.error);
+                            } else {
+                                document.getElementById('speaking-results').style.display = 'block';
+                                document.getElementById('res-speaking-score').innerText = data.score || "100%";
+                                document.getElementById('res-speaking-transcript').innerText = data.transcript || "";
+                                document.getElementById('res-speaking-feedback').innerText = data.feedback || "";
+                                addXP(15);
+                            }
+                        } catch (err) {
+                            console.error(err);
+                            document.getElementById('speaking-loading').style.display = 'none';
+                            alert("Failed to analyze speaking. " + err.message);
+                        }
+                    };
+                    
+                    mediaRecorder.start();
+                    isRecording = true;
+                    btnRecord.style.background = '#e11d48';
+                    btnRecord.innerHTML = '<i class="ph-fill ph-stop"></i>';
+                    document.getElementById('recording-status').innerText = 'Recording... Tap to stop';
+                } catch (err) {
+                    alert("Mikrofon ishlashi uchun ruxsat bering!");
+                }
+            } else {
+                mediaRecorder.stop();
+                isRecording = false;
+            }
+        });
+    }
+
     // Initialize the Practice Views
     renderPracticeLevels('reading');
     renderPracticeLevels('listening');
