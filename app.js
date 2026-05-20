@@ -64,14 +64,14 @@ document.addEventListener('DOMContentLoaded', () => {
             teacherStats.style.display = 'flex';
             roleText.innerText = "Teacher • Senior";
             roleBtn.innerText = "Switch to Student Profile (Demo)";
-            titleName.innerText = "Miss Malika";
+            titleName.innerText = "Mr Azamat";
         } else {
             // Switch to Student
             studentStats.style.display = 'flex';
             teacherStats.style.display = 'none';
             roleText.innerText = "Student • Pre-IELTS";
             roleBtn.innerText = "Switch to Teacher Profile (Demo)";
-            titleName.innerText = "Azizbek Rustamov";
+            titleName.innerText = "Xojaahror Valijonov";
         }
     };
 
