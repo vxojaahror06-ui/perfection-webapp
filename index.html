@@ -148,6 +148,12 @@
                         </div>
                         <span class="card-title">Listening</span>
                     </div>
+                    <div class="grid-card" onclick="switchTab('speaking')">
+                        <div class="card-icon-wrapper" style="color:var(--danger-color); background: rgba(239, 68, 68, 0.1);">
+                            <i class="ph ph-microphone"></i>
+                        </div>
+                        <span class="card-title">Speaking</span>
+                    </div>
                     <div class="grid-card" onclick="switchTab('writing')">
                         <div class="card-icon-wrapper purple-icon">
                             <i class="ph ph-robot"></i>
@@ -418,6 +424,48 @@
                             <h4><i class="ph ph-lightbulb text-yellow"></i> General Feedback</h4>
                             <p id="res-general">Loading...</p>
                         </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- SECTION: SPEAKING -->
+            <section id="speaking-section" class="app-section">
+                <div class="section-header">
+                    <h2>Speaking Practice</h2>
+                    <p>Read the sentence aloud to test your pronunciation</p>
+                </div>
+                
+                <div class="glass-card mb-4 text-center">
+                    <p id="speaking-target-text" style="font-size: 18px; font-weight: 600; color: var(--text-main); margin-bottom: 20px;">
+                        "The quick brown fox jumps over the lazy dog."
+                    </p>
+                    <button id="btn-record" style="border:none; border-radius: 50%; width: 80px; height: 80px; font-size: 32px; display: inline-flex; align-items: center; justify-content: center; box-shadow: 0 4px 15px rgba(255,107,107,0.4); background: #ff6b6b; color: white; cursor: pointer; transition: 0.3s;">
+                        <i class="ph-fill ph-microphone"></i>
+                    </button>
+                    <p id="recording-status" style="margin-top: 15px; font-size: 14px; color: var(--text-muted);">Tap to start recording</p>
+                </div>
+
+                <!-- Loading State -->
+                <div id="speaking-loading" class="text-center mt-4" style="display: none;">
+                    <i class="ph ph-spinner ph-spin" style="font-size: 32px; color: var(--primary-color);"></i>
+                    <p style="margin-top: 10px; font-size: 14px; color: var(--text-muted);">Analyzing your voice...</p>
+                </div>
+                
+                <!-- Results Area -->
+                <div id="speaking-results" class="mt-4" style="display: none;">
+                    <div class="result-card band-card mb-4">
+                        <h3>Pronunciation Score</h3>
+                        <div class="band-score" id="res-speaking-score">95%</div>
+                    </div>
+                    
+                    <div class="result-card mb-4">
+                        <h4><i class="ph ph-text-aa text-blue"></i> What we heard</h4>
+                        <p id="res-speaking-transcript">Loading...</p>
+                    </div>
+                    
+                    <div class="result-card mb-4">
+                        <h4><i class="ph ph-lightbulb text-yellow"></i> Feedback</h4>
+                        <p id="res-speaking-feedback">Loading...</p>
                     </div>
                 </div>
             </section>
