@@ -36,6 +36,10 @@ document.addEventListener('DOMContentLoaded', () => {
             targetSection.classList.add('active');
         }
 
+        if (targetId === 'speaking') {
+            if (window.renderSpeakingMain) window.renderSpeakingMain();
+        }
+
         // Update Title dynamically based on section
         const titles = {
             'home': 'Perfection School',
@@ -64,14 +68,14 @@ document.addEventListener('DOMContentLoaded', () => {
             teacherStats.style.display = 'flex';
             roleText.innerText = "Teacher • Senior";
             roleBtn.innerText = "Switch to Student Profile (Demo)";
-            titleName.innerText = "Mr Azamat";
+            titleName.innerText = "Miss Malika";
         } else {
             // Switch to Student
             studentStats.style.display = 'flex';
             teacherStats.style.display = 'none';
             roleText.innerText = "Student • Pre-IELTS";
             roleBtn.innerText = "Switch to Teacher Profile (Demo)";
-            titleName.innerText = "Xojaahror Valijonov";
+            titleName.innerText = "Azizbek Rustamov";
         }
     };
 
@@ -490,83 +494,662 @@ document.addEventListener('DOMContentLoaded', () => {
         renderPracticeTests(type, level);
     };
 
-    // SPEAKING LOGIC
-    let mediaRecorder = null;
-    let audioChunks = [];
-    let isRecording = false;
-    const btnRecord = document.getElementById('btn-record');
-    
-    if (btnRecord) {
-        btnRecord.addEventListener('click', async () => {
-            if (!isRecording) {
-                try {
-                    const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
-                    mediaRecorder = new MediaRecorder(stream);
-                    audioChunks = [];
-                    
-                    mediaRecorder.ondataavailable = (e) => {
-                        if (e.data.size > 0) audioChunks.push(e.data);
-                    };
-                    
-                    mediaRecorder.onstop = async () => {
-                        const audioBlob = new Blob(audioChunks, { type: 'audio/webm' });
-                        // Stop all tracks to release mic
-                        stream.getTracks().forEach(track => track.stop());
-                        
-                        document.getElementById('speaking-loading').style.display = 'block';
-                        document.getElementById('speaking-results').style.display = 'none';
-                        document.getElementById('recording-status').innerText = 'Tap to start recording';
-                        btnRecord.style.background = '#ff6b6b';
-                        btnRecord.innerHTML = '<i class="ph-fill ph-microphone"></i>';
-                        
-                        const formData = new FormData();
-                        formData.append('audio', audioBlob, 'speaking.webm');
-                        
-                        const targetText = document.getElementById('speaking-target-text').innerText.replace(/["']/g, "").trim();
-                        formData.append('target_text', targetText);
-                        
-                        try {
-                            const res = await fetch('https://perfection-webapp.onrender.com/api/speak', {
-                                method: 'POST',
-                                body: formData
-                            });
-                            const data = await res.json();
-                            
-                            document.getElementById('speaking-loading').style.display = 'none';
-                            if (data.error) {
-                                alert(data.error);
-                            } else {
-                                document.getElementById('speaking-results').style.display = 'block';
-                                document.getElementById('res-speaking-score').innerText = data.score || "100%";
-                                document.getElementById('res-speaking-transcript').innerText = data.transcript || "";
-                                document.getElementById('res-speaking-feedback').innerText = data.feedback || "";
-                                addXP(15);
-                            }
-                        } catch (err) {
-                            console.error(err);
-                            document.getElementById('speaking-loading').style.display = 'none';
-                            alert("Failed to analyze speaking. " + err.message);
-                        }
-                    };
-                    
-                    mediaRecorder.start();
-                    isRecording = true;
-                    btnRecord.style.background = '#e11d48';
-                    btnRecord.innerHTML = '<i class="ph-fill ph-stop"></i>';
-                    document.getElementById('recording-status').innerText = 'Recording... Tap to stop';
-                } catch (err) {
-                    alert("Mikrofon ishlashi uchun ruxsat bering!");
-                }
-            } else {
-                mediaRecorder.stop();
-                isRecording = false;
+    // SPEAKING LOGIC (CEFR / DTM Multi-level Format)
+    let currentSpeakingPart = '';
+    let currentSpeakingTopic = null;
+    let currentSpeakingQuestionIdx = 0;
+    let speakingAudioBlobs = [];
+    let speakingMediaRecorder = null;
+    let speakingAudioChunks = [];
+    let speakingTimerInterval = null;
+    let speakingPrepInterval = null;
+    let speakingSecondsLeft = 0;
+    let speakingPrepSecondsLeft = 0;
+    let speakingMicStream = null;
+    let speakingCurrentState = 'main'; // 'main', 'topics', 'prep', 'record', 'loading', 'results'
+    let selectedSpeakingPart = '';
+
+    function getBackendUrl(endpoint) {
+        const isLocal = window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1';
+        const base = isLocal ? 'http://localhost:8000' : 'https://perfection-webapp.onrender.com';
+        return `${base}${endpoint}`;
+    }
+
+    function updateSpeakingHeader(state, partId = '') {
+        speakingCurrentState = state;
+        if (partId) selectedSpeakingPart = partId;
+
+        const backBtn = document.getElementById('speaking-back-btn');
+        const titleEl = document.getElementById('speaking-main-title');
+        const subtitleEl = document.getElementById('speaking-main-subtitle');
+        
+        if (!titleEl || !subtitleEl) return;
+
+        if (state === 'main') {
+            titleEl.innerText = 'Speaking Practice';
+            subtitleEl.innerText = 'CEFR / DTM Multi-level format';
+            if (backBtn) {
+                backBtn.innerHTML = '<i class="ph ph-arrow-left"></i>';
+                backBtn.setAttribute('onclick', 'switchTab("home")');
             }
+        } else if (state === 'topics') {
+            titleEl.innerText = `Part ${selectedSpeakingPart} Topics`;
+            subtitleEl.innerText = 'Mavzular ro\'yxati';
+            if (backBtn) {
+                backBtn.innerHTML = '<i class="ph ph-arrow-left"></i>';
+                backBtn.setAttribute('onclick', 'renderSpeakingMain()');
+            }
+        } else if (state === 'prep') {
+            titleEl.innerText = 'Preparation';
+            subtitleEl.innerText = 'Gapirishga tayyorlaning';
+            if (backBtn) {
+                backBtn.innerHTML = '<i class="ph ph-arrow-left"></i>';
+                backBtn.setAttribute('onclick', 'confirmCancelSpeaking()');
+            }
+        } else if (state === 'record') {
+            titleEl.innerText = 'Recording...';
+            subtitleEl.innerText = 'Javobingizni gapiring';
+            if (backBtn) {
+                backBtn.innerHTML = '<i class="ph ph-arrow-left"></i>';
+                backBtn.setAttribute('onclick', 'confirmCancelSpeaking()');
+            }
+        } else if (state === 'loading') {
+            titleEl.innerText = 'Analyzing';
+            subtitleEl.innerText = 'AI tahlil qilmoqda...';
+            if (backBtn) {
+                backBtn.innerHTML = '<i class="ph ph-arrow-left"></i>';
+                backBtn.setAttribute('onclick', 'void(0)'); 
+            }
+        } else if (state === 'results') {
+            titleEl.innerText = 'Results';
+            subtitleEl.innerText = 'AI Examiner bahosi';
+            if (backBtn) {
+                backBtn.innerHTML = '<i class="ph ph-arrow-left"></i>';
+                backBtn.setAttribute('onclick', 'renderSpeakingMain()');
+            }
+        }
+    }
+
+    window.confirmCancelSpeaking = function() {
+        if (confirm("Hozirgi gapirish mashqidan chiqmoqchimisiz? Natijalar saqlanmaydi.")) {
+            clearInterval(speakingTimerInterval);
+            clearInterval(speakingPrepInterval);
+            if (speakingMicStream) {
+                speakingMicStream.getTracks().forEach(track => track.stop());
+            }
+            renderSpeakingTopics(selectedSpeakingPart);
+        }
+    };
+
+    window.handleSpeakingBack = function() {
+        // Handled dynamically by updateSpeakingHeader
+    };
+
+    window.renderSpeakingMain = function() {
+        const container = document.getElementById('speaking-content-container');
+        if (!container) return;
+
+        clearInterval(speakingTimerInterval);
+        clearInterval(speakingPrepInterval);
+        if (speakingMicStream) {
+            speakingMicStream.getTracks().forEach(track => track.stop());
+        }
+
+        updateSpeakingHeader('main');
+
+        container.innerHTML = `
+            <div class="mb-4">
+                <p style="color:var(--text-muted); font-size:14px; margin-bottom:20px;">
+                    CEFR va DTM Multi-level yangi gapirish (speaking) imtihoni formati bo'yicha tayyorlaning va o'z nutqingizni AI examiner yordamida baholang.
+                </p>
+            </div>
+            
+            <div class="resource-grid" style="grid-template-columns: 1fr; gap: 16px;">
+                <div class="resource-card glass-card" onclick="renderSpeakingTopics('1.1')" style="cursor:pointer; display:flex; gap:16px; align-items:center; border-left:4px solid var(--primary-color);">
+                    <div class="r-icon bg-blue" style="margin-bottom:0; flex-shrink:0;"><i class="ph ph-user"></i></div>
+                    <div>
+                        <h4 style="margin:0 0 4px 0;">Part 1.1 (A1-A2)</h4>
+                        <p style="margin:0; font-size:12px; color:var(--text-muted);">Shaxsiy ma'lumotlar. 3 ta savol. Har biriga 30s. Tayyorgarliksiz.</p>
+                    </div>
+                </div>
+                
+                <div class="resource-card glass-card" onclick="renderSpeakingTopics('1.2')" style="cursor:pointer; display:flex; gap:16px; align-items:center; border-left:4px solid var(--success-color);">
+                    <div class="r-icon bg-green" style="margin-bottom:0; flex-shrink:0;"><i class="ph ph-image"></i></div>
+                    <div>
+                        <h4 style="margin:0 0 4px 0;">Part 1.2 (B1)</h4>
+                        <p style="margin:0; font-size:12px; color:var(--text-muted);">2 ta rasm asosida tasvirlash va fikr bildirish. Q4: 45s, Q5-6: 30s. Tayyorgarliksiz.</p>
+                    </div>
+                </div>
+                
+                <div class="resource-card glass-card" onclick="renderSpeakingTopics('2')" style="cursor:pointer; display:flex; gap:16px; align-items:center; border-left:4px solid var(--orange-color);">
+                    <div class="r-icon bg-orange" style="margin-bottom:0; flex-shrink:0;"><i class="ph ph-presentation-chart"></i></div>
+                    <div>
+                        <h4 style="margin:0 0 4px 0;">Part 2 (B2)</h4>
+                        <p style="margin:0; font-size:12px; color:var(--text-muted);">Mavzuni tahlil qilish (1 ta rasm, 3 ta savol). 1 daqiqa tayyorgarlik, 2 daqiqa gapirish.</p>
+                    </div>
+                </div>
+                
+                <div class="resource-card glass-card" onclick="renderSpeakingTopics('3')" style="cursor:pointer; display:flex; gap:16px; align-items:center; border-left:4px solid var(--purple-color);">
+                    <div class="r-icon bg-purple" style="margin-bottom:0; flex-shrink:0;"><i class="ph ph-chat-circle-dots"></i></div>
+                    <div>
+                        <h4 style="margin:0 0 4px 0;">Part 3 (C1)</h4>
+                        <p style="margin:0; font-size:12px; color:var(--text-muted);">Ikki tomonlama argument tahlili. 1 daqiqa tayyorgarlik, 2 daqiqa gapirish.</p>
+                    </div>
+                </div>
+            </div>
+        `;
+    };
+
+    let speakingTestData = null;
+
+    async function loadSpeakingTestData() {
+        if (speakingTestData) return speakingTestData;
+        try {
+            const res = await fetch('tests.json');
+            const data = await res.json();
+            speakingTestData = data.speaking;
+            return speakingTestData;
+        } catch (e) {
+            console.error("Failed to load speaking tests", e);
+            return null;
+        }
+    }
+
+    window.renderSpeakingTopics = async function(partId) {
+        const container = document.getElementById('speaking-content-container');
+        if (!container) return;
+        
+        container.innerHTML = `
+            <div class="text-center" style="padding: 20px 0;">
+                <i class="ph ph-spinner ph-spin" style="font-size:32px; color:var(--primary-color);"></i>
+                <p style="margin-top:10px; color:var(--text-muted);">Mavzular yuklanmoqda...</p>
+            </div>
+        `;
+
+        const data = await loadSpeakingTestData();
+        if (!data || !data[partId]) {
+            container.innerHTML = `<div style="color:var(--danger-color); padding: 15px;">Mavzularni yuklashda xatolik yuz berdi.</div>`;
+            return;
+        }
+
+        updateSpeakingHeader('topics', partId);
+
+        let html = `
+            <div class="mb-4">
+                <h3 style="font-size:14px; font-weight:700; color:var(--text-muted); margin-bottom:12px; text-transform:uppercase;">Mavzuni tanlang:</h3>
+                <div style="display:flex; flex-direction:column; gap:12px;">
+        `;
+
+        data[partId].forEach(topic => {
+            html += `
+                <div class="glass-card" onclick="startSpeakingSession('${partId}', ${topic.id})" style="cursor:pointer; padding:16px; display:flex; justify-content:space-between; align-items:center; border: 1px solid var(--border-color); border-radius:var(--border-radius-md); background:var(--bg-card); transition:0.2s;">
+                    <div>
+                        <span style="font-weight:600; color:var(--text-main); font-size:15px;">${topic.title}</span>
+                    </div>
+                    <i class="ph ph-caret-right" style="color:var(--text-muted);"></i>
+                </div>
+            `;
         });
+
+        html += `
+                </div>
+            </div>
+        `;
+        container.innerHTML = html;
+    };
+
+    window.startSpeakingSession = async function(partId, topicId) {
+        const data = await loadSpeakingTestData();
+        const topic = data[partId].find(t => t.id === topicId);
+        if (!topic) return;
+
+        currentSpeakingPart = partId;
+        currentSpeakingTopic = topic;
+        currentSpeakingQuestionIdx = 0;
+        speakingAudioBlobs = [];
+        speakingAudioChunks = [];
+
+        if (partId === '2' || partId === '3') {
+            startSpeakingPrep();
+        } else {
+            startSpeakingRecord();
+        }
+    };
+
+    function startSpeakingPrep() {
+        updateSpeakingHeader('prep');
+        const container = document.getElementById('speaking-content-container');
+        if (!container) return;
+
+        speakingPrepSecondsLeft = 60; // 1 minute preparation time
+        
+        let questionsHtml = '';
+        let imageHtml = '';
+
+        if (currentSpeakingPart === '2') {
+            imageHtml = `<div style="text-align:center; margin-bottom:16px;">
+                <img src="${currentSpeakingTopic.image}" style="max-height:180px; max-width:100%; border-radius:var(--border-radius-md); box-shadow:0 4px 10px rgba(0,0,0,0.1);" alt="Topic Image">
+            </div>`;
+            questionsHtml = `<ol style="margin-left: 20px; font-weight: 500; text-align: left; color: var(--text-main); font-size:14px; line-height:1.5;">
+                ${currentSpeakingTopic.questions.map(q => `<li style="margin-bottom:8px;">${q}</li>`).join('')}
+            </ol>`;
+        } else if (currentSpeakingPart === '3') {
+            questionsHtml = `
+                <div style="background:var(--bg-main); padding:16px; border-radius:var(--border-radius-sm); border-left:4px solid var(--purple-color); font-style:italic; font-size:14px; color:var(--text-main); margin-bottom:16px; line-height:1.5; text-align:left;">
+                    "${currentSpeakingTopic.argument}"
+                </div>
+                <div style="font-weight:600; font-size:14px; color:var(--text-main); text-align:left;">
+                    Task: <span style="font-weight:400; color:var(--text-muted);">${currentSpeakingTopic.task}</span>
+                </div>
+            `;
+        }
+
+        container.innerHTML = `
+            <div class="glass-card text-center" style="padding:20px; background:var(--bg-card); border-radius:var(--border-radius-lg); box-shadow:0 4px 15px rgba(0,0,0,0.03);">
+                <div style="font-size:13px; font-weight:700; color:var(--secondary-color); text-transform:uppercase; margin-bottom:8px; display:flex; align-items:center; justify-content:center; gap:6px;">
+                    <i class="ph ph-hourglass-medium"></i> Tayyorgarlik vaqti (Preparation Time)
+                </div>
+                
+                <h3 style="font-size:18px; font-weight:700; color:var(--primary-color); margin-bottom:16px;">${currentSpeakingTopic.title}</h3>
+                
+                ${imageHtml}
+                
+                <div class="mb-4" style="background:rgba(0,0,0,0.02); padding:16px; border-radius:var(--border-radius-md); border:1px solid var(--border-color);">
+                    ${questionsHtml}
+                </div>
+
+                <div style="margin:20px 0;">
+                    <div style="position:relative; width:90px; height:90px; margin:0 auto; display:flex; align-items:center; justify-content:center; background:var(--primary-light); border-radius:50%;">
+                        <span id="prep-timer-text" style="font-size:28px; font-weight:800; color:var(--primary-color);">60</span>
+                    </div>
+                    <p style="margin-top:10px; font-size:13px; color:var(--text-muted);">Mavzu va savollar bilan tanishib chiqing.</p>
+                </div>
+
+                <button class="btn-primary w-100" onclick="skipSpeakingPrep()" style="padding:14px; font-size:15px; border-radius:24px; background:var(--success-color);">
+                    <i class="ph ph-play"></i> Tayyorman, hoziroq boshlash
+                </button>
+            </div>
+        `;
+
+        clearInterval(speakingPrepInterval);
+        speakingPrepInterval = setInterval(() => {
+            speakingPrepSecondsLeft--;
+            const timerEl = document.getElementById('prep-timer-text');
+            if (timerEl) {
+                timerEl.innerText = speakingPrepSecondsLeft;
+            }
+            if (speakingPrepSecondsLeft <= 0) {
+                clearInterval(speakingPrepInterval);
+                startSpeakingRecord();
+            }
+        }, 1000);
+    }
+
+    window.skipSpeakingPrep = function() {
+        clearInterval(speakingPrepInterval);
+        startSpeakingRecord();
+    };
+
+    window.startSpeakingRecord = async function() {
+        updateSpeakingHeader('record');
+        const container = document.getElementById('speaking-content-container');
+        if (!container) return;
+
+        clearInterval(speakingTimerInterval);
+
+        if (currentSpeakingPart === '1.1') {
+            speakingSecondsLeft = 30; 
+        } else if (currentSpeakingPart === '1.2') {
+            speakingSecondsLeft = (currentSpeakingQuestionIdx === 0) ? 45 : 30; 
+        } else {
+            speakingSecondsLeft = 120; 
+        }
+
+        const totalRecordingTime = speakingSecondsLeft;
+
+        let promptContent = '';
+        if (currentSpeakingPart === '1.1') {
+            promptContent = `
+                <div style="font-size:12px; font-weight:700; color:var(--text-muted); text-transform:uppercase; margin-bottom:4px;">
+                    Savol ${currentSpeakingQuestionIdx + 1} / 3
+                </div>
+                <h3 style="font-size:20px; font-weight:700; color:var(--text-main); margin-bottom:20px; line-height:1.4;">
+                    "${currentSpeakingTopic.questions[currentSpeakingQuestionIdx]}"
+                </h3>
+            `;
+        } else if (currentSpeakingPart === '1.2') {
+            const qNum = currentSpeakingQuestionIdx + 4; 
+            const sideBySideImages = `
+                <div style="display:flex; gap:10px; margin-bottom:16px;">
+                    <div style="flex:1; height:120px; border-radius:8px; overflow:hidden; box-shadow:0 2px 5px rgba(0,0,0,0.1);">
+                        <img src="${currentSpeakingTopic.images[0]}" style="width:100%; height:100%; object-fit:cover;" alt="Image 1">
+                    </div>
+                    <div style="flex:1; height:120px; border-radius:8px; overflow:hidden; box-shadow:0 2px 5px rgba(0,0,0,0.1);">
+                        <img src="${currentSpeakingTopic.images[1]}" style="width:100%; height:100%; object-fit:cover;" alt="Image 2">
+                    </div>
+                </div>
+            `;
+            promptContent = `
+                ${sideBySideImages}
+                <div style="font-size:12px; font-weight:700; color:var(--text-muted); text-transform:uppercase; margin-bottom:4px;">
+                    Savol ${qNum} / 6
+                </div>
+                <h3 style="font-size:18px; font-weight:700; color:var(--text-main); margin-bottom:20px; line-height:1.4;">
+                    "${currentSpeakingTopic.questions[currentSpeakingQuestionIdx]}"
+                </h3>
+            `;
+        } else if (currentSpeakingPart === '2') {
+            promptContent = `
+                <div style="text-align:center; margin-bottom:16px;">
+                    <img src="${currentSpeakingTopic.image}" style="max-height:140px; max-width:100%; border-radius:8px; box-shadow:0 2px 5px rgba(0,0,0,0.1);" alt="Topic Image">
+                </div>
+                <div style="font-size:12px; font-weight:700; color:var(--text-muted); text-transform:uppercase; margin-bottom:4px;">
+                    Gapirish topshirig'i (3 ta savolga javob bering)
+                </div>
+                <ol style="margin-left:20px; font-weight:500; text-align:left; color:var(--text-main); font-size:13px; line-height:1.5; margin-bottom:20px;">
+                    ${currentSpeakingTopic.questions.map(q => `<li style="margin-bottom:4px;">${q}</li>`).join('')}
+                </ol>
+            `;
+        } else if (currentSpeakingPart === '3') {
+            promptContent = `
+                <div style="background:var(--bg-main); padding:12px; border-radius:var(--border-radius-sm); border-left:4px solid var(--purple-color); font-style:italic; font-size:13px; color:var(--text-main); margin-bottom:12px; text-align:left; line-height:1.4;">
+                    "${currentSpeakingTopic.argument}"
+                </div>
+                <div style="font-weight:600; font-size:13px; color:var(--text-main); text-align:left; margin-bottom:20px;">
+                    Task: <span style="font-weight:400; color:var(--text-muted);">${currentSpeakingTopic.task}</span>
+                </div>
+            `;
+        }
+
+        container.innerHTML = `
+            <div class="glass-card text-center" style="padding:20px; background:var(--bg-card); border-radius:var(--border-radius-lg); box-shadow:0 4px 15px rgba(0,0,0,0.03);">
+                ${promptContent}
+
+                <div style="margin:20px 0;">
+                    <div style="position:relative; width:110px; height:110px; margin:0 auto; display:flex; flex-direction:column; align-items:center; justify-content:center; background:#fff1f2; border-radius:50%; border: 4px solid var(--danger-color); box-shadow: 0 0 15px rgba(239, 68, 68, 0.2);">
+                        <span id="speaking-timer-text" style="font-size:28px; font-weight:800; color:var(--danger-color);">${speakingSecondsLeft}</span>
+                        <span style="font-size:9px; font-weight:700; color:var(--text-muted); text-transform:uppercase;">soniya</span>
+                    </div>
+                </div>
+
+                <div class="recording-animation" id="rec-pulse-wrapper" style="display:none; justify-content:center; gap:4px; align-items:center; margin-bottom:16px;">
+                    <span style="width:6px; height:12px; background:var(--danger-color); border-radius:3px; animation: soundwave 1s ease-in-out infinite alternate;"></span>
+                    <span style="width:6px; height:24px; background:var(--danger-color); border-radius:3px; animation: soundwave 1s ease-in-out infinite alternate 0.2s;"></span>
+                    <span style="width:6px; height:16px; background:var(--danger-color); border-radius:3px; animation: soundwave 1s ease-in-out infinite alternate 0.4s;"></span>
+                    <span style="width:6px; height:28px; background:var(--danger-color); border-radius:3px; animation: soundwave 1s ease-in-out infinite alternate 0.6s;"></span>
+                    <span style="width:6px; height:10px; background:var(--danger-color); border-radius:3px; animation: soundwave 1s ease-in-out infinite alternate 0.8s;"></span>
+                </div>
+
+                <p id="speaking-rec-status" style="font-size:13px; color:var(--text-muted); margin-bottom:20px;">Mikrofonga ruxsat berilmoqda...</p>
+
+                <div style="display:flex; justify-content:center; align-items:center; gap:20px;">
+                    <button id="btn-speaking-mic" style="border:none; border-radius:50%; width:70px; height:70px; font-size:28px; display:inline-flex; align-items:center; justify-content:center; box-shadow:0 4px 15px rgba(239,68,68,0.3); background:var(--danger-color); color:white; cursor:pointer;" disabled>
+                        <i class="ph-fill ph-microphone"></i>
+                    </button>
+                </div>
+                
+                <div style="margin-top:20px; font-size:11px; color:var(--text-muted);" id="speaking-min-warning">
+                    Kamida 5 soniya gapiring.
+                </div>
+            </div>
+            
+            <style>
+                @keyframes soundwave {
+                    from { transform: scaleY(1); }
+                    to { transform: scaleY(2.2); }
+                }
+            </style>
+        `;
+
+        try {
+            const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
+            speakingMicStream = stream;
+            
+            speakingMediaRecorder = new MediaRecorder(stream);
+            speakingAudioChunks = [];
+            
+            speakingMediaRecorder.ondataavailable = (e) => {
+                if (e.data.size > 0) speakingAudioChunks.push(e.data);
+            };
+            
+            speakingMediaRecorder.onstop = () => {
+                const audioBlob = new Blob(speakingAudioChunks, { type: 'audio/webm' });
+                speakingAudioBlobs.push(audioBlob);
+                
+                stream.getTracks().forEach(track => track.stop());
+                
+                if (currentSpeakingPart === '1.1' || currentSpeakingPart === '1.2') {
+                    if (currentSpeakingQuestionIdx < 2) {
+                        currentSpeakingQuestionIdx++;
+                        startSpeakingRecord(); 
+                    } else {
+                        submitAllSpeakingAudio();
+                    }
+                } else {
+                    submitAllSpeakingAudio();
+                }
+            };
+            
+            speakingMediaRecorder.start();
+            
+            const micBtn = document.getElementById('btn-speaking-mic');
+            if (micBtn) {
+                micBtn.disabled = false;
+                micBtn.innerHTML = '<i class="ph-fill ph-stop"></i>';
+                
+                micBtn.addEventListener('click', () => {
+                    const elapsed = totalRecordingTime - speakingSecondsLeft;
+                    if (elapsed < 5) {
+                        alert("Iltimos, kamida 5 soniya gapiring!");
+                        return;
+                    }
+                    stopRecordingEarly();
+                });
+            }
+            
+            document.getElementById('rec-pulse-wrapper').style.display = 'flex';
+            document.getElementById('speaking-rec-status').innerText = 'Nutqingiz yozib olinmoqda... Erta to\'xtatish uchun qizil tugmani bosing.';
+            
+            speakingTimerInterval = setInterval(() => {
+                speakingSecondsLeft--;
+                const timerEl = document.getElementById('speaking-timer-text');
+                if (timerEl) {
+                    timerEl.innerText = speakingSecondsLeft;
+                }
+                
+                if (speakingSecondsLeft <= 5) {
+                    if (timerEl) timerEl.style.color = '#ef4444';
+                }
+
+                if (speakingSecondsLeft <= 0) {
+                    clearInterval(speakingTimerInterval);
+                    stopRecordingEarly();
+                }
+            }, 1000);
+            
+        } catch (err) {
+            console.error("Mic access failed", err);
+            container.innerHTML = `
+                <div class="glass-card text-center" style="padding:30px; background:var(--bg-card);">
+                    <i class="ph ph-warning-circle" style="font-size:48px; color:var(--danger-color); margin-bottom:16px;"></i>
+                    <h3>Mikrofon topilmadi!</h3>
+                    <p style="color:var(--text-muted); margin-top:8px; font-size:14px; line-height:1.5;">
+                        Speaking mashqini bajarish uchun brauzeringizda mikrofonga ruxsat berishingiz shart. Iltimos, sozlamalarni tekshiring.
+                    </p>
+                    <button class="btn-primary w-100 mt-4" onclick="renderSpeakingMain()">Orqaga qaytish</button>
+                </div>
+            `;
+        }
+    };
+
+    function stopRecordingEarly() {
+        clearInterval(speakingTimerInterval);
+        if (speakingMediaRecorder && speakingMediaRecorder.state !== 'inactive') {
+            speakingMediaRecorder.stop();
+        }
+    }
+
+    async function submitAllSpeakingAudio() {
+        updateSpeakingHeader('loading');
+        const container = document.getElementById('speaking-content-container');
+        if (!container) return;
+
+        container.innerHTML = `
+            <div class="glass-card text-center" style="padding:40px 20px; background:var(--bg-card); border-radius:var(--border-radius-lg);">
+                <i class="ph ph-spinner ph-spin" style="font-size: 48px; color: var(--primary-color);"></i>
+                <h3 style="margin-top:20px; font-size:18px; font-weight:700;">Nutqingiz tahlil qilinmoqda...</h3>
+                <p style="margin-top:10px; font-size:14px; color:var(--text-muted); line-height:1.5;">
+                    AI examiner sizning talaffuzingiz, ravonligingiz, grammatikangiz va so'z boyligingizni baholamoqda. Iltimos, bir necha soniya kuting.
+                </p>
+            </div>
+        `;
+
+        const formData = new FormData();
+        formData.append('part', currentSpeakingPart);
+        formData.append('topic', currentSpeakingTopic.title);
+        
+        let questionsList = [];
+        if (currentSpeakingPart === '1.1' || currentSpeakingPart === '1.2') {
+            questionsList = currentSpeakingTopic.questions;
+        } else if (currentSpeakingPart === '2') {
+            questionsList = [currentSpeakingTopic.questions.join(', ')]; 
+        } else if (currentSpeakingPart === '3') {
+            questionsList = [currentSpeakingTopic.argument + " Task: " + currentSpeakingTopic.task];
+        }
+        formData.append('questions', JSON.stringify(questionsList));
+
+        speakingAudioBlobs.forEach((blob, idx) => {
+            formData.append('audios', blob, `q_${idx+1}.webm`);
+        });
+
+        try {
+            const apiEndpoint = getBackendUrl('/api/evaluate_speaking');
+            const res = await fetch(apiEndpoint, {
+                method: 'POST',
+                body: formData
+            });
+
+            if (!res.ok) {
+                throw new Error("Server xatoligi yuz berdi. Backend o'chiq bo'lishi mumkin.");
+            }
+
+            const results = await res.json();
+            if (results.error) {
+                throw new Error(results.error);
+            }
+
+            renderSpeakingResults(results);
+
+            let xp = 20;
+            if (currentSpeakingPart === '1.2') xp = 30;
+            if (currentSpeakingPart === '2') xp = 40;
+            if (currentSpeakingPart === '3') xp = 50;
+            addXP(xp);
+
+        } catch (err) {
+            console.error("Submit speaking error", err);
+            container.innerHTML = `
+                <div class="glass-card text-center" style="padding:30px; background:var(--bg-card);">
+                    <i class="ph ph-x-circle" style="font-size:48px; color:var(--danger-color); margin-bottom:16px;"></i>
+                    <h3>Tahlilda xatolik yuz berdi</h3>
+                    <p style="color:var(--text-muted); margin-top:8px; font-size:14px; line-height:1.5;">
+                        ${err.message}
+                    </p>
+                    <button class="btn-primary w-100 mt-4" onclick="renderSpeakingMain()">Qayta urinish</button>
+                </div>
+            `;
+        }
+    }
+
+    function renderSpeakingResults(data) {
+        updateSpeakingHeader('results');
+        const container = document.getElementById('speaking-content-container');
+        if (!container) return;
+
+        const ds = data.detailed_scores || {};
+        const fluency = ds.fluency || "0%";
+        const pronunciation = ds.pronunciation || "0%";
+        const vocabulary = ds.vocabulary || "0%";
+        const grammar = ds.grammar || "0%";
+        const overall = data.overall_score || "N/A";
+        const feedback = data.feedback || "Taqriz yozilmadi.";
+        const transcripts = data.transcripts || [];
+
+        let transcriptHtml = '';
+        if (currentSpeakingPart === '1.1' || currentSpeakingPart === '1.2') {
+            currentSpeakingTopic.questions.forEach((q, idx) => {
+                const trText = transcripts[idx] || 'Gapirilmadi / Ovoz yozilmadi';
+                transcriptHtml += `
+                    <div class="mb-4" style="text-align:left; background:rgba(0,0,0,0.01); padding:12px; border-radius:var(--border-radius-sm); border:1px solid var(--border-color);">
+                        <div style="font-size:11px; font-weight:700; color:var(--text-muted); margin-bottom:4px;">SAVOL ${idx+1}:</div>
+                        <div style="font-size:13px; font-weight:600; color:var(--text-main); margin-bottom:8px;">${q}</div>
+                        <div style="font-size:11px; font-weight:700; color:var(--primary-color); margin-bottom:4px;">SIZNING JAVOBINGIZ (TRANSCRIPT):</div>
+                        <div style="font-size:13px; font-style:italic; color:var(--text-main);">"${trText}"</div>
+                    </div>
+                `;
+            });
+        } else {
+            const trText = transcripts[0] || 'Gapirilmadi / Ovoz yozilmadi';
+            transcriptHtml += `
+                <div class="mb-4" style="text-align:left; background:rgba(0,0,0,0.01); padding:12px; border-radius:var(--border-radius-sm); border:1px solid var(--border-color);">
+                    <div style="font-size:11px; font-weight:700; color:var(--primary-color); margin-bottom:4px;">SIZNING NUTQINGIZ (TRANSCRIPT):</div>
+                    <div style="font-size:13px; font-style:italic; color:var(--text-main); line-height:1.5;">"${trText}"</div>
+                </div>
+            `;
+        }
+
+        container.innerHTML = `
+            <div class="result-card band-card mb-4 text-center" style="background:var(--bg-card); padding:24px; border-radius:var(--border-radius-lg); box-shadow:0 4px 15px rgba(0,0,0,0.03);">
+                <h3 style="font-size:13px; font-weight:700; color:var(--text-muted); text-transform:uppercase; margin-bottom:8px;">Baholash natijasi</h3>
+                <div class="band-score" style="font-size:48px; font-weight:800; color:var(--primary-color); line-height:1; margin:10px 0;">${overall}</div>
+                <p style="font-size:12px; color:var(--text-muted);">Umumiy CEFR darajangiz</p>
+            </div>
+
+            <div style="display:grid; grid-template-columns:1fr 1fr; gap:12px; margin-bottom:20px;">
+                <div class="glass-card" style="padding:16px; background:var(--bg-card); text-align:center; border-radius:var(--border-radius-md); box-shadow:0 2px 8px rgba(0,0,0,0.02); display:flex; flex-direction:column; align-items:center;">
+                    <div style="font-size:11px; font-weight:700; color:var(--text-muted); text-transform:uppercase; margin-bottom:6px;">Ravonlik (Fluency)</div>
+                    <div style="font-size:20px; font-weight:800; color:var(--primary-color);">${fluency}</div>
+                </div>
+                <div class="glass-card" style="padding:16px; background:var(--bg-card); text-align:center; border-radius:var(--border-radius-md); box-shadow:0 2px 8px rgba(0,0,0,0.02); display:flex; flex-direction:column; align-items:center;">
+                    <div style="font-size:11px; font-weight:700; color:var(--text-muted); text-transform:uppercase; margin-bottom:6px;">Talaffuz (Pronunciation)</div>
+                    <div style="font-size:20px; font-weight:800; color:var(--success-color);">${pronunciation}</div>
+                </div>
+                <div class="glass-card" style="padding:16px; background:var(--bg-card); text-align:center; border-radius:var(--border-radius-md); box-shadow:0 2px 8px rgba(0,0,0,0.02); display:flex; flex-direction:column; align-items:center;">
+                    <div style="font-size:11px; font-weight:700; color:var(--text-muted); text-transform:uppercase; margin-bottom:6px;">So'z boyligi (Vocabulary)</div>
+                    <div style="font-size:20px; font-weight:800; color:var(--secondary-color);">${vocabulary}</div>
+                </div>
+                <div class="glass-card" style="padding:16px; background:var(--bg-card); text-align:center; border-radius:var(--border-radius-md); box-shadow:0 2px 8px rgba(0,0,0,0.02); display:flex; flex-direction:column; align-items:center;">
+                    <div style="font-size:11px; font-weight:700; color:var(--text-muted); text-transform:uppercase; margin-bottom:6px;">Grammatika (Grammar)</div>
+                    <div style="font-size:20px; font-weight:800; color:var(--purple-color);">${grammar}</div>
+                </div>
+            </div>
+
+            <div class="glass-card mb-4" style="background:var(--bg-card); padding:20px; border-radius:var(--border-radius-lg); text-align:left; box-shadow:0 4px 15px rgba(0,0,0,0.03);">
+                <h4 style="font-size:14px; font-weight:700; color:var(--text-main); margin-bottom:12px; display:flex; align-items:center; gap:6px;">
+                    <i class="ph-fill ph-lightbulb text-yellow" style="font-size:18px;"></i> AI Examiner Taqrizi (Feedback)
+                </h4>
+                <div style="font-size:13px; line-height:1.6; color:var(--text-main); white-space:pre-line;">
+                    ${feedback}
+                </div>
+            </div>
+
+            <div class="glass-card mb-4" style="background:var(--bg-card); padding:20px; border-radius:var(--border-radius-lg); box-shadow:0 4px 15px rgba(0,0,0,0.03);">
+                <h4 style="font-size:14px; font-weight:700; color:var(--text-main); margin-bottom:12px; display:flex; align-items:center; gap:6px;">
+                    <i class="ph ph-text-aa text-blue" style="font-size:18px;"></i> Nima eshitildi? (Transcript)
+                </h4>
+                ${transcriptHtml}
+            </div>
+
+            <button class="btn-primary w-100" onclick="renderSpeakingMain()" style="padding:14px; font-size:15px; border-radius:24px; margin-bottom:20px;">
+                <i class="ph ph-arrow-left"></i> Bosh sahifaga qaytish
+            </button>
+        `;
     }
 
     // Initialize the Practice Views
     renderPracticeLevels('reading');
     renderPracticeLevels('listening');
+    if (window.renderSpeakingMain) window.renderSpeakingMain();
     populateDictionaries();
 
 });
