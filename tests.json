@@ -120,5 +120,91 @@
                 ]
             }
         ]
+    },
+    "speaking": {
+        "1.1": [
+            {
+                "id": 1,
+                "title": "Family & Free Time",
+                "questions": [
+                    "Tell me about your family and how you spend time together.",
+                    "What is your favorite room in your house, and why?",
+                    "What do you like to do in your free time?"
+                ]
+            },
+            {
+                "id": 2,
+                "title": "Friends & Study Routine",
+                "questions": [
+                    "Do you have a best friend? Describe him or her.",
+                    "What subjects do you like studying the most, and why?",
+                    "How do you usually spend your weekends?"
+                ]
+            }
+        ],
+        "1.2": [
+            {
+                "id": 1,
+                "title": "Healthy Eating vs Fast Food",
+                "images": [
+                    "https://images.unsplash.com/photo-1546069901-ba9599a7e63c?w=400&q=80",
+                    "https://images.unsplash.com/photo-1568901346375-23c9450c58cd?w=400&q=80"
+                ],
+                "questions": [
+                    "Compare the two different types of food shown in the pictures.",
+                    "Why do many people choose fast food even if it is unhealthy?",
+                    "Do you think schools should ban junk food? Why or why not?"
+                ]
+            },
+            {
+                "id": 2,
+                "title": "Office Work vs Outdoor Work",
+                "images": [
+                    "https://images.unsplash.com/photo-1497366216548-37526070297c?w=400&q=80",
+                    "https://images.unsplash.com/photo-1593113598332-cd59c5ad3f90?w=400&q=80"
+                ],
+                "questions": [
+                    "Compare the two working environments shown in these images.",
+                    "What are the main benefits of working in an office with modern computers?",
+                    "Which environment would you prefer to work in, and why?"
+                ]
+            }
+        ],
+        "2": [
+            {
+                "id": 1,
+                "title": "Studying Abroad",
+                "image": "https://images.unsplash.com/photo-1523050854058-8df90110c9f1?w=500&q=80",
+                "questions": [
+                    "What are the main benefits of studying at a foreign university?",
+                    "What challenges might a student face when living away from home?",
+                    "How can studying abroad impact a person's future career?"
+                ]
+            },
+            {
+                "id": 2,
+                "title": "Technology in Classrooms",
+                "image": "https://images.unsplash.com/photo-1580894732444-8febeb28a57b?w=500&q=80",
+                "questions": [
+                    "How is technology changing the way students learn today?",
+                    "Do you think online classes can completely replace traditional classrooms? Why?",
+                    "What are the negative effects of using too many screen devices in school?"
+                ]
+            }
+        ],
+        "3": [
+            {
+                "id": 1,
+                "title": "Remote Work and Office Collaboration",
+                "argument": "Some people argue that working from home increases productivity and work-life balance, while others believe that office work is essential for collaboration, company culture, and career growth.",
+                "task": "Discuss both sides of this argument and give your own opinion with relevant examples."
+            },
+            {
+                "id": 2,
+                "title": "Social Media and Communication",
+                "argument": "It is argued that social media has brought people closer together and made communication faster, whereas others claim it has isolated individuals and reduced face-to-face interaction.",
+                "task": "Discuss both viewpoints and share your own perspective on the impact of social media."
+            }
+        ]
     }
 }
