@@ -1,613 +1,210 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Perfection English School</title>
-    <!-- Phosphor Icons -->
-    <script src="https://unpkg.com/@phosphor-icons/web"></script>
-    <!-- Google Fonts -->
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
-    <!-- Custom CSS -->
-    <link rel="stylesheet" href="style.css?v=2">
-</head>
-<body>
-    <div class="app-container">
-        <!-- Header -->
-        <header class="app-header">
-            <div class="header-left">
-                <i class="ph ph-text-align-left" id="menu-btn"></i>
-                <h1 class="app-title">Perfection School</h1>
-            </div>
-            <div class="header-right">
-                <div class="streak-badge">
-                    <i class="ph-fill ph-fire"></i>
-                    <span>12</span>
-                </div>
-                <i class="ph ph-bell"></i>
-            </div>
-        </header>
-        <main class="app-main">
-            <!-- SECTION: AUTH (Registration) -->
-            <!-- SECTION: AUTH NAME -->
-            <section id="auth-name-section" class="app-section active">
-                <div class="welcome-area text-center" style="margin-top: 40px;">
-                    <div class="brand-logo-container mx-auto mb-4" style="margin: 0 auto 20px; text-align: center;">
-                        <img src="logo.jpg" alt="Perfection English School" style="max-width: 250px; width: 100%; border-radius: 8px; box-shadow: 0 4px 15px rgba(0,0,0,0.1);">
-                    </div>
-                    <h2>Welcome to our School!</h2>
-                    <p>Let's set up your profile</p>
-                </div>
-                <form id="reg-name-form" class="auth-form glass-card" style="margin-top: 30px;">
-                    <div class="form-group mb-4">
-                        <label>What's your full name?</label>
-                        <input type="text" id="reg-name" placeholder="e.g., Azizbek Rustamov" required>
-                    </div>
-                    <button type="submit" class="btn-primary w-100" style="padding: 14px; font-size: 16px; display:flex; justify-content:center; align-items:center; gap:8px;">Next <i class="ph ph-arrow-right"></i></button>
-                </form>
-            </section>
-            <!-- SECTION: AUTH PHONE -->
-            <section id="auth-phone-section" class="app-section">
-                <div class="section-header" style="display: flex; align-items: center; gap: 10px; margin-top: 20px;">
-                    <button type="button" class="btn-icon" onclick="switchTab('auth-name')" style="background:transparent; color:var(--text-main);"><i class="ph ph-arrow-left"></i></button>
-                    <h2 style="margin:0;">Contact Info</h2>
-                </div>
-                <form id="reg-phone-form" class="auth-form glass-card" style="margin-top: 20px;">
-                    <div class="form-group mb-4">
-                        <label>Your Phone Number</label>
-                        <input type="tel" id="reg-phone" placeholder="+998" required>
-                    </div>
-                    <button type="submit" class="btn-primary w-100" style="padding: 14px; font-size: 16px; display:flex; justify-content:center; align-items:center; gap:8px;">Next <i class="ph ph-arrow-right"></i></button>
-                </form>
-            </section>
-            <!-- SECTION: AUTH LEVEL -->
-            <section id="auth-level-section" class="app-section">
-                <div class="section-header" style="display: flex; align-items: center; gap: 10px; margin-top: 20px;">
-                    <button type="button" class="btn-icon" onclick="switchTab('auth-phone')" style="background:transparent; color:var(--text-main);"><i class="ph ph-arrow-left"></i></button>
-                    <h2 style="margin:0;">English Level</h2>
-                </div>
-                <form id="reg-level-form" class="auth-form glass-card" style="margin-top: 20px;">
-                    <div class="form-group mb-4">
-                        <label>Select your current level</label>
-                        <select id="reg-level" required>
-                            <option value="" disabled selected>Select level</option>
-                            <option value="Beginner">Beginner</option>
-                            <option value="Elementary">Elementary</option>
-                            <option value="Pre-Intermediate">Pre-Intermediate</option>
-                            <option value="Intermediate">Intermediate</option>
-                            <option value="Upper-Intermediate">Upper-Intermediate</option>
-                            <option value="Pre-IELTS">Pre-IELTS</option>
-                            <option value="IELTS">IELTS</option>
-                        </select>
-                    </div>
-                    <button type="submit" class="btn-primary w-100" style="padding: 14px; font-size: 16px; background: var(--success-color); display:flex; justify-content:center; align-items:center; gap:8px;">Finish <i class="ph ph-check"></i></button>
-                </form>
-            </section>
-            <!-- SECTION: HOME -->
-            <section id="home-section" class="app-section">
-                <div class="welcome-area">
-                    <h2>Hello, Student 👋</h2>
-                    <p>What are we learning today?</p>
-                </div>
-                <!-- Vocabulary of the Day Widget -->
-                <div class="vocab-widget">
-                    <div class="vocab-header">
-                        <span class="vocab-title"><i class="ph-fill ph-star"></i> Word of the Day</span>
-                        <span class="vocab-date">Today</span>
-                    </div>
-                    <div class="vocab-content">
-                        <div class="vocab-word">Perseverance</div>
-                        <div class="vocab-pronunciation">/ˌpɜːrsəˈvɪrəns/</div>
-                        <div class="vocab-meaning">Persistence in doing something despite difficulty.</div>
-                    </div>
-                </div>
-                <!-- Main Banner -->
-                <div class="banner-card" onclick="switchTab('lessons')">
-                    <div class="banner-content">
-                        <h2>LEARN<br>ENGLISH<br>WITH US!</h2>
-                        <div class="progress-container mt-2">
-                            <div class="progress-text">
-                                <span>Pre-IELTS Course</span>
-                                <span>65%</span>
-                            </div>
-                            <div class="progress-bar">
-                                <div class="progress-fill" style="width: 65%;"></div>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="banner-image">
-                        <img src="https://illustrations.popsy.co/blue/student-going-to-school.svg" alt="Education">
-                    </div>
-                </div>
-                <!-- Grid Cards -->
-                <div class="grid-container">
-                    <div class="grid-card" onclick="switchTab('lessons')">
-                        <div class="card-icon-wrapper blue-icon">
-                            <i class="ph ph-books"></i>
-                        </div>
-                        <span class="card-title">Lessons</span>
-                    </div>
-                    <div class="grid-card" onclick="switchTab('reading')">
-                        <div class="card-icon-wrapper orange-icon">
-                            <i class="ph ph-book-open"></i>
-                        </div>
-                        <span class="card-title">Reading</span>
-                    </div>
-                    <div class="grid-card" onclick="switchTab('listening')">
-                        <div class="card-icon-wrapper green-icon">
-                            <i class="ph ph-headphones"></i>
-                        </div>
-                        <span class="card-title">Listening</span>
-                    </div>
-                    <div class="grid-card" onclick="switchTab('speaking')">
-                        <div class="card-icon-wrapper" style="color:var(--danger-color); background: rgba(239, 68, 68, 0.1);">
-                            <i class="ph ph-microphone"></i>
-                        </div>
-                        <span class="card-title">Speaking</span>
-                    </div>
-                    <div class="grid-card" onclick="switchTab('writing')">
-                        <div class="card-icon-wrapper purple-icon">
-                            <i class="ph ph-robot"></i>
-                        </div>
-                        <span class="card-title">Writing</span>
-                    </div>
-                    <div class="grid-card" onclick="switchTab('rating')">
-                        <div class="card-icon-wrapper" style="color:var(--secondary-color);">
-                            <i class="ph ph-trophy"></i>
-                        </div>
-                        <span class="card-title">Ranking</span>
-                    </div>
-                    <div class="grid-card" onclick="switchTab('resources')">
-                        <div class="card-icon-wrapper" style="color:var(--danger-color);">
-                            <i class="ph ph-folder-open"></i>
-                        </div>
-                        <span class="card-title">Resources</span>
-                    </div>
-                </div>
-            </section>
-            <!-- SECTION: LESSONS -->
-            <section id="lessons-section" class="app-section">
-                <div class="section-header">
-                    <h2>My Lessons</h2>
-                    <p>Your current level: <strong>Pre-IELTS</strong></p>
-                </div>
-                
-                <div class="lessons-list">
-                    <div class="lesson-card completed">
-                        <div class="lesson-icon"><i class="ph-fill ph-check-circle"></i></div>
-                        <div class="lesson-info">
-                            <h3>Lesson 1: Present Simple vs Continuous</h3>
-                            <p>Grammar and Practice</p>
-                        </div>
-                        <div class="lesson-action">
-                            <button class="btn-icon"><i class="ph ph-play"></i></button>
-                        </div>
-                    </div>
-                    <div class="lesson-card active">
-                        <div class="lesson-icon"><i class="ph-fill ph-play-circle"></i></div>
-                        <div class="lesson-info">
-                            <h3>Lesson 2: IELTS Speaking Part 1</h3>
-                            <p>Most common questions</p>
-                        </div>
-                        <div class="lesson-action">
-                            <button class="btn-primary">Start</button>
-                        </div>
-                    </div>
-                    <div class="lesson-card locked">
-                        <div class="lesson-icon"><i class="ph-fill ph-lock-key"></i></div>
-                        <div class="lesson-info">
-                            <h3>Lesson 3: Writing Task 1 Basics</h3>
-                            <p>Complete previous lesson</p>
-                        </div>
-                    </div>
-                </div>
-            </section>
-            <!-- SECTION: RATING (LEADERBOARD) -->
-            <section id="rating-section" class="app-section">
-                <div class="section-header text-center">
-                    <h2>Leaderboard</h2>
-                    <p>Most active students</p>
-                </div>
-                <div class="podium-container">
-                    <div class="podium-item second">
-                        <div class="avatar-circle"><img src="https://i.pravatar.cc/150?u=a042581f4e29026704d" alt="Avatar"></div>
-                        <div class="podium-rank silver">2</div>
-                        <div class="podium-name">Malika</div>
-                        <div class="podium-score">1240 xp</div>
-                    </div>
-                    <div class="podium-item first">
-                        <div class="avatar-circle"><img src="https://i.pravatar.cc/150?u=a042581f4e29026024d" alt="Avatar"></div>
-                        <div class="podium-rank gold">1</div>
-                        <div class="podium-name">Sardor</div>
-                        <div class="podium-score">1450 xp</div>
-                    </div>
-                    <div class="podium-item third">
-                        <div class="avatar-circle"><img src="https://i.pravatar.cc/150?u=a048581f4e29026701d" alt="Avatar"></div>
-                        <div class="podium-rank bronze">3</div>
-                        <div class="podium-name">Jasur</div>
-                        <div class="podium-score">1120 xp</div>
-                    </div>
-                </div>
-                <div class="leaderboard-list">
-                    <div class="lb-item">
-                        <div class="lb-rank">4</div>
-                        <div class="lb-user">
-                            <div class="lb-avatar"><img src="https://i.pravatar.cc/150?u=1" alt="Avatar"></div>
-                            <span class="lb-name">Zarina</span>
-                        </div>
-                        <div class="lb-score">980 xp</div>
-                    </div>
-                    <div class="lb-item current-user">
-                        <div class="lb-rank">5</div>
-                        <div class="lb-user">
-                            <div class="lb-avatar"><img src="https://i.pravatar.cc/150?u=2" alt="Avatar"></div>
-                            <span class="lb-name">You (Azizbek)</span>
-                        </div>
-                        <div class="lb-score">850 xp</div>
-                    </div>
-                    <div class="lb-item">
-                        <div class="lb-rank">6</div>
-                        <div class="lb-user">
-                            <div class="lb-avatar"><img src="https://i.pravatar.cc/150?u=3" alt="Avatar"></div>
-                            <span class="lb-name">Murod</span>
-                        </div>
-                        <div class="lb-score">720 xp</div>
-                    </div>
-                </div>
-            </section>
-            <!-- SECTION: RESOURCES -->
-            <section id="resources-section" class="app-section">
-                <div class="section-header">
-                    <h2>Extra Resources</h2>
-                    <!-- Search inside resources -->
-                    <div class="search-box mb-4">
-                        <i class="ph ph-magnifying-glass search-icon"></i>
-                        <input type="text" placeholder="Search topics..." class="search-input">
-                    </div>
-                </div>
-                <div class="resource-grid">
-                    <div class="resource-card" onclick="openResource('alphabet')">
-                        <div class="r-icon bg-blue"><i class="ph ph-text-aa"></i></div>
-                        <h4>Alphabet</h4>
-                        <p>Letters and pronunciation</p>
-                    </div>
-                    <div class="resource-card" onclick="openResource('numbers')">
-                        <div class="r-icon bg-green"><i class="ph ph-list-numbers"></i></div>
-                        <h4>Numbers</h4>
-                        <p>From 1 to 1000</p>
-                    </div>
-                    <div class="resource-card" onclick="openResource('phrases')">
-                        <div class="r-icon bg-orange"><i class="ph ph-chat-circle-text"></i></div>
-                        <h4>Phrases</h4>
-                        <p>For daily conversation</p>
-                    </div>
-                    <div class="resource-card" onclick="openResource('grammar')">
-                        <div class="r-icon bg-purple"><i class="ph ph-books"></i></div>
-                        <h4>Grammar</h4>
-                        <p>Basic rules</p>
-                    </div>
-                </div>
-            </section>
-            <!-- SECTION: ALPHABET DETAIL -->
-            <section id="alphabet-section" class="app-section">
-                <div class="section-header" style="display: flex; align-items: center; gap: 10px;">
-                    <button class="btn-icon" onclick="switchTab('resources')" style="background:transparent; color:var(--text-main);"><i class="ph ph-arrow-left"></i></button>
-                    <div>
-                        <h2 style="margin:0;">English Alphabet</h2>
-                        <p>26 letters and pronunciation</p>
-                    </div>
-                </div>
-                
-                <div class="dictionary-list">
-                    <!-- Javascript will populate this -->
-                </div>
-            </section>
-            <!-- SECTION: NUMBERS DETAIL -->
-            <section id="numbers-section" class="app-section">
-                <div class="section-header" style="display: flex; align-items: center; gap: 10px;">
-                    <button class="btn-icon" onclick="switchTab('resources')" style="background:transparent; color:var(--text-main);"><i class="ph ph-arrow-left"></i></button>
-                    <div>
-                        <h2 style="margin:0;">Numbers</h2>
-                        <p>Let's learn English numbers</p>
-                    </div>
-                </div>
-                
-                <div class="dictionary-list" id="numbers-list">
-                    <!-- Javascript will populate this -->
-                </div>
-            </section>
-            <!-- SECTION: WRITING AI -->
-            <section id="writing-section" class="app-section">
-                <div class="section-header" style="display: flex; align-items: center; gap: 10px;">
-                    <button class="btn-icon" onclick="switchTab('home')" style="background:transparent; color:var(--text-main);"><i class="ph ph-arrow-left"></i></button>
-                    <div>
-                        <h2 style="margin:0;">Writing Checker</h2>
-                        <p>Check your essay and get a score</p>
-                    </div>
-                </div>
-                
-                <div class="writing-container">
-                    <div class="form-group mb-4">
-                        <label>Task Type:</label>
-                        <select id="writing-type" class="custom-select">
-                            <optgroup label="CEFR (Multilevel)">
-                                <option value="CEFR Part 1.1">Informal Letter (min 50 words)</option>
-                                <option value="CEFR Part 1.2">Formal Letter (120-150 words)</option>
-                                <option value="CEFR Part 2">Blogpost (180-200 words)</option>
-                            </optgroup>
-                            <optgroup label="IELTS (Academic)">
-                                <option value="IELTS Task 1">Task 1 (150 words)</option>
-                                <option value="IELTS Task 2" selected>Task 2 (250 words)</option>
-                            </optgroup>
-                            <optgroup label="Other">
-                                <option value="General">Free topic / General</option>
-                            </optgroup>
-                        </select>
-                    </div>
-                    
-                    <div class="form-group mb-4">
-                        <label>Write your essay here:</label>
-                        <textarea id="writing-text" class="w-100" rows="10" placeholder="I think that..." style="padding: 12px; border-radius: 8px; border: 1px solid var(--border-color); background: var(--bg-main); color: var(--text-main); font-family: inherit; resize: vertical;"></textarea>
-                    </div>
-                    <div class="form-group mb-4">
-                        <label>Or Upload Image of your writing (Optional):</label>
-                        <div class="upload-zone-wrapper mt-2">
-                            <input type="file" id="writing-image" accept="image/*" hidden>
-                            <label for="writing-image" class="upload-label" id="upload-label">
-                                <div class="upload-icon"><i class="ph ph-camera"></i></div>
-                                <div class="upload-text-content">
-                                    <div class="upload-title">Snap a photo</div>
-                                    <div class="upload-subtitle">Take a picture of your notebook</div>
-                                </div>
-                            </label>
-                        </div>
-                        <div id="image-preview-container" class="image-preview-wrapper" style="display: none;">
-                            <img id="preview-img" src="" alt="Preview">
-                            <button id="remove-image-btn" class="btn-remove-img" type="button"><i class="ph ph-x"></i></button>
-                        </div>
-                    </div>
-                    
-                    <button id="check-writing-btn" class="btn-primary w-100" style="padding: 14px; font-size: 16px; display: flex; align-items: center; justify-content: center; gap: 8px;">
-                        <i class="ph ph-sparkle"></i> Check
-                    </button>
-                    
-                    <!-- Loading State -->
-                    <div id="writing-loading" class="text-center mt-4" style="display: none;">
-                        <i class="ph ph-spinner ph-spin" style="font-size: 32px; color: var(--primary-color);"></i>
-                        <p style="margin-top: 10px; font-size: 14px; color: var(--text-muted);">Checking your essay... Please wait.</p>
-                    </div>
-                    
-                    <!-- Results Area -->
-                    <div id="writing-results" class="mt-4" style="display: none;">
-                        <div class="result-card band-card mb-4">
-                            <h3>Overall Band</h3>
-                            <div class="band-score" id="res-band">6.5</div>
-                        </div>
-                        
-                        <div class="result-card mb-4">
-                            <h4><i class="ph ph-text-aa text-blue"></i> Grammar</h4>
-                            <p id="res-grammar">Loading...</p>
-                        </div>
-                        
-                        <div class="result-card mb-4">
-                            <h4><i class="ph ph-book text-green"></i> Vocabulary</h4>
-                            <p id="res-vocab">Loading...</p>
-                        </div>
-                        
-                        <div class="result-card mb-4">
-                            <h4><i class="ph ph-link text-orange"></i> Coherence & Cohesion</h4>
-                            <p id="res-coherence">Loading...</p>
-                        </div>
-                        
-                        <div class="result-card mb-4">
-                            <h4><i class="ph ph-lightbulb text-yellow"></i> General Feedback</h4>
-                            <p id="res-general">Loading...</p>
-                        </div>
-                    </div>
-                </div>
-            </section>
-            <!-- SECTION: SPEAKING -->
-            <section id="speaking-section" class="app-section">
-                <div class="section-header" style="display: flex; align-items: center; gap: 10px; margin-top: 10px;">
-                    <button class="btn-icon" id="speaking-back-btn" onclick="handleSpeakingBack()" style="background:transparent; color:var(--text-main);"><i class="ph ph-arrow-left"></i></button>
-                    <div>
-                        <h2 id="speaking-main-title" style="margin:0;">Speaking Practice</h2>
-                        <p id="speaking-main-subtitle">CEFR / DTM Multi-level format</p>
-                    </div>
-                </div>
-                
-                <div id="speaking-content-container"></div>
-            </section>
-            <!-- SECTION: PROFILE -->
-            <section id="profile-section" class="app-section">
-                <div class="profile-header">
-                    <div class="profile-avatar">
-                        <img src="https://i.pravatar.cc/150?u=2" alt="Profile">
-                        <button class="edit-avatar"><i class="ph ph-camera"></i></button>
-                    </div>
-                    <h2 class="profile-name">Student</h2>
-                    <p class="profile-phone" style="color:var(--text-muted); font-size:14px; margin-bottom:4px;"></p>
-                    <p class="profile-role">Student</p>
-                    <!-- Role Switcher for Demo -->
-                    <button class="role-switch-btn" onclick="toggleRole()">Switch to Teacher Profile (Demo)</button>
-                </div>
-                <!-- Student Profile Stats -->
-                <div id="student-stats" class="profile-stats">
-                    <div class="stat-box">
-                        <i class="ph-fill ph-fire text-orange"></i>
-                        <span class="stat-value">12</span>
-                        <span class="stat-label">Day streak</span>
-                    </div>
-                    <div class="stat-box">
-                        <i class="ph-fill ph-star text-yellow"></i>
-                        <span class="stat-value">850</span>
-                        <span class="stat-label">Total XP</span>
-                    </div>
-                    <div class="stat-box">
-                        <i class="ph-fill ph-book-open text-blue"></i>
-                        <span class="stat-value">24</span>
-                        <span class="stat-label">Lessons</span>
-                    </div>
-                </div>
-                <!-- Teacher Profile Stats (Hidden by default) -->
-                <div id="teacher-stats" class="profile-stats" style="display: none;">
-                    <div class="stat-box">
-                        <i class="ph-fill ph-users text-blue"></i>
-                        <span class="stat-value">145</span>
-                        <span class="stat-label">Students</span>
-                    </div>
-                    <div class="stat-box">
-                        <i class="ph-fill ph-chalkboard-teacher text-green"></i>
-                        <span class="stat-value">6</span>
-                        <span class="stat-label">Groups</span>
-                    </div>
-                    <div class="stat-box">
-                        <i class="ph-fill ph-star text-yellow"></i>
-                        <span class="stat-value">4.9</span>
-                        <span class="stat-label">Ranking</span>
-                    </div>
-                </div>
-                <div class="profile-menu">
-                    <div class="menu-item" onclick="switchTab('settings')">
-                        <div class="menu-item-left">
-                            <div class="menu-icon"><i class="ph ph-gear"></i></div>
-                            <span>Settings & Appearance</span>
-                        </div>
-                        <i class="ph ph-caret-right"></i>
-                    </div>
-                    <div class="menu-item text-red" onclick="logOut()">
-                        <div class="menu-item-left">
-                            <div class="menu-icon"><i class="ph ph-sign-out"></i></div>
-                            <span>Log Out</span>
-                        </div>
-                    </div>
-                </div>
-            </section>
-            <!-- SECTION: SETTINGS -->
-            <section id="settings-section" class="app-section">
-                <div class="section-header" style="display: flex; align-items: center; gap: 10px;">
-                    <button class="btn-icon" onclick="switchTab('profile')" style="background:transparent; color:var(--text-main);"><i class="ph ph-arrow-left"></i></button>
-                    <h2 style="margin:0;">Settings</h2>
-                </div>
-                <div class="profile-menu mt-4">
-                    <div class="menu-item" style="display:flex; justify-content:space-between; align-items:center;">
-                        <div class="menu-item-left">
-                            <div class="menu-icon bg-purple" style="background:#8b5cf6; color:white;"><i class="ph ph-moon"></i></div>
-                            <span>Dark Mode</span>
-                        </div>
-                        <input type="checkbox" id="dark-mode-toggle" onchange="toggleDarkMode()" style="width:20px; height:20px;">
-                    </div>
-                    <div class="menu-item" onclick="document.getElementById('avatar-upload').click()">
-                        <div class="menu-item-left">
-                            <div class="menu-icon bg-blue" style="background:#2563eb; color:white;"><i class="ph ph-image"></i></div>
-                            <span>Change Profile Picture</span>
-                            <input type="file" id="avatar-upload" accept="image/*" style="display:none;" onchange="uploadAvatar(event)">
-                        </div>
-                        <i class="ph ph-caret-right"></i>
-                    </div>
-                </div>
-            </section>
-            <!-- SECTION: PHRASES DETAIL -->
-            <section id="phrases-section" class="app-section">
-                <div class="section-header" style="display: flex; align-items: center; gap: 10px;">
-                    <button class="btn-icon" onclick="switchTab('resources')" style="background:transparent; color:var(--text-main);"><i class="ph ph-arrow-left"></i></button>
-                    <div>
-                        <h2 style="margin:0;">Phrases</h2>
-                        <p>Daily English Conversations</p>
-                    </div>
-                </div>
-                <div class="dictionary-list" id="phrases-list"></div>
-            </section>
-            <!-- SECTION: GRAMMAR DETAIL -->
-            <section id="grammar-section" class="app-section">
-                <div class="section-header" style="display: flex; align-items: center; gap: 10px;">
-                    <button class="btn-icon" onclick="switchTab('resources')" style="background:transparent; color:var(--text-main);"><i class="ph ph-arrow-left"></i></button>
-                    <div>
-                        <h2 style="margin:0;">Grammar</h2>
-                        <p>Basic English Rules</p>
-                    </div>
-                </div>
-                <div class="dictionary-list" id="grammar-list"></div>
-            </section>
-            <!-- SECTION: READING -->
-            <section id="reading-section" class="app-section">
-                <div class="section-header" style="display: flex; align-items: center; gap: 10px;">
-                    <button class="btn-icon" onclick="switchTab('home')" style="background:transparent; color:var(--text-main);"><i class="ph ph-arrow-left"></i></button>
-                    <div>
-                        <h2 style="margin:0;">Reading Practice</h2>
-                        <p>Improve your reading skills</p>
-                    </div>
-                </div>
-                
-                <!-- Container for levels or active test -->
-                <div id="reading-content-container"></div>
-            </section>
-            <!-- SECTION: LISTENING -->
-            <section id="listening-section" class="app-section">
-                <div class="section-header" style="display: flex; align-items: center; gap: 10px;">
-                    <button class="btn-icon" onclick="switchTab('home')" style="background:transparent; color:var(--text-main);"><i class="ph ph-arrow-left"></i></button>
-                    <div>
-                        <h2 style="margin:0;">Listening Practice</h2>
-                        <p>Enhance your listening</p>
-                    </div>
-                </div>
-                
-                <!-- Container for levels or active test -->
-                <div id="listening-content-container"></div>
-            </section>
-        </main>
-        <!-- Bottom Navigation -->
-        <nav class="bottom-nav">
-            <a href="#" class="nav-item active" data-target="home">
-                <i class="ph ph-house"></i>
-                <span>Home</span>
-            </a>
-            <a href="#" class="nav-item" data-target="lessons">
-                <i class="ph ph-play-circle"></i>
-                <span>Lessons</span>
-            </a>
-            <a href="#" class="nav-item" data-target="rating">
-                <i class="ph ph-ranking"></i>
-                <span>Ranking</span>
-            </a>
-            <a href="#" class="nav-item" data-target="resources">
-                <i class="ph ph-books"></i>
-                <span>Resources</span>
-            </a>
-            <a href="#" class="nav-item" data-target="profile">
-                <i class="ph ph-user"></i>
-                <span>Profile</span>
-            </a>
-        </nav>
-    </div>
-    <!-- Firebase Configuration and SDK -->
-    <script type="module">
-        import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
-        import { getFirestore, collection, addDoc, getDocs, setDoc, doc, updateDoc, getDoc, deleteDoc } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
-        const firebaseConfig = {
-            apiKey: "AIzaSyCl8oeI8yYddF-YuSuhCGN6fqZiEechjn8",
-            authDomain: "perfection-school.firebaseapp.com",
-            projectId: "perfection-school",
-            storageBucket: "perfection-school.firebasestorage.app",
-            messagingSenderId: "793168534663",
-            appId: "1:793168534663:web:ad375713f143481b4a2c22",
-            measurementId: "G-87NPRELTDH"
-        };
-        const app = initializeApp(firebaseConfig);
-        const db = getFirestore(app);
-        // Make db globally available
-        window.firebaseDB = db;
-        window.firebaseCollection = collection;
-        window.firebaseAddDoc = addDoc;
-        window.firebaseGetDocs = getDocs;
-        window.firebaseSetDoc = setDoc;
-        window.firebaseDoc = doc;
-        window.firebaseUpdateDoc = updateDoc;
-        window.firebaseGetDoc = getDoc;
-        window.firebaseDeleteDoc = deleteDoc;
-    </script>
-    <script src="app.js?v=3"></script>
-</body>
-</html>
+{
+    "reading": {
+        "A2": [
+            {
+                "id": 1,
+                "title": "My Daily Routine",
+                "content": "I wake up at 7:00 AM every morning. First, I wash my face and brush my teeth. Then, I eat breakfast with my family. We usually eat eggs and bread, and we drink tea. At 8:00 AM, I go to school by bus. My classes start at 8:30 AM and finish at 2:00 PM. After school, I come back home and do my homework. In the evening, I watch TV or read a book before I go to sleep at 10:00 PM.",
+                "questions": [
+                    {
+                        "q": "What time does the person wake up?",
+                        "options": ["A) 8:00 AM", "B) 7:00 AM", "C) 8:30 AM"],
+                        "answer": "B"
+                    },
+                    {
+                        "q": "How does the person go to school?",
+                        "options": ["A) By car", "B) On foot", "C) By bus"],
+                        "answer": "C"
+                    }
+                ]
+            }
+        ],
+        "B2": [
+            {
+                "id": 1,
+                "title": "The Impact of Social Media",
+                "content": "Social media has fundamentally changed the way people communicate and share information. In the past decade, platforms like Facebook, Instagram, and Twitter have grown from niche websites into global phenomena. While these platforms offer incredible opportunities for connecting with distant friends and discovering new communities, they also present significant challenges. Studies have shown that excessive use of social media can lead to feelings of anxiety and isolation, particularly among teenagers. Furthermore, the rapid spread of misinformation has become a major concern for societies worldwide. Therefore, finding a healthy balance in digital consumption is more important than ever.",
+                "questions": [
+                    {
+                        "q": "According to the text, what is a negative effect of social media?",
+                        "options": ["A) It connects distant friends.", "B) It helps discover new communities.", "C) It can lead to anxiety and isolation.", "D) It makes communication slower."],
+                        "answer": "C"
+                    },
+                    {
+                        "q": "What is mentioned as a 'major concern for societies worldwide'?",
+                        "options": ["A) Connecting with friends", "B) The rapid spread of misinformation", "C) Teenagers using the internet", "D) The cost of internet access"],
+                        "answer": "B"
+                    }
+                ]
+            }
+        ],
+        "IELTS 6.0": [
+            {
+                "id": 1,
+                "title": "Urbanization and the Environment",
+                "content": "The global trend towards urbanization is reshaping the demographic landscape, with over half the world's population now residing in cities. This massive migration from rural to urban areas provides better access to education, healthcare, and employment opportunities. However, the rapid expansion of urban centers puts immense strain on the environment. Deforestation to make way for housing, increased carbon emissions from traffic, and poor waste management are some of the critical issues facing modern metropolises. Urban planners are now focusing on creating sustainable cities, incorporating green spaces, improving public transport networks, and utilizing renewable energy sources to mitigate these adverse environmental impacts.",
+                "questions": [
+                    {
+                        "q": "What is one positive aspect of urbanization mentioned in the text?",
+                        "options": ["A) Increased carbon emissions", "B) Deforestation", "C) Better access to healthcare and jobs", "D) Poor waste management"],
+                        "answer": "C"
+                    },
+                    {
+                        "q": "How are urban planners attempting to solve environmental problems?",
+                        "options": ["A) By encouraging people to move back to rural areas", "B) By building more factories", "C) By creating sustainable cities with green spaces and public transport", "D) By reducing the number of schools and hospitals"],
+                        "answer": "C"
+                    }
+                ]
+            }
+        ],
+        "IELTS 8.0": [
+            {
+                "id": 1,
+                "title": "The Nuances of Cognitive Linguistics",
+                "content": "Cognitive linguistics posits that language is inextricably linked to general cognitive mechanisms rather than being an autonomous module of the mind. Proponents argue that semantic structures are inherently conceptual, reflecting our embodied experiences and spatial conceptualizations. For instance, metaphorical language is not merely a poetic device but a fundamental reflection of how we process abstract thoughts—mapping concrete domains onto abstract ones. Critics of this paradigm, often aligned with generative grammar, contend that cognitive linguistics lacks formal rigorousness and fails to account for the innate, universal syntactic structures that seemingly underpin all human languages. The debate underscores profound divergent perspectives on the architecture of human cognition.",
+                "questions": [
+                    {
+                        "q": "According to cognitive linguistics, what is metaphorical language?",
+                        "options": ["A) An autonomous module of the mind", "B) Merely a poetic device used in literature", "C) A reflection of innate syntactic structures", "D) A fundamental reflection of how we process abstract thoughts"],
+                        "answer": "D"
+                    },
+                    {
+                        "q": "What is a major criticism of cognitive linguistics mentioned in the text?",
+                        "options": ["A) It relies too heavily on embodied experiences.", "B) It lacks formal rigorousness and ignores innate syntactic structures.", "C) It uses too many poetic devices.", "D) It separates language from general cognitive mechanisms."],
+                        "answer": "B"
+                    }
+                ]
+            }
+        ]
+    },
+    "listening": {
+        "A2": [
+            {
+                "id": 1,
+                "title": "At the Restaurant",
+                "youtube_id": "rJ01a3H3rBw",
+                "questions": [
+                    {
+                        "q": "What does the customer order to drink?",
+                        "options": ["A) Water", "B) Coffee", "C) Orange juice"],
+                        "answer": "B"
+                    }
+                ]
+            }
+        ],
+        "B2": [
+            {
+                "id": 1,
+                "title": "Job Interview Tips",
+                "youtube_id": "j9P_xXb0l9A",
+                "questions": [
+                    {
+                        "q": "What is the FIRST tip mentioned for a successful interview?",
+                        "options": ["A) Ask good questions", "B) Research the company beforehand", "C) Wear an expensive suit", "D) Arrive 30 minutes early"],
+                        "answer": "B"
+                    }
+                ]
+            }
+        ],
+        "IELTS 7.0": [
+            {
+                "id": 1,
+                "title": "University Lecture on Climate Change",
+                "youtube_id": "jXJ0s0P5_9w",
+                "questions": [
+                    {
+                        "q": "According to the professor, what is the primary driver of the recent anomalous temperature spikes?",
+                        "options": ["A) Solar flares", "B) Anthropogenic greenhouse gas emissions", "C) Ocean current fluctuations", "D) Volcanic activity"],
+                        "answer": "B"
+                    }
+                ]
+            }
+        ]
+    },
+    "speaking": {
+        "1.1": [
+            {
+                "id": 1,
+                "title": "Family & Free Time",
+                "questions": [
+                    "Tell me about your family and how you spend time together.",
+                    "What is your favorite room in your house, and why?",
+                    "What do you like to do in your free time?"
+                ]
+            },
+            {
+                "id": 2,
+                "title": "Friends & Study Routine",
+                "questions": [
+                    "Do you have a best friend? Describe him or her.",
+                    "What subjects do you like studying the most, and why?",
+                    "How do you usually spend your weekends?"
+                ]
+            }
+        ],
+        "1.2": [
+            {
+                "id": 1,
+                "title": "Healthy Eating vs Fast Food",
+                "images": [
+                    "https://images.unsplash.com/photo-1546069901-ba9599a7e63c?w=400&q=80",
+                    "https://images.unsplash.com/photo-1568901346375-23c9450c58cd?w=400&q=80"
+                ],
+                "questions": [
+                    "Compare the two different types of food shown in the pictures.",
+                    "Why do many people choose fast food even if it is unhealthy?",
+                    "Do you think schools should ban junk food? Why or why not?"
+                ]
+            },
+            {
+                "id": 2,
+                "title": "Office Work vs Outdoor Work",
+                "images": [
+                    "https://images.unsplash.com/photo-1497366216548-37526070297c?w=400&q=80",
+                    "https://images.unsplash.com/photo-1593113598332-cd59c5ad3f90?w=400&q=80"
+                ],
+                "questions": [
+                    "Compare the two working environments shown in these images.",
+                    "What are the main benefits of working in an office with modern computers?",
+                    "Which environment would you prefer to work in, and why?"
+                ]
+            }
+        ],
+        "2": [
+            {
+                "id": 1,
+                "title": "Studying Abroad",
+                "image": "https://images.unsplash.com/photo-1523050854058-8df90110c9f1?w=500&q=80",
+                "questions": [
+                    "What are the main benefits of studying at a foreign university?",
+                    "What challenges might a student face when living away from home?",
+                    "How can studying abroad impact a person's future career?"
+                ]
+            },
+            {
+                "id": 2,
+                "title": "Technology in Classrooms",
+                "image": "https://images.unsplash.com/photo-1580894732444-8febeb28a57b?w=500&q=80",
+                "questions": [
+                    "How is technology changing the way students learn today?",
+                    "Do you think online classes can completely replace traditional classrooms? Why?",
+                    "What are the negative effects of using too many screen devices in school?"
+                ]
+            }
+        ],
+        "3": [
+            {
+                "id": 1,
+                "title": "Remote Work and Office Collaboration",
+                "argument": "Some people argue that working from home increases productivity and work-life balance, while others believe that office work is essential for collaboration, company culture, and career growth.",
+                "task": "Discuss both sides of this argument and give your own opinion with relevant examples."
+            },
+            {
+                "id": 2,
+                "title": "Social Media and Communication",
+                "argument": "It is argued that social media has brought people closer together and made communication faster, whereas others claim it has isolated individuals and reduced face-to-face interaction.",
+                "task": "Discuss both viewpoints and share your own perspective on the impact of social media."
+            }
+        ]
+    }
+}
