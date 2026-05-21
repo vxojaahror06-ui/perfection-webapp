@@ -1,1225 +1,616 @@
-:root {
-    --primary-color: #2563eb; 
-    --primary-light: #eff6ff;
-    --secondary-color: #f59e0b;
-    --success-color: #10b981;
-    --danger-color: #ef4444;
-    --purple-color: #8b5cf6;
-    
-    --text-main: #1f2937;
-    --text-muted: #6b7280;
-    --bg-main: #f3f4f6; 
-    --bg-card: #ffffff;
-    --border-color: #e5e7eb;
-    
-    --border-radius-lg: 20px;
-    --border-radius-md: 16px;
-    --border-radius-sm: 12px;
-}
-
-* {
-    margin: 0;
-    padding: 0;
-    box-sizing: border-box;
-    -webkit-tap-highlight-color: transparent;
-}
-
-body {
-    font-family: 'Inter', sans-serif;
-    background-color: #111; /* Outer background for desktop preview */
-    color: var(--text-main);
-    display: flex;
-    justify-content: center;
-    min-height: 100vh;
-}
-
-.app-container {
-    width: 100%;
-    max-width: 480px; 
-    background-color: var(--bg-main);
-    position: relative;
-    display: flex;
-    flex-direction: column;
-    min-height: 100vh;
-    box-shadow: 0 0 30px rgba(0,0,0,0.2);
-    overflow: hidden;
-}
-
-/* Header */
-.app-header {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    padding: 16px 20px;
-    background-color: var(--bg-main);
-    color: var(--text-main);
-    z-index: 10;
-}
-
-.header-left {
-    display: flex;
-    align-items: center;
-    gap: 12px;
-}
-
-.header-left i {
-    font-size: 24px;
-    cursor: pointer;
-    color: var(--text-main);
-}
-
-.app-title {
-    font-size: 18px;
-    font-weight: 700;
-}
-
-.header-right {
-    display: flex;
-    align-items: center;
-    gap: 16px;
-}
-
-.header-right i {
-    font-size: 22px;
-    color: var(--text-muted);
-}
-
-.streak-badge {
-    display: flex;
-    align-items: center;
-    gap: 4px;
-    background-color: #fff7ed;
-    color: #ea580c;
-    padding: 4px 10px;
-    border-radius: 20px;
-    font-weight: 700;
-    font-size: 14px;
-}
-
-/* Sections (SPA) */
-.app-main {
-    flex: 1;
-    overflow-y: auto;
-    overflow-x: hidden;
-    padding-bottom: 90px; /* space for bottom nav */
-    position: relative;
-}
-
-.app-section {
-    display: none;
-    padding: 0 20px 20px;
-    animation: fadeIn 0.3s ease;
-}
-
-.app-section.active {
-    display: block;
-}
-
-@keyframes fadeIn {
-    from { opacity: 0; transform: translateY(10px); }
-    to { opacity: 1; transform: translateY(0); }
-}
-
-/* General Typography */
-.mt-2 { margin-top: 8px; }
-.mb-4 { margin-bottom: 16px; }
-.text-center { text-align: center; }
-.text-orange { color: #ea580c; }
-.text-yellow { color: #eab308; }
-.text-blue { color: #3b82f6; }
-.text-green { color: #10b981; }
-.text-red { color: #ef4444; }
-
-.section-header {
-    margin: 10px 0 20px;
-}
-
-.section-header h2 {
-    font-size: 22px;
-    font-weight: 700;
-    margin-bottom: 4px;
-}
-
-.section-header p {
-    color: var(--text-muted);
-    font-size: 14px;
-}
-
-/* Home Section */
-.welcome-area {
-    margin: 10px 0 20px;
-}
-
-.welcome-area h2 {
-    font-size: 24px;
-    font-weight: 800;
-}
-
-.welcome-area p {
-    color: var(--text-muted);
-    font-size: 14px;
-    margin-top: 4px;
-}
-
-/* Vocab Widget */
-.vocab-widget {
-    background-color: var(--bg-card);
-    border-radius: var(--border-radius-md);
-    padding: 16px;
-    margin-bottom: 20px;
-    box-shadow: 0 4px 15px rgba(0,0,0,0.03);
-    border-left: 4px solid var(--secondary-color);
-}
-
-.vocab-header {
-    display: flex;
-    justify-content: space-between;
-    font-size: 12px;
-    font-weight: 600;
-    color: var(--text-muted);
-    margin-bottom: 8px;
-    text-transform: uppercase;
-}
-
-.vocab-title {
-    display: flex;
-    align-items: center;
-    gap: 4px;
-    color: var(--secondary-color);
-}
-
-.vocab-word {
-    font-size: 20px;
-    font-weight: 700;
-    color: var(--primary-color);
-}
-
-.vocab-pronunciation {
-    font-size: 13px;
-    color: var(--text-muted);
-    margin-bottom: 6px;
-}
-
-.vocab-meaning {
-    font-size: 14px;
-    color: var(--text-main);
-}
-
-/* Banner Card */
-.banner-card {
-    background: linear-gradient(135deg, #2563eb, #1d4ed8);
-    border-radius: var(--border-radius-lg);
-    padding: 24px;
-    color: white;
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    position: relative;
-    overflow: hidden;
-    margin-bottom: 24px;
-    cursor: pointer;
-    box-shadow: 0 10px 25px -5px rgba(37, 99, 235, 0.3);
-}
-
-.banner-content {
-    z-index: 2;
-    max-width: 60%;
-}
-
-.banner-content h2 {
-    font-size: 18px;
-    font-weight: 800;
-    line-height: 1.3;
-    margin-bottom: 12px;
-}
-
-.progress-container {
-    background-color: rgba(255,255,255,0.15);
-    padding: 10px;
-    border-radius: 12px;
-    backdrop-filter: blur(5px);
-}
-
-.progress-text {
-    display: flex;
-    justify-content: space-between;
-    font-size: 11px;
-    font-weight: 600;
-    margin-bottom: 6px;
-}
-
-.progress-bar {
-    height: 6px;
-    background-color: rgba(255,255,255,0.2);
-    border-radius: 3px;
-    overflow: hidden;
-}
-
-.progress-fill {
-    height: 100%;
-    background-color: #fff;
-    border-radius: 3px;
-}
-
-.banner-image {
-    position: absolute;
-    right: -10px;
-    bottom: -10px;
-    width: 150px;
-    height: 150px;
-    z-index: 1;
-}
-
-.banner-image img {
-    width: 100%;
-    height: 100%;
-    object-fit: contain;
-}
-
-/* Grid Menu */
-.grid-container {
-    display: grid;
-    grid-template-columns: repeat(3, 1fr);
-    gap: 12px;
-}
-
-.grid-card {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    gap: 8px;
-    cursor: pointer;
-}
-
-.card-icon-wrapper {
-    width: 56px;
-    height: 56px;
-    background-color: var(--bg-card);
-    border-radius: var(--border-radius-md);
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    box-shadow: 0 4px 10px rgba(0,0,0,0.03);
-}
-
-.card-icon-wrapper i {
-    font-size: 26px;
-}
-
-.blue-icon i { color: var(--primary-color); }
-.orange-icon i { color: var(--secondary-color); }
-.green-icon i { color: var(--success-color); }
-.purple-icon i { color: var(--purple-color); }
-
-.card-title {
-    font-size: 12px;
-    font-weight: 600;
-    color: var(--text-main);
-}
-
-/* Lessons Section */
-.lessons-list {
-    display: flex;
-    flex-direction: column;
-    gap: 16px;
-}
-
-.lesson-card {
-    background-color: var(--bg-card);
-    border-radius: var(--border-radius-md);
-    padding: 16px;
-    display: flex;
-    align-items: center;
-    gap: 16px;
-    box-shadow: 0 2px 8px rgba(0,0,0,0.02);
-}
-
-.lesson-icon {
-    font-size: 32px;
-}
-
-.lesson-card.completed .lesson-icon { color: var(--success-color); }
-.lesson-card.active .lesson-icon { color: var(--primary-color); }
-.lesson-card.locked .lesson-icon { color: var(--text-muted); opacity: 0.5; }
-.lesson-card.locked { opacity: 0.7; background-color: transparent; border: 1px solid var(--border-color); box-shadow: none; }
-
-.lesson-info {
-    flex: 1;
-}
-
-.lesson-info h3 {
-    font-size: 15px;
-    font-weight: 600;
-    margin-bottom: 4px;
-}
-
-.lesson-info p {
-    font-size: 12px;
-    color: var(--text-muted);
-}
-
-.btn-icon {
-    width: 36px;
-    height: 36px;
-    border-radius: 50%;
-    border: none;
-    background-color: var(--primary-light);
-    color: var(--primary-color);
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    font-size: 18px;
-}
-
-.btn-primary {
-    background-color: var(--primary-color);
-    color: white;
-    border: none;
-    padding: 8px 16px;
-    border-radius: 20px;
-    font-size: 13px;
-    font-weight: 600;
-    cursor: pointer;
-}
-
-/* Rating Section (Leaderboard) */
-.podium-container {
-    display: flex;
-    justify-content: center;
-    align-items: flex-end;
-    gap: 12px;
-    margin: 30px 0 40px;
-    height: 180px;
-}
-
-.podium-item {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    width: 30%;
-}
-
-.avatar-circle {
-    width: 64px;
-    height: 64px;
-    border-radius: 50%;
-    overflow: hidden;
-    border: 3px solid white;
-    box-shadow: 0 4px 10px rgba(0,0,0,0.1);
-    margin-bottom: -15px;
-    z-index: 2;
-    background-color: var(--bg-main);
-}
-
-.avatar-circle img {
-    width: 100%;
-    height: 100%;
-    object-fit: cover;
-}
-
-.podium-item.first .avatar-circle { width: 80px; height: 80px; border-color: #fef08a; }
-
-.podium-rank {
-    width: 30px;
-    height: 30px;
-    border-radius: 50%;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    font-weight: 800;
-    color: white;
-    font-size: 14px;
-    z-index: 3;
-    border: 2px solid white;
-}
-
-.gold { background-color: #eab308; }
-.silver { background-color: #94a3b8; }
-.bronze { background-color: #d97706; }
-
-.podium-name {
-    font-weight: 700;
-    font-size: 14px;
-    margin-top: 8px;
-}
-
-.podium-score {
-    font-size: 12px;
-    color: var(--text-muted);
-    font-weight: 600;
-}
-
-.podium-item.first { margin-bottom: 20px; }
-
-.leaderboard-list {
-    background-color: var(--bg-card);
-    border-radius: var(--border-radius-lg);
-    padding: 10px;
-    box-shadow: 0 4px 15px rgba(0,0,0,0.03);
-}
-
-.lb-item {
-    display: flex;
-    align-items: center;
-    padding: 12px;
-    border-bottom: 1px solid var(--bg-main);
-}
-
-.lb-item:last-child { border-bottom: none; }
-
-.lb-item.current-user {
-    background-color: var(--primary-light);
-    border-radius: var(--border-radius-sm);
-    border: none;
-}
-
-.lb-rank {
-    width: 30px;
-    font-weight: 700;
-    color: var(--text-muted);
-    text-align: center;
-}
-
-.lb-user {
-    display: flex;
-    align-items: center;
-    gap: 12px;
-    flex: 1;
-    margin-left: 10px;
-}
-
-.lb-avatar {
-    width: 40px;
-    height: 40px;
-    border-radius: 50%;
-    overflow: hidden;
-}
-
-.lb-avatar img { width: 100%; height: 100%; }
-
-.lb-name {
-    font-weight: 600;
-    font-size: 14px;
-}
-
-.lb-score {
-    font-weight: 700;
-    color: var(--primary-color);
-    font-size: 14px;
-}
-
-/* Resources Section */
-.search-box {
-    display: flex;
-    align-items: center;
-    background-color: var(--bg-card);
-    border-radius: var(--border-radius-md);
-    padding: 12px 16px;
-    gap: 12px;
-    box-shadow: 0 2px 10px rgba(0,0,0,0.03);
-}
-
-.search-icon { font-size: 20px; color: var(--text-muted); }
-
-.search-input {
-    border: none;
-    background: transparent;
-    font-size: 15px;
-    font-family: inherit;
-    width: 100%;
-    color: var(--text-main);
-    outline: none;
-}
-
-.resource-grid {
-    display: grid;
-    grid-template-columns: 1fr 1fr;
-    gap: 16px;
-}
-
-.resource-card {
-    background-color: var(--bg-card);
-    border-radius: var(--border-radius-md);
-    padding: 20px;
-    box-shadow: 0 4px 10px rgba(0,0,0,0.03);
-}
-
-.r-icon {
-    width: 48px;
-    height: 48px;
-    border-radius: 12px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    font-size: 24px;
-    color: white;
-    margin-bottom: 16px;
-}
-
-.bg-blue { background-color: var(--primary-color); }
-.bg-green { background-color: var(--success-color); }
-.bg-orange { background-color: var(--secondary-color); }
-.bg-purple { background-color: var(--purple-color); }
-
-.resource-card h4 {
-    font-size: 16px;
-    font-weight: 700;
-    margin-bottom: 4px;
-}
-
-.resource-card p {
-    font-size: 12px;
-    color: var(--text-muted);
-}
-
-/* Profile Section */
-.profile-header {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    margin-bottom: 24px;
-}
-
-.profile-avatar {
-    width: 100px;
-    height: 100px;
-    border-radius: 50%;
-    margin-bottom: 16px;
-    position: relative;
-}
-
-.profile-avatar img {
-    width: 100%;
-    height: 100%;
-    border-radius: 50%;
-    object-fit: cover;
-    border: 3px solid white;
-    box-shadow: 0 4px 15px rgba(0,0,0,0.1);
-}
-
-.edit-avatar {
-    position: absolute;
-    bottom: 0;
-    right: 0;
-    width: 32px;
-    height: 32px;
-    background-color: var(--primary-color);
-    color: white;
-    border: none;
-    border-radius: 50%;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    font-size: 16px;
-    cursor: pointer;
-    border: 2px solid white;
-}
-
-.profile-name {
-    font-size: 20px;
-    font-weight: 700;
-}
-
-.profile-role {
-    font-size: 14px;
-    color: var(--text-muted);
-    margin-top: 4px;
-}
-
-.role-switch-btn {
-    margin-top: 12px;
-    background-color: var(--bg-card);
-    border: 1px solid var(--border-color);
-    padding: 6px 12px;
-    border-radius: 20px;
-    font-size: 12px;
-    font-weight: 600;
-    cursor: pointer;
-    color: var(--text-main);
-}
-
-.profile-stats {
-    display: flex;
-    gap: 12px;
-    margin-bottom: 24px;
-}
-
-.stat-box {
-    flex: 1;
-    background-color: var(--bg-card);
-    border-radius: var(--border-radius-md);
-    padding: 16px 10px;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    box-shadow: 0 4px 10px rgba(0,0,0,0.03);
-}
-
-.stat-box i { font-size: 24px; margin-bottom: 8px; }
-.stat-value { font-size: 18px; font-weight: 800; margin-bottom: 2px; }
-.stat-label { font-size: 11px; color: var(--text-muted); font-weight: 500; text-transform: uppercase; }
-
-.profile-menu {
-    background-color: var(--bg-card);
-    border-radius: var(--border-radius-lg);
-    overflow: hidden;
-    box-shadow: 0 4px 15px rgba(0,0,0,0.03);
-}
-
-.menu-item {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    padding: 16px 20px;
-    border-bottom: 1px solid var(--bg-main);
-    cursor: pointer;
-}
-
-.menu-item:last-child { border-bottom: none; }
-
-.menu-item-left {
-    display: flex;
-    align-items: center;
-    gap: 16px;
-    font-weight: 600;
-    font-size: 15px;
-}
-
-.menu-icon {
-    width: 36px;
-    height: 36px;
-    background-color: var(--bg-main);
-    border-radius: 10px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    font-size: 20px;
-    color: var(--text-main);
-}
-
-/* Bottom Navigation */
-.bottom-nav {
-    position: absolute;
-    bottom: 0;
-    left: 0;
-    width: 100%;
-    background-color: var(--bg-card);
-    display: flex;
-    justify-content: space-around;
-    align-items: center;
-    padding: 12px 0 20px;
-    border-top: 1px solid var(--border-color);
-    z-index: 20;
-    box-shadow: 0 -4px 20px rgba(0,0,0,0.05);
-}
-
-.nav-item {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    gap: 6px;
-    text-decoration: none;
-    color: var(--text-muted);
-    transition: all 0.2s ease;
-    width: 20%;
-}
-
-.nav-item i { font-size: 24px; }
-.nav-item span { font-size: 10px; font-weight: 600; }
-
-.nav-item.active {
-    color: var(--primary-color);
-}
-.nav-item.active i {
-    font-weight: 700;
-}
-
-/* Forms & Dictionary */
-.auth-form {
-    background-color: var(--bg-card);
-    padding: 20px;
-    border-radius: var(--border-radius-lg);
-    box-shadow: 0 4px 15px rgba(0,0,0,0.05);
-}
-
-.form-group label {
-    display: block;
-    font-size: 14px;
-    font-weight: 600;
-    margin-bottom: 8px;
-    color: var(--text-main);
-}
-
-.form-group input, .form-group select {
-    width: 100%;
-    padding: 12px 16px;
-    border: 1px solid var(--border-color);
-    border-radius: var(--border-radius-md);
-    background-color: var(--bg-main);
-    font-family: inherit;
-    font-size: 15px;
-    color: var(--text-main);
-    outline: none;
-    transition: border-color 0.2s;
-}
-
-.form-group input:focus, .form-group select:focus {
-    border-color: var(--primary-color);
-}
-
-.w-100 { width: 100%; }
-
-.dictionary-list {
-    display: flex;
-    flex-direction: column;
-    gap: 12px;
-}
-
-.dict-item {
-    display: flex;
-    align-items: center;
-    background-color: var(--bg-card);
-    padding: 16px;
-    border-radius: var(--border-radius-md);
-    box-shadow: 0 2px 8px rgba(0,0,0,0.03);
-}
-
-.dict-main {
-    font-size: 24px;
-    font-weight: 800;
-    color: var(--primary-color);
-    width: 60px;
-    text-align: center;
-}
-
-.dict-info {
-    flex: 1;
-    border-left: 2px solid var(--bg-main);
-    padding-left: 16px;
-}
-
-.dict-pron {
-    font-size: 13px;
-    color: var(--text-muted);
-    font-weight: 600;
-}
-
-.dict-trans {
-    font-size: 15px;
-    font-weight: 500;
-    color: var(--text-main);
-    margin-top: 4px;
-}
-
-/* AI Writing Result Styles */
-.result-card {
-    background-color: var(--bg-card);
-    border-radius: var(--border-radius-md);
-    padding: 16px;
-    box-shadow: 0 4px 15px rgba(0,0,0,0.03);
-    border-left: 4px solid var(--primary-color);
-}
-
-.result-card.band-card {
-    border-left: none;
-    text-align: center;
-    background: linear-gradient(135deg, var(--bg-card), var(--bg-main));
-    border: 2px solid var(--primary-color);
-}
-
-.result-card h3 {
-    font-size: 16px;
-    color: var(--text-muted);
-    margin-bottom: 8px;
-}
-
-.result-card h4 {
-    font-size: 14px;
-    font-weight: 700;
-    margin-bottom: 8px;
-    display: flex;
-    align-items: center;
-    gap: 6px;
-}
-
-.band-score {
-    font-size: 42px;
-    font-weight: 800;
-    color: var(--primary-color);
-}
-
-.result-card p {
-    font-size: 14px;
-    color: var(--text-main);
-    line-height: 1.5;
-}
-
-/* Premium Select Box */
-.custom-select {
-    appearance: none;
-    -webkit-appearance: none;
-    -moz-appearance: none;
-    background-color: var(--bg-card);
-    border: 1px solid var(--border-color);
-    padding: 14px 16px;
-    border-radius: 12px;
-    color: var(--text-main);
-    font-size: 15px;
-    font-weight: 500;
-    font-family: inherit;
-    width: 100%;
-    cursor: pointer;
-    transition: all 0.3s ease;
-    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='16' height='16' fill='%239ca3af' viewBox='0 0 256 256'%3E%3Cpath d='M213.66,101.66l-80,80a8,8,0,0,1-11.32,0l-80-80A8,8,0,0,1,53.66,90.34L128,164.69l74.34-74.35a8,8,0,0,1,11.32,11.32Z'%3E%3C/path%3E%3C/svg%3E");
-    background-repeat: no-repeat;
-    background-position: right 16px center;
-}
-.custom-select:focus {
-    outline: none;
-    border-color: var(--primary-color);
-    box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.15);
-}
-
-/* Premium Upload Zone */
-.upload-zone-wrapper {
-    position: relative;
-    width: 100%;
-}
-.upload-label {
-    display: flex;
-    flex-direction: row;
-    align-items: center;
-    justify-content: flex-start;
-    padding: 20px;
-    gap: 16px;
-    border: 2px dashed rgba(59, 130, 246, 0.4);
-    border-radius: 16px;
-    background: linear-gradient(135deg, rgba(59, 130, 246, 0.05) 0%, rgba(139, 92, 246, 0.05) 100%);
-    cursor: pointer;
-    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-    box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.1);
-}
-.upload-label:hover {
-    border-color: rgba(139, 92, 246, 0.8);
-    background: linear-gradient(135deg, rgba(59, 130, 246, 0.1) 0%, rgba(139, 92, 246, 0.1) 100%);
-    transform: translateY(-3px);
-    box-shadow: 0 10px 25px -5px rgba(139, 92, 246, 0.2), inset 0 0 0 1px rgba(255, 255, 255, 0.2);
-}
-.upload-icon {
-    font-size: 32px;
-    color: #8b5cf6;
-    margin-bottom: 0;
-    background: var(--bg-main);
-    width: 56px;
-    height: 56px;
-    border-radius: 16px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    box-shadow: 0 4px 15px rgba(0,0,0,0.08);
-}
-.upload-text-content {
-    text-align: left;
-}
-.upload-title {
-    font-size: 16px;
-    font-weight: 700;
-    color: var(--text-main);
-    margin-bottom: 2px;
-    background: linear-gradient(90deg, #3b82f6, #8b5cf6);
-    -webkit-background-clip: text;
-    -webkit-text-fill-color: transparent;
-}
-.upload-subtitle {
-    font-size: 13px;
-    color: var(--text-muted);
-}
-.image-preview-wrapper {
-    position: relative;
-    margin-top: 16px;
-    border-radius: 16px;
-    overflow: hidden;
-    box-shadow: 0 8px 25px rgba(0,0,0,0.08);
-}
-.image-preview-wrapper img {
-    width: 100%;
-    display: block;
-    object-fit: cover;
-    max-height: 250px;
-}
-.btn-remove-img {
-    position: absolute;
-    top: 10px;
-    right: 10px;
-    background: rgba(0, 0, 0, 0.6);
-    border: none;
-    color: white;
-    width: 36px;
-    height: 36px;
-    border-radius: 50%;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    cursor: pointer;
-    backdrop-filter: blur(4px);
-    transition: all 0.2s ease;
-    font-size: 18px;
-}
-.btn-remove-img:hover {
-    background: #ef4444;
-    transform: scale(1.1);
-}
-
-/* NEW ADDITIONS FOR READING, LISTENING & AUTH */
-
-/* Glassmorphism */
-.glass-card {
-    background: rgba(255, 255, 255, 0.75);
-    backdrop-filter: blur(12px);
-    -webkit-backdrop-filter: blur(12px);
-    border: 1px solid rgba(255, 255, 255, 0.5);
-    box-shadow: 0 8px 32px 0 rgba(31, 38, 135, 0.05);
-    border-radius: var(--border-radius-lg);
-}
-
-.dark-theme .glass-card {
-    background: rgba(31, 41, 55, 0.6);
-    border: 1px solid rgba(255, 255, 255, 0.05);
-}
-
-/* Auth Wizard */
-.auth-step {
-    display: none;
-    animation: slideInRight 0.4s ease forwards;
-}
-.auth-step.active {
-    display: block;
-}
-
-@keyframes slideInRight {
-    from { opacity: 0; transform: translateX(30px); }
-    to { opacity: 1; transform: translateX(0); }
-}
-
-/* Levels & Tests Grid */
-.level-grid {
-    display: grid;
-    grid-template-columns: repeat(3, 1fr);
-    gap: 10px;
-    margin-top: 16px;
-}
-
-.level-btn {
-    background: var(--bg-card);
-    border: 1px solid var(--border-color);
-    padding: 14px 0;
-    border-radius: var(--border-radius-md);
-    font-weight: 700;
-    font-size: 14px;
-    color: var(--text-main);
-    cursor: pointer;
-    transition: all 0.2s;
-    text-align: center;
-    box-shadow: 0 2px 8px rgba(0,0,0,0.02);
-}
-
-.level-btn:hover, .level-btn.active {
-    background: var(--primary-color);
-    color: white;
-    border-color: var(--primary-color);
-    transform: translateY(-2px);
-}
-
-.tests-grid {
-    display: grid;
-    grid-template-columns: repeat(5, 1fr);
-    gap: 10px;
-    margin-top: 20px;
-}
-
-.test-btn {
-    aspect-ratio: 1;
-    border-radius: 50%;
-    border: none;
-    background: var(--bg-card);
-    color: var(--text-main);
-    font-weight: 700;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    box-shadow: 0 3px 8px rgba(0,0,0,0.05);
-    cursor: pointer;
-    transition: all 0.2s;
-}
-
-.test-btn:hover {
-    background: var(--primary-color);
-    color: white;
-    transform: scale(1.1);
-}
-
-.test-btn.completed {
-    background: var(--success-color);
-    color: white;
-}
-
-/* Reading & Listening Elements */
-.passage-box {
-    background: var(--bg-card);
-    padding: 16px;
-    border-radius: var(--border-radius-md);
-    max-height: 280px;
-    overflow-y: auto;
-    font-size: 14px;
-    line-height: 1.6;
-    margin-bottom: 20px;
-    border: 1px solid var(--border-color);
-    box-shadow: inset 0 2px 10px rgba(0,0,0,0.02);
-}
-
-.quiz-question {
-    background: var(--bg-card);
-    padding: 16px;
-    border-radius: var(--border-radius-md);
-    margin-bottom: 12px;
-    box-shadow: 0 4px 12px rgba(0,0,0,0.03);
-}
-
-.quiz-question h4 {
-    font-size: 15px;
-    font-weight: 600;
-    margin-bottom: 12px;
-}
-
-.quiz-options label {
-    display: flex;
-    align-items: center;
-    gap: 12px;
-    padding: 12px 16px;
-    border: 2px solid var(--border-color);
-    border-radius: 10px;
-    margin-bottom: 8px;
-    cursor: pointer;
-    transition: all 0.2s;
-    font-size: 14px;
-    font-weight: 500;
-}
-
-.quiz-options label:hover {
-    background: var(--primary-light);
-    border-color: var(--primary-light);
-}
-
-.quiz-options input[type="radio"] {
-    accent-color: var(--primary-color);
-    width: 18px;
-    height: 18px;
-}
-
-/* Audio Player Custom UI */
-.audio-player-card {
-    display: flex;
-    align-items: center;
-    gap: 15px;
-    background: var(--bg-card);
-    padding: 16px 20px;
-    border-radius: var(--border-radius-lg);
-    box-shadow: 0 8px 20px rgba(0,0,0,0.05);
-    margin-bottom: 24px;
-    border: 1px solid var(--border-color);
-}
-
-.play-btn {
-    width: 50px;
-    height: 50px;
-    border-radius: 50%;
-    background: linear-gradient(135deg, var(--primary-color), #4f46e5);
-    color: white;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    font-size: 22px;
-    border: none;
-    cursor: pointer;
-    box-shadow: 0 4px 15px rgba(37,99,235,0.4);
-    transition: transform 0.2s;
-}
-
-.play-btn:active {
-    transform: scale(0.95);
-}
-
-.audio-timeline-wrapper {
-    flex: 1;
-    display: flex;
-    flex-direction: column;
-    gap: 6px;
-}
-
-.audio-timeline {
-    height: 6px;
-    background: var(--border-color);
-    border-radius: 3px;
-    position: relative;
-    cursor: pointer;
-}
-
-.audio-progress {
-    position: absolute;
-    top: 0; left: 0;
-    height: 100%;
-    width: 0%;
-    background: var(--primary-color);
-    border-radius: 3px;
-    transition: width 0.1s linear;
-}
-
-.audio-progress::after {
-    content: '';
-    position: absolute;
-    right: -5px;
-    top: -4px;
-    width: 14px;
-    height: 14px;
-    background: white;
-    border: 2px solid var(--primary-color);
-    border-radius: 50%;
-    box-shadow: 0 2px 5px rgba(0,0,0,0.2);
-}
-
-.audio-time {
-    display: flex;
-    justify-content: space-between;
-    font-size: 11px;
-    font-weight: 600;
-    color: var(--text-muted);
-}
-
-/* --- DARK MODE & SETTINGS --- */
-body.dark-mode {
-    --text-main: #f3f4f6;
-    --text-muted: #9ca3af;
-    --bg-main: #111827;
-    --bg-card: rgba(31, 41, 55, 0.7);
-    --border-color: rgba(255, 255, 255, 0.1);
-    --primary-light: #1e3a8a;
-    background-color: #000;
-}
-
-body.dark-mode .app-container {
-    background-color: #111827;
-}
-
-body.dark-mode .glass-card, 
-body.dark-mode .nav-item.active {
-    background: rgba(31, 41, 55, 0.7);
-    border: 1px solid rgba(255, 255, 255, 0.1);
-}
-
-body.dark-mode .app-header {
-    background: rgba(17, 24, 39, 0.8);
-}
-
-body.dark-mode .bottom-nav {
-    background: rgba(17, 24, 39, 0.8);
-}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Perfection English School</title>
+    <!-- Phosphor Icons -->
+    <script src="https://unpkg.com/@phosphor-icons/web"></script>
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <!-- Custom CSS -->
+    <link rel="stylesheet" href="style.css?v=2">
+    <!-- Telegram Web App SDK -->
+    <script src="https://telegram.org/js/telegram-web-app.js"></script>
+</head>
+<body>
+    <div class="app-container not-registered">
+        <!-- Header -->
+        <header class="app-header">
+            <div class="header-left">
+                <i class="ph ph-text-align-left" id="menu-btn"></i>
+                <h1 class="app-title">Perfection School</h1>
+            </div>
+            <div class="header-right">
+                <div class="streak-badge">
+                    <i class="ph-fill ph-fire"></i>
+                    <span>12</span>
+                </div>
+                <i class="ph ph-bell"></i>
+            </div>
+        </header>
+        <main class="app-main">
+            <!-- SECTION: AUTH (Registration) -->
+            <!-- SECTION: AUTH NAME -->
+            <section id="auth-name-section" class="app-section active">
+                <div class="welcome-area text-center" style="margin-top: 40px;">
+                    <div class="brand-logo-container mx-auto mb-4" style="margin: 0 auto 20px; text-align: center;">
+                        <img src="logo.jpg" alt="Perfection English School" style="max-width: 250px; width: 100%; border-radius: 8px; box-shadow: 0 4px 15px rgba(0,0,0,0.1);">
+                    </div>
+                    <h2>Welcome to our School!</h2>
+                    <p>Let's set up your profile</p>
+                </div>
+                <form id="reg-name-form" class="auth-form glass-card" style="margin-top: 30px;">
+                    <div class="form-group mb-4">
+                        <label>What's your full name?</label>
+                        <input type="text" id="reg-name" placeholder="e.g., Azizbek Rustamov" required>
+                    </div>
+                    <button type="submit" class="btn-primary w-100" style="padding: 14px; font-size: 16px; display:flex; justify-content:center; align-items:center; gap:8px;">Next <i class="ph ph-arrow-right"></i></button>
+                </form>
+            </section>
+            <!-- SECTION: AUTH PHONE -->
+            <section id="auth-phone-section" class="app-section">
+                <div class="section-header" style="display: flex; align-items: center; gap: 10px; margin-top: 20px;">
+                    <button type="button" class="btn-icon" onclick="switchTab('auth-name')" style="background:transparent; color:var(--text-main);"><i class="ph ph-arrow-left"></i></button>
+                    <h2 style="margin:0;">Contact Info</h2>
+                </div>
+                <form id="reg-phone-form" class="auth-form glass-card" style="margin-top: 20px;">
+                    <div class="form-group mb-4">
+                        <label>Your Phone Number</label>
+                        <input type="tel" id="reg-phone" placeholder="+998" required>
+                    </div>
+                    <button type="submit" class="btn-primary w-100" style="padding: 14px; font-size: 16px; display:flex; justify-content:center; align-items:center; gap:8px;">Next <i class="ph ph-arrow-right"></i></button>
+                </form>
+            </section>
+            <!-- SECTION: AUTH LEVEL -->
+            <section id="auth-level-section" class="app-section">
+                <div class="section-header" style="display: flex; align-items: center; gap: 10px; margin-top: 20px;">
+                    <button type="button" class="btn-icon" onclick="switchTab('auth-phone')" style="background:transparent; color:var(--text-main);"><i class="ph ph-arrow-left"></i></button>
+                    <h2 style="margin:0;">English Level</h2>
+                </div>
+                <form id="reg-level-form" class="auth-form glass-card" style="margin-top: 20px;">
+                    <div class="form-group mb-4">
+                        <label>Select your current level</label>
+                        <select id="reg-level" required>
+                            <option value="" disabled selected>Select level</option>
+                            <option value="Beginner">Beginner</option>
+                            <option value="Elementary">Elementary</option>
+                            <option value="Pre-Intermediate">Pre-Intermediate</option>
+                            <option value="Intermediate">Intermediate</option>
+                            <option value="Upper-Intermediate">Upper-Intermediate</option>
+                            <option value="Pre-IELTS">Pre-IELTS</option>
+                            <option value="IELTS">IELTS</option>
+                        </select>
+                    </div>
+                    <button type="submit" class="btn-primary w-100" style="padding: 14px; font-size: 16px; background: var(--success-color); display:flex; justify-content:center; align-items:center; gap:8px;">Finish <i class="ph ph-check"></i></button>
+                </form>
+            </section>
+            <!-- SECTION: HOME -->
+            <section id="home-section" class="app-section">
+                <div class="welcome-area">
+                    <h2>Hello, Student 👋</h2>
+                    <p>What are we learning today?</p>
+                </div>
+                <!-- Vocabulary of the Day Widget -->
+                <div class="vocab-widget">
+                    <div class="vocab-header">
+                        <span class="vocab-title"><i class="ph-fill ph-star"></i> Word of the Day</span>
+                        <span class="vocab-date">Today</span>
+                    </div>
+                    <div class="vocab-content">
+                        <div class="vocab-word">Perseverance</div>
+                        <div class="vocab-pronunciation">/ˌpɜːrsəˈvɪrəns/</div>
+                        <div class="vocab-meaning">Persistence in doing something despite difficulty.</div>
+                    </div>
+                </div>
+                <!-- Main Banner -->
+                <div class="banner-card" onclick="switchTab('lessons')">
+                    <div class="banner-content">
+                        <h2>LEARN<br>ENGLISH<br>WITH US!</h2>
+                        <div class="progress-container mt-2">
+                            <div class="progress-text">
+                                <span>Pre-IELTS Course</span>
+                                <span>65%</span>
+                            </div>
+                            <div class="progress-bar">
+                                <div class="progress-fill" style="width: 65%;"></div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="banner-image">
+                        <img src="https://illustrations.popsy.co/blue/student-going-to-school.svg" alt="Education">
+                    </div>
+                </div>
+                <!-- Grid Cards -->
+                <div class="grid-container">
+                    <div class="grid-card" onclick="switchTab('lessons')">
+                        <div class="card-icon-wrapper blue-icon">
+                            <i class="ph ph-books"></i>
+                        </div>
+                        <span class="card-title">Lessons</span>
+                    </div>
+                    <div class="grid-card" onclick="switchTab('reading')">
+                        <div class="card-icon-wrapper orange-icon">
+                            <i class="ph ph-book-open"></i>
+                        </div>
+                        <span class="card-title">Reading</span>
+                    </div>
+                    <div class="grid-card" onclick="switchTab('listening')">
+                        <div class="card-icon-wrapper green-icon">
+                            <i class="ph ph-headphones"></i>
+                        </div>
+                        <span class="card-title">Listening</span>
+                    </div>
+                    <div class="grid-card" onclick="switchTab('speaking')">
+                        <div class="card-icon-wrapper" style="color:var(--danger-color); background: rgba(239, 68, 68, 0.1);">
+                            <i class="ph ph-microphone"></i>
+                        </div>
+                        <span class="card-title">Speaking</span>
+                    </div>
+                    <div class="grid-card" onclick="switchTab('writing')">
+                        <div class="card-icon-wrapper purple-icon">
+                            <i class="ph ph-robot"></i>
+                        </div>
+                        <span class="card-title">Writing</span>
+                    </div>
+                    <div class="grid-card" onclick="switchTab('rating')">
+                        <div class="card-icon-wrapper" style="color:var(--secondary-color);">
+                            <i class="ph ph-trophy"></i>
+                        </div>
+                        <span class="card-title">Ranking</span>
+                    </div>
+                    <div class="grid-card" onclick="switchTab('resources')">
+                        <div class="card-icon-wrapper" style="color:var(--danger-color);">
+                            <i class="ph ph-folder-open"></i>
+                        </div>
+                        <span class="card-title">Resources</span>
+                    </div>
+                </div>
+            </section>
+            <!-- SECTION: LESSONS -->
+            <section id="lessons-section" class="app-section">
+                <div class="section-header">
+                    <h2>My Lessons</h2>
+                    <p>Your current level: <strong>Pre-IELTS</strong></p>
+                </div>
+                
+                <div class="lessons-list">
+                    <div class="lesson-card completed">
+                        <div class="lesson-icon"><i class="ph-fill ph-check-circle"></i></div>
+                        <div class="lesson-info">
+                            <h3>Lesson 1: Present Simple vs Continuous</h3>
+                            <p>Grammar and Practice</p>
+                        </div>
+                        <div class="lesson-action">
+                            <button class="btn-icon"><i class="ph ph-play"></i></button>
+                        </div>
+                    </div>
+                    <div class="lesson-card active">
+                        <div class="lesson-icon"><i class="ph-fill ph-play-circle"></i></div>
+                        <div class="lesson-info">
+                            <h3>Lesson 2: IELTS Speaking Part 1</h3>
+                            <p>Most common questions</p>
+                        </div>
+                        <div class="lesson-action">
+                            <button class="btn-primary">Start</button>
+                        </div>
+                    </div>
+                    <div class="lesson-card locked">
+                        <div class="lesson-icon"><i class="ph-fill ph-lock-key"></i></div>
+                        <div class="lesson-info">
+                            <h3>Lesson 3: Writing Task 1 Basics</h3>
+                            <p>Complete previous lesson</p>
+                        </div>
+                    </div>
+                </div>
+            </section>
+            <!-- SECTION: RATING (LEADERBOARD) -->
+            <section id="rating-section" class="app-section">
+                <div class="section-header text-center">
+                    <h2>Leaderboard</h2>
+                    <p>Most active students</p>
+                </div>
+                <div class="podium-container">
+                    <div class="podium-item second">
+                        <div class="avatar-circle"><img src="https://i.pravatar.cc/150?u=a042581f4e29026704d" alt="Avatar"></div>
+                        <div class="podium-rank silver">2</div>
+                        <div class="podium-name">Malika</div>
+                        <div class="podium-score">1240 xp</div>
+                    </div>
+                    <div class="podium-item first">
+                        <div class="avatar-circle"><img src="https://i.pravatar.cc/150?u=a042581f4e29026024d" alt="Avatar"></div>
+                        <div class="podium-rank gold">1</div>
+                        <div class="podium-name">Sardor</div>
+                        <div class="podium-score">1450 xp</div>
+                    </div>
+                    <div class="podium-item third">
+                        <div class="avatar-circle"><img src="https://i.pravatar.cc/150?u=a048581f4e29026701d" alt="Avatar"></div>
+                        <div class="podium-rank bronze">3</div>
+                        <div class="podium-name">Jasur</div>
+                        <div class="podium-score">1120 xp</div>
+                    </div>
+                </div>
+                <div class="leaderboard-list">
+                    <div class="lb-item">
+                        <div class="lb-rank">4</div>
+                        <div class="lb-user">
+                            <div class="lb-avatar"><img src="https://i.pravatar.cc/150?u=1" alt="Avatar"></div>
+                            <span class="lb-name">Zarina</span>
+                        </div>
+                        <div class="lb-score">980 xp</div>
+                    </div>
+                    <div class="lb-item current-user">
+                        <div class="lb-rank">5</div>
+                        <div class="lb-user">
+                            <div class="lb-avatar"><img src="https://i.pravatar.cc/150?u=2" alt="Avatar"></div>
+                            <span class="lb-name">You (Azizbek)</span>
+                        </div>
+                        <div class="lb-score">850 xp</div>
+                    </div>
+                    <div class="lb-item">
+                        <div class="lb-rank">6</div>
+                        <div class="lb-user">
+                            <div class="lb-avatar"><img src="https://i.pravatar.cc/150?u=3" alt="Avatar"></div>
+                            <span class="lb-name">Murod</span>
+                        </div>
+                        <div class="lb-score">720 xp</div>
+                    </div>
+                </div>
+            </section>
+            <!-- SECTION: RESOURCES -->
+            <section id="resources-section" class="app-section">
+                <div class="section-header">
+                    <h2>Extra Resources</h2>
+                    <!-- Search inside resources -->
+                    <div class="search-box mb-4">
+                        <i class="ph ph-magnifying-glass search-icon"></i>
+                        <input type="text" placeholder="Search topics..." class="search-input">
+                    </div>
+                </div>
+                <div class="resource-grid">
+                    <div class="resource-card" onclick="openResource('alphabet')">
+                        <div class="r-icon bg-blue"><i class="ph ph-text-aa"></i></div>
+                        <h4>Alphabet</h4>
+                        <p>Letters and pronunciation</p>
+                    </div>
+                    <div class="resource-card" onclick="openResource('numbers')">
+                        <div class="r-icon bg-green"><i class="ph ph-list-numbers"></i></div>
+                        <h4>Numbers</h4>
+                        <p>From 1 to 1000</p>
+                    </div>
+                    <div class="resource-card" onclick="openResource('phrases')">
+                        <div class="r-icon bg-orange"><i class="ph ph-chat-circle-text"></i></div>
+                        <h4>Phrases</h4>
+                        <p>For daily conversation</p>
+                    </div>
+                    <div class="resource-card" onclick="openResource('grammar')">
+                        <div class="r-icon bg-purple"><i class="ph ph-books"></i></div>
+                        <h4>Grammar</h4>
+                        <p>Basic rules</p>
+                    </div>
+                </div>
+            </section>
+            <!-- SECTION: ALPHABET DETAIL -->
+            <section id="alphabet-section" class="app-section">
+                <div class="section-header" style="display: flex; align-items: center; gap: 10px;">
+                    <button class="btn-icon" onclick="switchTab('resources')" style="background:transparent; color:var(--text-main);"><i class="ph ph-arrow-left"></i></button>
+                    <div>
+                        <h2 style="margin:0;">English Alphabet</h2>
+                        <p>26 letters and pronunciation</p>
+                    </div>
+                </div>
+                
+                <div class="dictionary-list">
+                    <!-- Javascript will populate this -->
+                </div>
+            </section>
+            <!-- SECTION: NUMBERS DETAIL -->
+            <section id="numbers-section" class="app-section">
+                <div class="section-header" style="display: flex; align-items: center; gap: 10px;">
+                    <button class="btn-icon" onclick="switchTab('resources')" style="background:transparent; color:var(--text-main);"><i class="ph ph-arrow-left"></i></button>
+                    <div>
+                        <h2 style="margin:0;">Numbers</h2>
+                        <p>Let's learn English numbers</p>
+                    </div>
+                </div>
+                
+                <div class="dictionary-list" id="numbers-list">
+                    <!-- Javascript will populate this -->
+                </div>
+            </section>
+            <!-- SECTION: WRITING AI -->
+            <section id="writing-section" class="app-section">
+                <div class="section-header" style="display: flex; align-items: center; gap: 10px;">
+                    <button class="btn-icon" onclick="switchTab('home')" style="background:transparent; color:var(--text-main);"><i class="ph ph-arrow-left"></i></button>
+                    <div>
+                        <h2 style="margin:0;">Writing Checker</h2>
+                        <p>Check your essay and get a score</p>
+                    </div>
+                </div>
+                
+                <div class="writing-container">
+                    <div class="form-group mb-4">
+                        <label>Task Type:</label>
+                        <select id="writing-type" class="custom-select">
+                            <optgroup label="CEFR (Multilevel)">
+                                <option value="CEFR Part 1.1">Informal Letter (min 50 words)</option>
+                                <option value="CEFR Part 1.2">Formal Letter (120-150 words)</option>
+                                <option value="CEFR Part 2">Blogpost (180-200 words)</option>
+                            </optgroup>
+                            <optgroup label="IELTS (Academic)">
+                                <option value="IELTS Task 1">Task 1 (150 words)</option>
+                                <option value="IELTS Task 2" selected>Task 2 (250 words)</option>
+                            </optgroup>
+                            <optgroup label="Other">
+                                <option value="General">Free topic / General</option>
+                            </optgroup>
+                        </select>
+                    </div>
+                    
+                    <div class="form-group mb-4">
+                        <label>Write your essay here:</label>
+                        <textarea id="writing-text" class="w-100" rows="10" placeholder="I think that..." style="padding: 12px; border-radius: 8px; border: 1px solid var(--border-color); background: var(--bg-main); color: var(--text-main); font-family: inherit; resize: vertical;"></textarea>
+                    </div>
+                    <div class="form-group mb-4">
+                        <label>Or Upload Image of your writing (Optional):</label>
+                        <div class="upload-zone-wrapper mt-2">
+                            <input type="file" id="writing-image" accept="image/*" hidden>
+                            <label for="writing-image" class="upload-label" id="upload-label">
+                                <div class="upload-icon"><i class="ph ph-camera"></i></div>
+                                <div class="upload-text-content">
+                                    <div class="upload-title">Snap a photo</div>
+                                    <div class="upload-subtitle">Take a picture of your notebook</div>
+                                </div>
+                            </label>
+                        </div>
+                        <div id="image-preview-container" class="image-preview-wrapper" style="display: none;">
+                            <img id="preview-img" src="" alt="Preview">
+                            <button id="remove-image-btn" class="btn-remove-img" type="button"><i class="ph ph-x"></i></button>
+                        </div>
+                    </div>
+                    
+                    <button id="check-writing-btn" class="btn-primary w-100" style="padding: 14px; font-size: 16px; display: flex; align-items: center; justify-content: center; gap: 8px;">
+                        <i class="ph ph-sparkle"></i> Check
+                    </button>
+                    
+                    <!-- Loading State -->
+                    <div id="writing-loading" class="text-center mt-4" style="display: none;">
+                        <i class="ph ph-spinner ph-spin" style="font-size: 32px; color: var(--primary-color);"></i>
+                        <p style="margin-top: 10px; font-size: 14px; color: var(--text-muted);">Checking your essay... Please wait.</p>
+                    </div>
+                    
+                    <!-- Results Area -->
+                    <div id="writing-results" class="mt-4" style="display: none;">
+                        <div class="result-card band-card mb-4">
+                            <h3>Overall Band</h3>
+                            <div class="band-score" id="res-band">6.5</div>
+                        </div>
+                        
+                        <div class="result-card mb-4">
+                            <h4><i class="ph ph-text-aa text-blue"></i> Grammar</h4>
+                            <p id="res-grammar">Loading...</p>
+                        </div>
+                        
+                        <div class="result-card mb-4">
+                            <h4><i class="ph ph-book text-green"></i> Vocabulary</h4>
+                            <p id="res-vocab">Loading...</p>
+                        </div>
+                        
+                        <div class="result-card mb-4">
+                            <h4><i class="ph ph-link text-orange"></i> Coherence & Cohesion</h4>
+                            <p id="res-coherence">Loading...</p>
+                        </div>
+                        
+                        <div class="result-card mb-4">
+                            <h4><i class="ph ph-lightbulb text-yellow"></i> General Feedback</h4>
+                            <p id="res-general">Loading...</p>
+                        </div>
+                    </div>
+                </div>
+            </section>
+            <!-- SECTION: SPEAKING -->
+            <section id="speaking-section" class="app-section">
+                <div class="section-header" style="display: flex; align-items: center; gap: 10px; margin-top: 10px;">
+                    <button class="btn-icon" id="speaking-back-btn" onclick="handleSpeakingBack()" style="background:transparent; color:var(--text-main);"><i class="ph ph-arrow-left"></i></button>
+                    <div>
+                        <h2 id="speaking-main-title" style="margin:0;">Speaking Practice</h2>
+                        <p id="speaking-main-subtitle">CEFR / DTM Multi-level format</p>
+                    </div>
+                </div>
+                
+                <div id="speaking-content-container"></div>
+            </section>
+            <!-- SECTION: PROFILE -->
+            <section id="profile-section" class="app-section">
+                <div class="profile-header">
+                    <div class="profile-avatar">
+                        <img src="https://i.pravatar.cc/150?u=2" alt="Profile">
+                        <button class="edit-avatar"><i class="ph ph-camera"></i></button>
+                    </div>
+                    <h2 class="profile-name">Student</h2>
+                    <p class="profile-phone" style="color:var(--text-muted); font-size:14px; margin-bottom:4px;"></p>
+                    <p class="profile-role">Student</p>
+                    <!-- Role Switcher for Demo -->
+                    <button class="role-switch-btn" onclick="toggleRole()">Switch to Teacher Profile (Demo)</button>
+                </div>
+                <!-- Student Profile Stats -->
+                <div id="student-stats" class="profile-stats">
+                    <div class="stat-box">
+                        <i class="ph-fill ph-fire text-orange"></i>
+                        <span class="stat-value">12</span>
+                        <span class="stat-label">Day streak</span>
+                    </div>
+                    <div class="stat-box">
+                        <i class="ph-fill ph-star text-yellow"></i>
+                        <span class="stat-value">850</span>
+                        <span class="stat-label">Total XP</span>
+                    </div>
+                    <div class="stat-box">
+                        <i class="ph-fill ph-book-open text-blue"></i>
+                        <span class="stat-value">24</span>
+                        <span class="stat-label">Lessons</span>
+                    </div>
+                </div>
+                <!-- Teacher Profile Stats (Hidden by default) -->
+                <div id="teacher-stats" class="profile-stats" style="display: none;">
+                    <div class="stat-box">
+                        <i class="ph-fill ph-users text-blue"></i>
+                        <span class="stat-value">145</span>
+                        <span class="stat-label">Students</span>
+                    </div>
+                    <div class="stat-box">
+                        <i class="ph-fill ph-chalkboard-teacher text-green"></i>
+                        <span class="stat-value">6</span>
+                        <span class="stat-label">Groups</span>
+                    </div>
+                    <div class="stat-box">
+                        <i class="ph-fill ph-star text-yellow"></i>
+                        <span class="stat-value">4.9</span>
+                        <span class="stat-label">Ranking</span>
+                    </div>
+                </div>
+                <div class="profile-menu">
+                    <div class="menu-item" onclick="switchTab('settings')">
+                        <div class="menu-item-left">
+                            <div class="menu-icon"><i class="ph ph-gear"></i></div>
+                            <span>Settings & Appearance</span>
+                        </div>
+                        <i class="ph ph-caret-right"></i>
+                    </div>
+                    <div class="menu-item text-red" onclick="logOut()">
+                        <div class="menu-item-left">
+                            <div class="menu-icon"><i class="ph ph-sign-out"></i></div>
+                            <span>Log Out</span>
+                        </div>
+                    </div>
+                </div>
+            </section>
+            <!-- SECTION: SETTINGS -->
+            <section id="settings-section" class="app-section">
+                <div class="section-header" style="display: flex; align-items: center; gap: 10px;">
+                    <button class="btn-icon" onclick="switchTab('profile')" style="background:transparent; color:var(--text-main);"><i class="ph ph-arrow-left"></i></button>
+                    <h2 style="margin:0;">Settings</h2>
+                </div>
+                <div class="profile-menu mt-4">
+                    <div class="menu-item" style="display:flex; justify-content:space-between; align-items:center;">
+                        <div class="menu-item-left">
+                            <div class="menu-icon bg-purple" style="background:#8b5cf6; color:white;"><i class="ph ph-moon"></i></div>
+                            <span>Dark Mode</span>
+                        </div>
+                        <input type="checkbox" id="dark-mode-toggle" onchange="toggleDarkMode()" style="width:20px; height:20px;">
+                    </div>
+                    <div class="menu-item" onclick="document.getElementById('avatar-upload').click()">
+                        <div class="menu-item-left">
+                            <div class="menu-icon bg-blue" style="background:#2563eb; color:white;"><i class="ph ph-image"></i></div>
+                            <span>Change Profile Picture</span>
+                            <input type="file" id="avatar-upload" accept="image/*" style="display:none;" onchange="uploadAvatar(event)">
+                        </div>
+                        <i class="ph ph-caret-right"></i>
+                    </div>
+                </div>
+            </section>
+            <!-- SECTION: PHRASES DETAIL -->
+            <section id="phrases-section" class="app-section">
+                <div class="section-header" style="display: flex; align-items: center; gap: 10px;">
+                    <button class="btn-icon" onclick="switchTab('resources')" style="background:transparent; color:var(--text-main);"><i class="ph ph-arrow-left"></i></button>
+                    <div>
+                        <h2 style="margin:0;">Phrases</h2>
+                        <p>Daily English Conversations</p>
+                    </div>
+                </div>
+                <div class="dictionary-list" id="phrases-list"></div>
+            </section>
+            <!-- SECTION: GRAMMAR DETAIL -->
+            <section id="grammar-section" class="app-section">
+                <div class="section-header" style="display: flex; align-items: center; gap: 10px;">
+                    <button class="btn-icon" onclick="switchTab('resources')" style="background:transparent; color:var(--text-main);"><i class="ph ph-arrow-left"></i></button>
+                    <div>
+                        <h2 style="margin:0;">Grammar</h2>
+                        <p>Basic English Rules</p>
+                    </div>
+                </div>
+                <div class="dictionary-list" id="grammar-list"></div>
+            </section>
+            <!-- SECTION: READING -->
+            <section id="reading-section" class="app-section">
+                <div class="section-header" style="display: flex; align-items: center; gap: 10px;">
+                    <button class="btn-icon" onclick="switchTab('home')" style="background:transparent; color:var(--text-main);"><i class="ph ph-arrow-left"></i></button>
+                    <div>
+                        <h2 style="margin:0;">Reading Practice</h2>
+                        <p>Improve your reading skills</p>
+                    </div>
+                </div>
+                
+                <!-- Container for levels or active test -->
+                <div id="reading-content-container"></div>
+            </section>
+            <!-- SECTION: LISTENING -->
+            <section id="listening-section" class="app-section">
+                <div class="section-header" style="display: flex; align-items: center; gap: 10px;">
+                    <button class="btn-icon" onclick="switchTab('home')" style="background:transparent; color:var(--text-main);"><i class="ph ph-arrow-left"></i></button>
+                    <div>
+                        <h2 style="margin:0;">Listening Practice</h2>
+                        <p>Enhance your listening</p>
+                    </div>
+                </div>
+                
+                <!-- Container for levels or active test -->
+                <div id="listening-content-container"></div>
+            </section>
+        </main>
+        <!-- Bottom Navigation -->
+        <nav class="bottom-nav">
+            <a href="#" class="nav-item active" data-target="home">
+                <i class="ph ph-house"></i>
+                <span>Home</span>
+            </a>
+            <a href="#" class="nav-item" data-target="lessons">
+                <i class="ph ph-play-circle"></i>
+                <span>Lessons</span>
+            </a>
+            <a href="#" class="nav-item" data-target="rating">
+                <i class="ph ph-ranking"></i>
+                <span>Ranking</span>
+            </a>
+            <a href="#" class="nav-item" data-target="resources">
+                <i class="ph ph-books"></i>
+                <span>Resources</span>
+            </a>
+            <a href="#" class="nav-item" data-target="profile">
+                <i class="ph ph-user"></i>
+                <span>Profile</span>
+            </a>
+        </nav>
+    </div>
+    <!-- Firebase Configuration and SDK -->
+    <script type="module">
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
+        import { getFirestore, collection, addDoc, getDocs, setDoc, doc, updateDoc, getDoc, deleteDoc } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
+        const firebaseConfig = {
+            apiKey: "AIzaSyCl8oeI8yYddF-YuSuhCGN6fqZiEechjn8",
+            authDomain: "perfection-school.firebaseapp.com",
+            projectId: "perfection-school",
+            storageBucket: "perfection-school.firebasestorage.app",
+            messagingSenderId: "793168534663",
+            appId: "1:793168534663:web:ad375713f143481b4a2c22",
+            measurementId: "G-87NPRELTDH"
+        };
+        const app = initializeApp(firebaseConfig);
+        const db = getFirestore(app);
+        // Make db globally available
+        window.firebaseDB = db;
+        window.firebaseCollection = collection;
+        window.firebaseAddDoc = addDoc;
+        window.firebaseGetDocs = getDocs;
+        window.firebaseSetDoc = setDoc;
+        window.firebaseDoc = doc;
+        window.firebaseUpdateDoc = updateDoc;
+        window.firebaseGetDoc = getDoc;
+        window.firebaseDeleteDoc = deleteDoc;
+    </script>
+    <script src="tests.js"></script>
+    <script src="app.js?v=3"></script>
+</body>
+</html>
