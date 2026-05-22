@@ -48,6 +48,10 @@ document.addEventListener('DOMContentLoaded', () => {
             if (window.renderSpeakingMain) window.renderSpeakingMain();
         }
 
+        if (targetId === 'writing') {
+            if (window.loadWritingTasks) window.loadWritingTasks();
+        }
+
         // Update Title dynamically based on section
         const titles = {
             'home': 'Perfection School',
@@ -296,12 +300,135 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     }
 
+    // Writing Tasks List and Loading Logic
+    let loadedWritingTasks = [];
+
+    window.loadWritingTasks = async function() {
+        const selectEl = document.getElementById('writing-topic-select');
+        if (!selectEl) return;
+        
+        // Skip if already loaded
+        if (loadedWritingTasks.length > 0) return;
+
+        try {
+            if (window.firebaseDB && window.firebaseGetDocs && window.firebaseCollection) {
+                const db = window.firebaseDB;
+                const snap = await window.firebaseGetDocs(window.firebaseCollection(db, "writing_tasks"));
+                if (!snap.empty) {
+                    loadedWritingTasks = [];
+                    snap.forEach(doc => {
+                        loadedWritingTasks.push({
+                            id: doc.id,
+                            ...doc.data()
+                        });
+                    });
+                    
+                    // Sort tasks by level/id
+                    loadedWritingTasks.sort((a, b) => {
+                        if (a.level !== b.level) {
+                            return a.level.localeCompare(b.level);
+                        }
+                        return (a.id || 0) - (b.id || 0);
+                    });
+                    
+                    // Populate select dropdown
+                    selectEl.innerHTML = '<option value="free">Free Topic / Erkin mavzu</option>';
+                    loadedWritingTasks.forEach(task => {
+                        const option = document.createElement('option');
+                        option.value = task.id;
+                        option.textContent = `[${task.level}] ${task.title}`;
+                        selectEl.appendChild(option);
+                    });
+                }
+            }
+        } catch (error) {
+            console.error("Failed to load writing tasks from Firestore:", error);
+        }
+    };
+
+    // Handle topic select change
+    const topicSelect = document.getElementById('writing-topic-select');
+    if (topicSelect) {
+        topicSelect.addEventListener('change', (e) => {
+            const val = e.target.value;
+            const detailsContainer = document.getElementById('writing-topic-details');
+            const titleEl = document.getElementById('writing-topic-title');
+            const promptEl = document.getElementById('writing-topic-prompt');
+            const imgContainer = document.getElementById('writing-topic-image-container');
+            const imgEl = document.getElementById('writing-topic-img');
+            const attachContainer = document.getElementById('writing-topic-attachment-container');
+            const attachLink = document.getElementById('writing-topic-attachment-link');
+            const attachName = document.getElementById('writing-topic-attachment-name');
+            const typeSelect = document.getElementById('writing-type');
+
+            if (val === 'free') {
+                if (detailsContainer) detailsContainer.style.display = 'none';
+                if (typeSelect) {
+                    typeSelect.disabled = false;
+                    typeSelect.value = 'General';
+                }
+            } else {
+                const task = loadedWritingTasks.find(t => t.id === val);
+                if (task) {
+                    if (titleEl) titleEl.textContent = `[${task.level}] ${task.title}`;
+                    if (promptEl) promptEl.textContent = task.prompt;
+
+                    // Image
+                    if (task.image) {
+                        if (imgEl) imgEl.src = task.image;
+                        if (imgContainer) imgContainer.style.display = 'block';
+                    } else {
+                        if (imgContainer) imgContainer.style.display = 'none';
+                    }
+
+                    // Attachment
+                    if (task.attachment) {
+                        if (attachLink) {
+                            attachLink.href = task.attachment;
+                            attachLink.download = task.attachment_name || 'attachment';
+                        }
+                        if (attachName) {
+                            attachName.textContent = task.attachment_name || 'Faylni yuklab olish';
+                        }
+                        if (attachContainer) attachContainer.style.display = 'block';
+                    } else {
+                        if (attachContainer) attachContainer.style.display = 'none';
+                    }
+
+                    if (detailsContainer) detailsContainer.style.display = 'block';
+
+                    // Update Writing Type selection
+                    if (typeSelect) {
+                        let found = false;
+                        for (let i = 0; i < typeSelect.options.length; i++) {
+                            if (typeSelect.options[i].value === task.level) {
+                                typeSelect.value = task.level;
+                                found = true;
+                                break;
+                            }
+                        }
+                        if (!found) {
+                            for (let i = 0; i < typeSelect.options.length; i++) {
+                                if (task.level.includes(typeSelect.options[i].value) || typeSelect.options[i].value.includes(task.level)) {
+                                    typeSelect.value = typeSelect.options[i].value;
+                                    break;
+                                }
+                            }
+                        }
+                        typeSelect.disabled = true;
+                    }
+                }
+            }
+        });
+    }
+
     // AI Writing Validation Logic
     const checkWritingBtn = document.getElementById('check-writing-btn');
     if (checkWritingBtn) {
         checkWritingBtn.addEventListener('click', async () => {
             const text = document.getElementById('writing-text').value;
-            const type = document.getElementById('writing-type').value;
+            // Get value from writing-type element
+            let type = document.getElementById('writing-type').value;
             
             if (text.trim().length < 10 && !currentImageData) {
                 if (window.Telegram && window.Telegram.WebApp) {
@@ -318,6 +445,18 @@ document.addEventListener('DOMContentLoaded', () => {
             checkWritingBtn.disabled = true;
 
             try {
+                // Get selected topic's prompt
+                const topicVal = document.getElementById('writing-topic-select')?.value;
+                let promptText = "";
+                if (topicVal && topicVal !== 'free') {
+                    const selectedTask = loadedWritingTasks.find(t => t.id === topicVal);
+                    if (selectedTask) {
+                        promptText = selectedTask.prompt;
+                        // Use task level directly
+                        type = selectedTask.level;
+                    }
+                }
+
                 // Production URL for the backend server
                 const backendUrl = getBackendUrl('/api/check_writing');
                 
@@ -329,7 +468,8 @@ document.addEventListener('DOMContentLoaded', () => {
                     body: JSON.stringify({
                         text: text,
                         task_type: type,
-                        image_data: currentImageData
+                        image_data: currentImageData,
+                        prompt: promptText
                     })
                 });
 
@@ -596,7 +736,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
     function getBackendUrl(endpoint) {
         const isLocal = window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1';
-        const base = isLocal ? 'http://localhost:8001' : 'https://perfection-webapp.onrender.com';
+        const base = isLocal ? 'http://localhost:8001' : window.location.origin;
         return `${base}${endpoint}`;
     }
 

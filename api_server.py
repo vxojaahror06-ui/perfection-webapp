@@ -20,6 +20,7 @@ class WritingRequest(BaseModel):
     text: Optional[str] = ""
     task_type: str = "General" 
     image_data: Optional[str] = None
+    prompt: Optional[str] = ""
 
 # Groq API ni sozlash
 GROQ_API_KEY = os.environ.get("GROQ_API_KEY")
@@ -42,10 +43,11 @@ async def check_writing(req: WritingRequest):
             "general_feedback": "DIQQAT: GROQ_API_KEY topilmadi! Renderda kalitni to'g'ri qo'yganingizni tekshiring."
         }
         
+    prompt_clause = f"\n    Topshiriq mavzusi (Prompt):\n    \"\"\"{req.prompt}\"\"\"" if req.prompt else ""
     prompt = f"""
     Siz IELTS/CEFR examiner va malakali Ingliz tili o'qituvchisisiz. 
     Quyidagi o'quvchi yozgan inshoni tekshiring.
-    Vazifa turi: {req.task_type}
+    Vazifa turi: {req.task_type}{prompt_clause}
     Matn:
     \"\"\"{req.text}\"\"\"
     
@@ -264,7 +266,20 @@ async def evaluate_speaking(
         import traceback
         traceback.print_exc()
         return {"error": f"Gapirishni tahlil qilishda xatolik: {str(e)}"}
+from fastapi.staticfiles import StaticFiles
+from fastapi.responses import FileResponse
+
+@app.get("/")
+async def read_index():
+    return FileResponse("index.html")
+
+@app.get("/admin")
+async def read_admin():
+    return FileResponse("admin.html")
+
+app.mount("/", StaticFiles(directory="."), name="static")
 
 if __name__ == "__main__":
     import uvicorn
-    uvicorn.run(app, host="0.0.0.0", port=8000)
+    uvicorn.run(app, host="0.0.0.0", port=8001)
+
