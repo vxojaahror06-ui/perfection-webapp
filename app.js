@@ -164,15 +164,19 @@ window.checkAndUpdateStreak = async function() {
             const data = docSnap.data();
             let streak = data.streak || 0;
             let lastLoginStr = data.last_login_date; // YYYY-MM-DD
+            let loginHistory = data.login_history || []; // Array of YYYY-MM-DD
             
             const todayDate = new Date();
             // Local timezone date string
             const todayStr = todayDate.getFullYear() + '-' + String(todayDate.getMonth() + 1).padStart(2, '0') + '-' + String(todayDate.getDate()).padStart(2, '0');
             
+            let isNewDay = false;
+
             if (!lastLoginStr) {
                 // First time ever
                 streak = 1;
-                await window.firebaseUpdateDoc(userRef, { streak: streak, last_login_date: todayStr });
+                loginHistory = [todayStr];
+                isNewDay = true;
             } else if (lastLoginStr !== todayStr) {
                 // Parse dates to compare days difference
                 const lastDate = new Date(lastLoginStr);
@@ -187,8 +191,26 @@ window.checkAndUpdateStreak = async function() {
                     streak = 1;
                 }
                 
-                // Only update Firebase if it's a new day
-                await window.firebaseUpdateDoc(userRef, { streak: streak, last_login_date: todayStr });
+                if (!loginHistory.includes(todayStr)) {
+                    loginHistory.push(todayStr);
+                }
+                isNewDay = true;
+            }
+            
+            // If it's a legacy user with no history but has streak
+            if (loginHistory.length === 0 && lastLoginStr) {
+                loginHistory.push(lastLoginStr);
+                if (lastLoginStr !== todayStr) loginHistory.push(todayStr);
+                isNewDay = true;
+            }
+
+            // Only update Firebase if it's a new day or history needs initializing
+            if (isNewDay) {
+                await window.firebaseUpdateDoc(userRef, { 
+                    streak: streak, 
+                    last_login_date: todayStr,
+                    login_history: loginHistory
+                });
             }
             
             // Update the UI Header Badge
@@ -197,16 +219,81 @@ window.checkAndUpdateStreak = async function() {
                 streakBadge.innerText = streak;
                 // If streak is 0 or 1, maybe grey out the fire?
                 const fireIcon = document.querySelector('.streak-badge i');
-                if (streak === 0) {
-                    fireIcon.style.color = '#9ca3af'; // gray
-                } else {
-                    fireIcon.style.color = '#f97316'; // orange flame
+                if (fireIcon) {
+                    if (streak === 0) {
+                        fireIcon.style.color = '#9ca3af'; // gray
+                    } else {
+                        fireIcon.style.color = '#f97316'; // orange flame
+                    }
                 }
             }
+
+            // Render Calendar
+            renderStreakCalendar(loginHistory);
         }
     } catch (e) {
         console.error("Streak calculation error:", e);
     }
+}
+
+// Function to render Duolingo-style streak calendar
+window.renderStreakCalendar = function(loginHistory) {
+    const container = document.getElementById('streak-calendar-container');
+    if (!container) return;
+
+    const date = new Date();
+    const year = date.getFullYear();
+    const month = date.getMonth(); // 0-indexed
+    
+    const monthNames = ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"];
+    
+    // Get number of days in the month
+    const daysInMonth = new Date(year, month + 1, 0).getDate();
+    // Get first day of the month (0 = Sunday, 1 = Monday, etc.)
+    let firstDay = new Date(year, month, 1).getDay();
+    // Make Monday first day (if Sunday, make it 6, otherwise -1)
+    firstDay = firstDay === 0 ? 6 : firstDay - 1;
+
+    let html = `
+        <div class="streak-calendar">
+            <div class="calendar-header">
+                <div class="calendar-title"><i class="ph-fill ph-calendar-check text-orange"></i> ${monthNames[month]} ${year}</div>
+            </div>
+            <div class="calendar-grid">
+                <div class="calendar-day-header">Mon</div>
+                <div class="calendar-day-header">Tue</div>
+                <div class="calendar-day-header">Wed</div>
+                <div class="calendar-day-header">Thu</div>
+                <div class="calendar-day-header">Fri</div>
+                <div class="calendar-day-header">Sat</div>
+                <div class="calendar-day-header">Sun</div>
+    `;
+
+    // Fill empty slots before 1st day
+    for (let i = 0; i < firstDay; i++) {
+        html += `<div class="calendar-day empty"></div>`;
+    }
+
+    const todayStr = new Date().toISOString().split('T')[0]; // simple compare
+
+    for (let day = 1; day <= daysInMonth; day++) {
+        const currentDayStr = `${year}-${String(month + 1).padStart(2, '0')}-${String(day).padStart(2, '0')}`;
+        const isActive = loginHistory.includes(currentDayStr);
+        const isToday = currentDayStr === todayStr;
+        
+        let classes = 'calendar-day';
+        if (isActive) classes += ' active-streak';
+        if (isToday) classes += ' today';
+        
+        html += `<div class="${classes}">${day}</div>`;
+    }
+
+    html += `
+            </div>
+        </div>
+    `;
+
+    container.innerHTML = html;
 }
 
     
@@ -1727,16 +1814,46 @@ window.loadVideoLessons = async function() {
     `;
 
     try {
-        if (window.firebaseDB && window.firebaseGetDocs && window.firebaseCollection) {
-            const db = window.firebaseDB;
-            const snap = await window.firebaseGetDocs(window.firebaseCollection(db, "video_lessons"));
-            allVideoLessons = [];
-            snap.forEach(doc => {
-                allVideoLessons.push({
-                    id: doc.id,
-                    ...doc.data()
+        if (window.firebaseGetDocs && window.firebaseCollection && window.firebaseDB) {
+            const snap = await window.firebaseGetDocs(window.firebaseCollection(window.firebaseDB, "video_lessons"));
+            
+            if (snap.empty) {
+                // Modern Hardcoded Premium Videos Fallback
+                allVideoLessons = [
+                    {
+                        id: 'mock1',
+                        level: 'Grammar',
+                        title: 'Present Simple Tense (English Grammar)',
+                        description: 'Learn when and how to use the Present Simple tense easily with English with Lucy.',
+                        videoUrl: 'https://www.youtube.com/embed/L9AWrJnhsRI',
+                        thumbnail: 'https://img.youtube.com/vi/L9AWrJnhsRI/maxresdefault.jpg'
+                    },
+                    {
+                        id: 'mock2',
+                        level: 'Vocabulary',
+                        title: '50 Advanced Words You MUST Know',
+                        description: 'Elevate your vocabulary to sound like a native English speaker.',
+                        videoUrl: 'https://www.youtube.com/embed/XqP1mQGgKig',
+                        thumbnail: 'https://img.youtube.com/vi/XqP1mQGgKig/maxresdefault.jpg'
+                    },
+                    {
+                        id: 'mock3',
+                        level: 'IELTS Prep',
+                        title: 'IELTS Speaking Band 9 Mock Interview',
+                        description: 'Watch a full Band 9 speaking test and learn the strategies.',
+                        videoUrl: 'https://www.youtube.com/embed/sRqyH8168xQ',
+                        thumbnail: 'https://img.youtube.com/vi/sRqyH8168xQ/maxresdefault.jpg'
+                    }
+                ];
+            } else {
+                allVideoLessons = [];
+                snap.forEach(doc => {
+                    allVideoLessons.push({
+                        id: doc.id,
+                        ...doc.data()
+                    });
                 });
-            });
+            }
             
             // Sort by order/level
             allVideoLessons.sort((a, b) => {
@@ -1751,9 +1868,9 @@ window.loadVideoLessons = async function() {
         } else {
             grid.innerHTML = `<div class="text-center w-100" style="grid-column:1/-1; color:var(--text-muted);">Firebase connection not ready.</div>`;
         }
-    } catch (error) {
-        console.error("Failed to load video lessons:", error);
-        grid.innerHTML = `<div class="text-center w-100" style="grid-column:1/-1; color:var(--danger-color);">Videolarni yuklashda xatolik yuz berdi.</div>`;
+    } catch (e) {
+        console.error("Error loading video lessons:", e);
+        grid.innerHTML = `<div class="text-center w-100" style="grid-column:1/-1; color:var(--danger-color);">Failed to load videos. Check console.</div>`;
     }
 };
 

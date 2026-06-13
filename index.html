@@ -494,15 +494,16 @@
                 </div>
 
                 <!-- Student Profile Stats -->
+                <!-- Student Profile Stats -->
                 <div id="student-stats" class="profile-stats">
                     <div class="stat-box">
                         <i class="ph-fill ph-fire text-orange"></i>
-                        <span class="stat-value">12</span>
+                        <span class="stat-value">0</span>
                         <span class="stat-label">Day streak</span>
                     </div>
                     <div class="stat-box">
                         <i class="ph-fill ph-star text-yellow"></i>
-                        <span class="stat-value">850</span>
+                        <span class="stat-value">0 xp</span>
                         <span class="stat-label">Total XP</span>
                     </div>
                     <div class="stat-box">
@@ -510,6 +511,12 @@
                         <span class="stat-value">24</span>
                         <span class="stat-label">Lessons</span>
                     </div>
+                </div>
+
+                <!-- Streak Calendar Container -->
+                <div id="streak-calendar-container">
+                    <!-- Calendar will be injected by JS -->
+                </div>
                 </div>
 
                 <!-- Teacher Profile Stats (Hidden by default) -->
@@ -556,12 +563,15 @@
                 </div>
                 <div class="profile-menu mt-4">
                     <div class="menu-item" style="display:flex; justify-content:space-between; align-items:center;">
-                        <div class="menu-item-left">
-                            <div class="menu-icon bg-purple" style="background:#8b5cf6; color:white;"><i class="ph ph-moon"></i></div>
-                            <span>Dark Mode</span>
-                        </div>
-                        <input type="checkbox" id="dark-mode-toggle" onchange="toggleDarkMode()" style="width:20px; height:20px;">
-                    </div>
+                          <div class="menu-item-left">
+                              <div class="menu-icon bg-purple" style="background:#8b5cf6; color:white;"><i class="ph ph-moon"></i></div>
+                              <span>Dark Mode</span>
+                          </div>
+                          <label class="switch">
+                              <input type="checkbox" id="dark-mode-toggle" onchange="toggleDarkMode()">
+                              <span class="slider"></span>
+                          </label>
+                      </div>
                     <div class="menu-item" onclick="document.getElementById('avatar-upload').click()">
                         <div class="menu-item-left">
                             <div class="menu-icon bg-blue" style="background:#2563eb; color:white;"><i class="ph ph-image"></i></div>
