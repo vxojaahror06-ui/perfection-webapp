@@ -1506,7 +1506,7 @@ body.dark-mode input:checked + .slider {
 }
 
 .calendar-day.active-streak::after {
-    content: "🔥";
+    content: "\1F525";
     position: absolute;
     top: -6px;
     right: -6px;
