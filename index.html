@@ -180,40 +180,47 @@
             <!-- SECTION: LESSONS -->
             <section id="lessons-section" class="app-section">
                 <div class="section-header">
-                    <h2>My Lessons</h2>
-                    <p>Your current level: <strong>Pre-IELTS</strong></p>
+                    <h2>Video Lessons</h2>
+                    <p>Learn English with our best video lessons</p>
                 </div>
                 
-                <div class="lessons-list">
-                    <div class="lesson-card completed">
-                        <div class="lesson-icon"><i class="ph-fill ph-check-circle"></i></div>
-                        <div class="lesson-info">
-                            <h3>Lesson 1: Present Simple vs Continuous</h3>
-                            <p>Grammar and Practice</p>
-                        </div>
-                        <div class="lesson-action">
-                            <button class="btn-icon"><i class="ph ph-play"></i></button>
-                        </div>
-                    </div>
+                <!-- Category Filter Chips -->
+                <div class="filter-chips-container" style="display: flex; gap: 8px; overflow-x: auto; padding: 4px 0 16px; scrollbar-width: none;">
+                    <button class="filter-chip active" id="chip-all" onclick="filterVideoLessons('all')">All</button>
+                    <button class="filter-chip" id="chip-grammar" onclick="filterVideoLessons('Grammar')">Grammar</button>
+                    <button class="filter-chip" id="chip-vocabulary" onclick="filterVideoLessons('Vocabulary')">Vocabulary</button>
+                    <button class="filter-chip" id="chip-ielts" onclick="filterVideoLessons('IELTS Prep')">IELTS Prep</button>
+                    <button class="filter-chip" id="chip-live" onclick="filterVideoLessons('Live')" style="background: rgba(255,59,48,0.1); color: #ff3b30; border-color: rgba(255,59,48,0.3);"><i class="ph-fill ph-broadcast"></i> Live</button>
+                </div>
 
-                    <div class="lesson-card active">
-                        <div class="lesson-icon"><i class="ph-fill ph-play-circle"></i></div>
-                        <div class="lesson-info">
-                            <h3>Lesson 2: IELTS Speaking Part 1</h3>
-                            <p>Most common questions</p>
-                        </div>
-                        <div class="lesson-action">
-                            <button class="btn-primary">Start</button>
+                <!-- Video Player Container (Hidden by default, secure overlays) -->
+                <div id="video-player-container" style="display: none; background: var(--bg-card); border-radius: var(--border-radius-md); padding: 12px; margin-bottom: 20px; border: 1px solid var(--border-color); box-shadow: 0 4px 15px rgba(0,0,0,0.05); position: relative;">
+                    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px;">
+                        <h4 id="current-playing-title" style="margin: 0; font-size: 14px; font-weight: 700; color: var(--text-main); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; max-width: 80%;">Dars videosi</h4>
+                        <button onclick="closeVideoPlayer()" style="background: transparent; border: none; color: var(--text-muted); cursor: pointer; display: flex; align-items: center; justify-content: center; width: 24px; height: 24px; border-radius: 50%; font-size: 18px; transition: all 0.2s;"><i class="ph ph-x"></i></button>
+                    </div>
+                    
+                    <!-- Secure Wrapper to block context menu and easy copying -->
+                    <div id="secure-video-wrapper" style="position: relative; width: 100%; padding-bottom: 56.25%; height: 0; overflow: hidden; border-radius: 8px; background-color: #000;" oncontextmenu="return false;">
+                        <iframe id="video-player-iframe" src="" style="position: absolute; top: 0; left: 0; width: 100%; height: 100%; border: none;" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
+                        <!-- Overlay transparent div to prevent direct interaction with top portion (YouTube links, share button) -->
+                        <div id="secure-player-overlay" style="position: absolute; top: 0; left: 0; width: 100%; height: calc(100% - 50px); pointer-events: auto; background: transparent; z-index: 10;"></div>
+                    </div>
+                    <p id="current-playing-desc" style="margin: 8px 0 0; font-size: 12px; color: var(--text-muted); line-height: 1.5;"></p>
+                    
+                    <!-- Video MCQ Section -->
+                    <div id="video-mcq-container" style="display: none; margin-top: 15px; padding-top: 15px; border-top: 1px solid var(--border-color);">
+                        <h4 style="font-size: 13px; font-weight: 700; color: var(--text-main); margin-bottom: 10px;"><i class="ph-fill ph-question"></i> Dars bo'yicha test</h4>
+                        <p id="video-mcq-question" style="font-size: 12px; color: var(--text-muted); margin-bottom: 10px;">What is the main topic of this video?</p>
+                        <div id="video-mcq-options" style="display: flex; flex-direction: column; gap: 8px;">
+                            <!-- Options rendered by JS -->
                         </div>
                     </div>
+                </div>
 
-                    <div class="lesson-card locked">
-                        <div class="lesson-icon"><i class="ph-fill ph-lock-key"></i></div>
-                        <div class="lesson-info">
-                            <h3>Lesson 3: Writing Task 1 Basics</h3>
-                            <p>Complete previous lesson</p>
-                        </div>
-                    </div>
+                <!-- Video Lessons Grid -->
+                <div class="video-grid" id="video-lessons-grid">
+                    <!-- Loaded dynamically via JS -->
                 </div>
             </section>
 

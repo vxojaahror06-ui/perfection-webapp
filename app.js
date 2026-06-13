@@ -52,6 +52,10 @@ document.addEventListener('DOMContentLoaded', () => {
             if (window.loadWritingTasks) window.loadWritingTasks();
         }
 
+        if (targetId === 'lessons') {
+            if (window.loadVideoLessons) window.loadVideoLessons();
+        }
+
         // Update Title dynamically based on section
         const titles = {
             'home': 'Perfection School',
@@ -118,9 +122,93 @@ document.addEventListener('DOMContentLoaded', () => {
 
     // User Data & XP System
     let userXP = parseInt(localStorage.getItem('user_xp') || '0');
-    let userName = localStorage.getItem('user_name') || '';
-    let userPhone = localStorage.getItem('user_phone') || '';
-    let userLevel = localStorage.getItem('user_level') || '';
+
+// Gamification API (Firebase)
+window.addXP = async function(points, reason) {
+    const userId = localStorage.getItem('firebase_user_id');
+    if (!userId || !window.firebaseDB || !window.firebaseUpdateDoc || !window.firebaseDoc) return;
+    
+    try {
+        const userRef = window.firebaseDoc(window.firebaseDB, "users", userId);
+        const docSnap = await window.firebaseGetDoc(userRef);
+        if (docSnap.exists()) {
+            const currentXP = docSnap.data().xp || 0;
+            const newXP = currentXP + points;
+            await window.firebaseUpdateDoc(userRef, { xp: newXP });
+            
+            // Show a mini notification to user
+            if (window.Telegram && window.Telegram.WebApp) {
+                window.Telegram.WebApp.HapticFeedback.notificationOccurred("success");
+            }
+            console.log(`+${points} XP added! Reason: ${reason}. Total: ${newXP}`);
+            
+            // Update UI if on profile
+            const profilePoints = document.getElementById('profile-points');
+            if (profilePoints) profilePoints.innerText = newXP;
+        }
+    } catch (e) {
+        console.error("Failed to add XP:", e);
+    }
+}
+
+// Gamification: Streak System
+window.checkAndUpdateStreak = async function() {
+    const userId = localStorage.getItem('firebase_user_id');
+    if (!userId || !window.firebaseDB) return;
+    
+    try {
+        const userRef = window.firebaseDoc(window.firebaseDB, "users", userId);
+        const docSnap = await window.firebaseGetDoc(userRef);
+        
+        if (docSnap.exists()) {
+            const data = docSnap.data();
+            let streak = data.streak || 0;
+            let lastLoginStr = data.last_login_date; // YYYY-MM-DD
+            
+            const todayDate = new Date();
+            // Local timezone date string
+            const todayStr = todayDate.getFullYear() + '-' + String(todayDate.getMonth() + 1).padStart(2, '0') + '-' + String(todayDate.getDate()).padStart(2, '0');
+            
+            if (!lastLoginStr) {
+                // First time ever
+                streak = 1;
+                await window.firebaseUpdateDoc(userRef, { streak: streak, last_login_date: todayStr });
+            } else if (lastLoginStr !== todayStr) {
+                // Parse dates to compare days difference
+                const lastDate = new Date(lastLoginStr);
+                const diffTime = Math.abs(todayDate.setHours(0,0,0,0) - lastDate.setHours(0,0,0,0));
+                const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24)); 
+                
+                if (diffDays === 1) {
+                    // Logged in exactly the next day -> increment
+                    streak += 1;
+                } else if (diffDays > 1) {
+                    // Missed a day -> reset to 1
+                    streak = 1;
+                }
+                
+                // Only update Firebase if it's a new day
+                await window.firebaseUpdateDoc(userRef, { streak: streak, last_login_date: todayStr });
+            }
+            
+            // Update the UI Header Badge
+            const streakBadge = document.querySelector('.streak-badge span');
+            if (streakBadge) {
+                streakBadge.innerText = streak;
+                // If streak is 0 or 1, maybe grey out the fire?
+                const fireIcon = document.querySelector('.streak-badge i');
+                if (streak === 0) {
+                    fireIcon.style.color = '#9ca3af'; // gray
+                } else {
+                    fireIcon.style.color = '#f97316'; // orange flame
+                }
+            }
+        }
+    } catch (e) {
+        console.error("Streak calculation error:", e);
+    }
+}
+
     
     window.nextAuthStep = function(stepNumber) {
         document.querySelectorAll('.auth-step').forEach(step => step.classList.remove('active'));
@@ -156,11 +244,27 @@ document.addEventListener('DOMContentLoaded', () => {
             if(dmToggle) dmToggle.checked = true;
         }
 
-        document.querySelectorAll('.stat-value').forEach(el => {
-            if (el.nextElementSibling && el.nextElementSibling.textContent.includes('Total XP')) {
-                el.textContent = userXP;
-            }
-        });
+        // Fetch Real XP from Firebase
+        const userId = localStorage.getItem('firebase_user_id');
+        if (userId && window.firebaseDB && window.firebaseGetDoc && window.firebaseDoc) {
+            window.firebaseGetDoc(window.firebaseDoc(window.firebaseDB, "users", userId)).then(docSnap => {
+                if (docSnap.exists()) {
+                    const realXP = docSnap.data().xp || 0;
+                    document.querySelectorAll('.stat-value').forEach(el => {
+                        if (el.nextElementSibling && el.nextElementSibling.textContent.includes('Total XP')) {
+                            el.textContent = realXP;
+                        }
+                    });
+                }
+            });
+        } else {
+            document.querySelectorAll('.stat-value').forEach(el => {
+                if (el.nextElementSibling && el.nextElementSibling.textContent.includes('Total XP')) {
+                    el.textContent = userXP;
+                }
+            });
+        }
+
         document.querySelectorAll('.lb-score').forEach(el => {
             if (el.previousElementSibling && el.previousElementSibling.textContent.includes('You')) {
                 el.textContent = userXP + ' xp';
@@ -168,27 +272,24 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     }
 
-    window.addXP = function(amount) {
-        userXP += amount;
-        localStorage.setItem('user_xp', userXP);
-        updateUserUI();
-        if (window.Telegram && window.Telegram.WebApp && window.Telegram.WebApp.HapticFeedback) {
-            window.Telegram.WebApp.HapticFeedback.notificationOccurred('success');
-        }
-    };
-
     // Check Login & Daily XP
     if (localStorage.getItem('registered') === 'true') {
         const appContainer = document.querySelector('.app-container');
         if (appContainer) {
             appContainer.classList.remove('not-registered');
         }
+        updateUserUI();
+        
+        // Gamification: Update Streak
+        setTimeout(() => {
+            if (window.checkAndUpdateStreak) window.checkAndUpdateStreak();
+        }, 1500); // Give Firebase time to initialize
+
         const lastLogin = localStorage.getItem('last_login');
         const today = new Date().toDateString();
         if (lastLogin !== today) {
-            addXP(5); // Daily login
+            addXP(5, "Daily login"); // Daily login
             localStorage.setItem('last_login', today);
-            setTimeout(() => alert("Welcome back! +5 XP for daily login!"), 500);
         }
         updateUserUI();
         setTimeout(() => switchTab('home'), 10);
@@ -241,7 +342,11 @@ document.addEventListener('DOMContentLoaded', () => {
                         phone: phone,
                         level: level,
                         xp: 50,
+                        streak: 1,
                         registered_at: new Date().toISOString()
+                    }).then(docRef => {
+                        localStorage.setItem('firebase_user_id', docRef.id);
+                        console.log("Firebase User created: ", docRef.id);
                     });
                 } catch (e) {
                     console.log("Firebase not ready yet", e);
@@ -489,6 +594,9 @@ document.addEventListener('DOMContentLoaded', () => {
                 // Show results
                 document.getElementById('writing-loading').style.display = 'none';
                 document.getElementById('writing-results').style.display = 'block';
+                
+                // Gamification: Add +20 Points
+                addXP(20, "Writing checked by AI");
                 
             } catch (error) {
                 console.error("Fetch xatolik:", error);
@@ -1578,3 +1686,220 @@ window.uploadAvatar = function(event) {
         reader.readAsDataURL(file);
     }
 };
+
+// --- VIDEO LESSONS SYSTEM ---
+let allVideoLessons = [];
+
+window.getYouTubeId = function(url) {
+    if (!url) return '';
+    const regExp = /^.*(youtu.be\/|v\/|u\/\w\/|embed\/|watch\?v=|\&v=)([^#\&\?]*).*/;
+    const match = url.match(regExp);
+    return (match && match[2].length === 11) ? match[2] : '';
+};
+
+window.loadVideoLessons = async function() {
+    const grid = document.getElementById('video-lessons-grid');
+    if (!grid) return;
+    
+    grid.innerHTML = `
+        <div class="text-center w-100" style="padding: 40px 0; grid-column: 1 / -1;">
+            <i class="ph ph-spinner ph-spin" style="font-size: 32px; color: var(--primary-color);"></i>
+            <p style="margin-top: 10px; font-size: 14px; color: var(--text-muted);">Videolar yuklanmoqda...</p>
+        </div>
+    `;
+
+    try {
+        if (window.firebaseDB && window.firebaseGetDocs && window.firebaseCollection) {
+            const db = window.firebaseDB;
+            const snap = await window.firebaseGetDocs(window.firebaseCollection(db, "video_lessons"));
+            allVideoLessons = [];
+            snap.forEach(doc => {
+                allVideoLessons.push({
+                    id: doc.id,
+                    ...doc.data()
+                });
+            });
+            
+            // Sort by order/level
+            allVideoLessons.sort((a, b) => {
+                const levelOrder = { 'Grammar': 1, 'Vocabulary': 2, 'IELTS Prep': 3 };
+                const orderA = levelOrder[a.level] || 99;
+                const orderB = levelOrder[b.level] || 99;
+                if (orderA !== orderB) return orderA - orderB;
+                return (a.order || 0) - (b.order || 0);
+            });
+
+            filterVideoLessons('all');
+        } else {
+            grid.innerHTML = `<div class="text-center w-100" style="grid-column:1/-1; color:var(--text-muted);">Firebase connection not ready.</div>`;
+        }
+    } catch (error) {
+        console.error("Failed to load video lessons:", error);
+        grid.innerHTML = `<div class="text-center w-100" style="grid-column:1/-1; color:var(--danger-color);">Videolarni yuklashda xatolik yuz berdi.</div>`;
+    }
+};
+
+window.filterVideoLessons = function(category) {
+    document.querySelectorAll('.filter-chip').forEach(chip => {
+        chip.classList.remove('active');
+    });
+    
+    if (category === 'all') {
+        document.getElementById('chip-all')?.classList.add('active');
+    } else if (category === 'Grammar') {
+        document.getElementById('chip-grammar')?.classList.add('active');
+    } else if (category === 'Vocabulary') {
+        document.getElementById('chip-vocabulary')?.classList.add('active');
+    } else if (category === 'IELTS Prep') {
+        document.getElementById('chip-ielts')?.classList.add('active');
+    } else if (category === 'Live') {
+        document.getElementById('chip-live')?.classList.add('active');
+    }
+
+    let filtered = [];
+    if (category === 'Live') {
+        filtered = [{
+            id: 'live_mock',
+            level: 'Live',
+            title: '🔴 General English Live Speaking Club',
+            description: 'Join our teacher for a live speaking practice session!',
+            videoUrl: 'https://www.youtube.com/embed/jfKfPfyJRdk', // Example live stream
+            thumbnail: 'https://img.youtube.com/vi/jfKfPfyJRdk/maxresdefault.jpg'
+        }];
+    } else {
+        filtered = category === 'all' 
+            ? allVideoLessons 
+            : allVideoLessons.filter(v => v.level === category);
+    }
+
+    renderVideoGrid(filtered);
+};
+
+function renderVideoGrid(videos) {
+    const grid = document.getElementById('video-lessons-grid');
+    if (!grid) return;
+
+    if (videos.length === 0) {
+        grid.innerHTML = `
+            <div class="text-center w-100" style="padding: 40px 0; grid-column: 1 / -1; color: var(--text-muted);">
+                <i class="ph ph-video-camera-slash" style="font-size: 40px; margin-bottom: 8px; opacity: 0.6;"></i>
+                <p style="font-size: 14px;">Hozircha ushbu bo'limda videolar yo'q.</p>
+            </div>
+        `;
+        return;
+    }
+
+    grid.innerHTML = videos.map(video => {
+        const ytId = getYouTubeId(video.videoUrl);
+        const thumbnail = ytId 
+            ? `https://img.youtube.com/vi/${ytId}/mqdefault.jpg`
+            : 'https://images.unsplash.com/photo-1516321318423-f06f85e504b3?w=500&auto=format&fit=crop&q=60';
+
+        // Escaping helper
+        const titleSafe = video.title ? video.title.replace(/'/g, "\\'") : '';
+        const descSafe = video.description ? video.description.replace(/'/g, "\\'").replace(/\n/g, ' ') : '';
+        const urlSafe = video.videoUrl ? video.videoUrl.replace(/'/g, "\\'") : '';
+
+        return `
+            <div class="video-card glass-card" onclick="playVideo('${titleSafe}', '${urlSafe}', '${descSafe}')">
+                <div class="video-thumbnail-container">
+                    <img src="${thumbnail}" class="video-thumbnail-img" alt="${video.title}">
+                    <div class="video-play-overlay">
+                        <div class="video-play-icon-btn">
+                            <i class="ph-fill ph-play"></i>
+                        </div>
+                    </div>
+                </div>
+                <div class="video-card-content">
+                    <span class="video-card-tag">${video.level}</span>
+                    <h4 class="video-card-title">${video.title}</h4>
+                    <p class="video-card-desc">${video.description || ''}</p>
+                </div>
+            </div>
+        `;
+    }).join('');
+}
+
+window.playVideo = function(title, url, description) {
+    const playerContainer = document.getElementById('video-player-container');
+    const iframe = document.getElementById('video-player-iframe');
+    const titleEl = document.getElementById('current-playing-title');
+    const descEl = document.getElementById('current-playing-desc');
+
+    if (!playerContainer || !iframe) return;
+
+    const ytId = getYouTubeId(url);
+    let embedUrl = '';
+    if (ytId) {
+        embedUrl = `https://www.youtube.com/embed/${ytId}?rel=0&modestbranding=1&controls=1&disablekb=1&showinfo=0&iv_load_policy=3`;
+    } else {
+        embedUrl = url;
+    }
+
+    titleEl.textContent = title;
+    descEl.textContent = description || '';
+    iframe.src = embedUrl;
+    
+    playerContainer.style.display = 'block';
+    playerContainer.scrollIntoView({ behavior: 'smooth', block: 'start' });
+
+    // Render MCQ
+    const mcqContainer = document.getElementById('video-mcq-container');
+    const mcqQuestion = document.getElementById('video-mcq-question');
+    const mcqOptions = document.getElementById('video-mcq-options');
+    
+    if (mcqContainer && mcqQuestion && mcqOptions) {
+        mcqContainer.style.display = 'block';
+        mcqQuestion.textContent = `Did you understand the lesson in "${title}"? Choose the best description.`;
+        mcqOptions.innerHTML = `
+            <button class="mcq-btn btn-secondary w-100" onclick="submitVideoMCQ(this, false)" style="text-align:left; padding:10px; font-size:12px; border-radius:8px;">A) I didn't understand.</button>
+            <button class="mcq-btn btn-secondary w-100" onclick="submitVideoMCQ(this, true)" style="text-align:left; padding:10px; font-size:12px; border-radius:8px;">B) Yes, it was very clear!</button>
+        `;
+    }
+
+    // Gamification: Give +20 XP for starting a video lesson
+    // Use a simple cooldown to prevent spam clicking
+    const now = Date.now();
+    const lastVideoTime = parseInt(localStorage.getItem('last_video_reward') || '0');
+    if (now - lastVideoTime > 60000) { // 1 minute cooldown
+        localStorage.setItem('last_video_reward', now.toString());
+        addXP(20, "Watched a video lesson: " + title);
+        
+        if (window.Telegram && window.Telegram.WebApp) {
+            window.Telegram.WebApp.showAlert(`You earned +20 XP for learning! Keep it up! 🚀`);
+        }
+    }
+};
+
+window.closeVideoPlayer = function() {
+    const playerContainer = document.getElementById('video-player-container');
+    const iframe = document.getElementById('video-player-iframe');
+    if (playerContainer) playerContainer.style.display = 'none';
+    if (iframe) iframe.src = '';
+};
+
+window.submitVideoMCQ = function(btn, isCorrect) {
+    if (btn.classList.contains('disabled')) return;
+    
+    const container = document.getElementById('video-mcq-options');
+    const buttons = container.querySelectorAll('.mcq-btn');
+    buttons.forEach(b => {
+        b.classList.add('disabled');
+        b.style.opacity = '0.7';
+    });
+    
+    if (isCorrect) {
+        btn.style.background = 'var(--success-color)';
+        btn.style.color = '#fff';
+        addXP(20, "Answered Video MCQ correctly!");
+        if (window.Telegram && window.Telegram.WebApp) {
+            window.Telegram.WebApp.showAlert("Correct! +20 XP earned.");
+        }
+    } else {
+        btn.style.background = 'var(--danger-color)';
+        btn.style.color = '#fff';
+        if (window.Telegram && window.Telegram.WebApp) {
+            window.Telegram.WebApp.showAlert("Incorrect. Try again on the next video.");
+        }
+    }
+}
