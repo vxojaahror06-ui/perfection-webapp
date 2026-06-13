@@ -244,6 +244,21 @@ window.checkAndUpdateStreak = async function() {
             if(dmToggle) dmToggle.checked = true;
         }
 
+        // Premium Badge Logic
+        const isPremium = localStorage.getItem('is_premium') === 'true';
+        const roleText = "Student " + (userLevel ? `• ${userLevel}` : "");
+        const profileRole = document.querySelector('.profile-role');
+        
+        if (profileRole) {
+            if (isPremium) {
+                profileRole.innerHTML = `👑 <span style="color:#FFD700; font-weight:800;">PREMIUM</span> • ${roleText}`;
+                const buyBtn = document.getElementById('btn-buy-premium');
+                if (buyBtn) buyBtn.style.display = 'none'; // Hide button if already premium
+            } else {
+                profileRole.innerText = roleText;
+            }
+        }
+
         // Fetch Real XP from Firebase
         const userId = localStorage.getItem('firebase_user_id');
         if (userId && window.firebaseDB && window.firebaseGetDoc && window.firebaseDoc) {
@@ -278,12 +293,12 @@ window.checkAndUpdateStreak = async function() {
         if (appContainer) {
             appContainer.classList.remove('not-registered');
         }
-        updateUserUI();
         
         // Gamification: Update Streak
         setTimeout(() => {
             if (window.checkAndUpdateStreak) window.checkAndUpdateStreak();
-        }, 1500); // Give Firebase time to initialize
+            updateUserUI(); // Safe to update UI after a delay
+        }, 500); 
 
         const lastLogin = localStorage.getItem('last_login');
         const today = new Date().toDateString();
@@ -291,11 +306,14 @@ window.checkAndUpdateStreak = async function() {
             addXP(5, "Daily login"); // Daily login
             localStorage.setItem('last_login', today);
         }
-        updateUserUI();
-        setTimeout(() => switchTab('home'), 10);
+        
+        // Ensure home tab is shown immediately
+        switchTab('home');
     } else {
-        // Force auth name section if not registered
-        setTimeout(() => switchTab('auth-name'), 10);
+        // Show registration section
+        const appContainer = document.querySelector('.app-container');
+        if (appContainer) appContainer.classList.add('not-registered');
+        switchTab('auth-name');
     }
 
     // Registration Form Submit
@@ -1752,25 +1770,11 @@ window.filterVideoLessons = function(category) {
         document.getElementById('chip-vocabulary')?.classList.add('active');
     } else if (category === 'IELTS Prep') {
         document.getElementById('chip-ielts')?.classList.add('active');
-    } else if (category === 'Live') {
-        document.getElementById('chip-live')?.classList.add('active');
     }
 
-    let filtered = [];
-    if (category === 'Live') {
-        filtered = [{
-            id: 'live_mock',
-            level: 'Live',
-            title: '🔴 General English Live Speaking Club',
-            description: 'Join our teacher for a live speaking practice session!',
-            videoUrl: 'https://www.youtube.com/embed/jfKfPfyJRdk', // Example live stream
-            thumbnail: 'https://img.youtube.com/vi/jfKfPfyJRdk/maxresdefault.jpg'
-        }];
-    } else {
-        filtered = category === 'all' 
-            ? allVideoLessons 
-            : allVideoLessons.filter(v => v.level === category);
-    }
+    let filtered = category === 'all' 
+        ? allVideoLessons 
+        : allVideoLessons.filter(v => v.level === category);
 
     renderVideoGrid(filtered);
 };
@@ -1903,3 +1907,54 @@ window.submitVideoMCQ = function(btn, isCorrect) {
         }
     }
 }
+
+// Payment System Logic
+window.openPaymentModal = function() {
+    const modal = document.getElementById('payment-modal');
+    if (modal) modal.style.display = 'flex';
+};
+
+window.closePaymentModal = function() {
+    const modal = document.getElementById('payment-modal');
+    if (modal) modal.style.display = 'none';
+};
+
+window.processMockPayment = async function(method) {
+    const userId = localStorage.getItem('firebase_user_id');
+    const btnText = event.target.innerText;
+    event.target.innerText = "Processing...";
+    event.target.style.opacity = "0.7";
+    
+    // Simulate API delay
+    await new Promise(r => setTimeout(r, 1500));
+    
+    if (userId && window.firebaseDB && window.firebaseUpdateDoc) {
+        try {
+            const userRef = window.firebaseDoc(window.firebaseDB, "users", userId);
+            await window.firebaseUpdateDoc(userRef, { isPremium: true });
+            localStorage.setItem('is_premium', 'true');
+            
+            if (window.Telegram && window.Telegram.WebApp) {
+                window.Telegram.WebApp.showAlert(`Muvaffaqiyatli! Siz ${method} orqali to'lov qildingiz va Premium ochildi! 🎉`);
+            } else {
+                alert(`Muvaffaqiyatli! Siz ${method} orqali to'lov qildingiz va Premium ochildi! 🎉`);
+            }
+            
+            closePaymentModal();
+            updateUserUI();
+            
+        } catch(e) {
+            console.error("Payment update failed:", e);
+            alert("To'lovni tasdiqlashda xatolik yuz berdi.");
+        }
+    } else {
+        // Fallback if firebase not ready
+        localStorage.setItem('is_premium', 'true');
+        alert(`Muvaffaqiyatli! Premium faollashtirildi (${method}).`);
+        closePaymentModal();
+        updateUserUI();
+    }
+    
+    event.target.innerText = btnText;
+    event.target.style.opacity = "1";
+};
