@@ -51,9 +51,12 @@ body {
     justify-content: space-between;
     align-items: center;
     padding: 16px 20px;
-    background-color: var(--bg-main);
+    background-color: rgba(243, 244, 246, 0.85); /* Semi-transparent bg-main */
+    backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
     color: var(--text-main);
     z-index: 10;
+    border-bottom: 1px solid rgba(229, 231, 235, 0.5);
 }
 
 .header-left {
@@ -372,14 +375,27 @@ body {
 }
 
 .btn-primary {
+    display: block;
+    width: 100%;
+    padding: 14px;
     background-color: var(--primary-color);
-    color: white;
+    color: #fff;
     border: none;
-    padding: 8px 16px;
-    border-radius: 20px;
-    font-size: 13px;
-    font-weight: 600;
+    border-radius: var(--border-radius-md);
+    font-size: 16px;
+    font-weight: 700;
     cursor: pointer;
+    margin-top: 20px;
+    transition: background 0.3s, transform 0.2s cubic-bezier(0.4, 0, 0.2, 1), box-shadow 0.3s;
+}
+
+.btn-primary:active {
+    transform: scale(0.96);
+}
+
+.btn-primary:hover {
+    background-color: #1d4ed8;
+    box-shadow: 0 4px 12px rgba(37, 99, 235, 0.3);
 }
 
 /* Rating Section (Leaderboard) */
@@ -626,16 +642,21 @@ body {
     margin-top: 4px;
 }
 
-.role-switch-btn {
-    margin-top: 12px;
-    background-color: var(--bg-card);
+.filter-chip {
+    padding: 8px 16px;
+    background: var(--bg-main);
     border: 1px solid var(--border-color);
-    padding: 6px 12px;
     border-radius: 20px;
-    font-size: 12px;
+    font-size: 13px;
     font-weight: 600;
+    color: var(--text-muted);
     cursor: pointer;
-    color: var(--text-main);
+    white-space: nowrap;
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.filter-chip:active {
+    transform: scale(0.95);
 }
 
 .profile-stats {
@@ -714,13 +735,15 @@ body {
     bottom: 0;
     left: 0;
     width: 100%;
-    background-color: var(--bg-card);
+    background-color: rgba(255, 255, 255, 0.85);
+    backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
     display: flex;
     justify-content: space-around;
     align-items: center;
     padding: 12px 0 20px;
-    border-top: 1px solid var(--border-color);
-    z-index: 20;
+    border-top: 1px solid rgba(229, 231, 235, 0.5);
+    z-index: 10;
     box-shadow: 0 -4px 20px rgba(0,0,0,0.05);
 }
 
@@ -728,15 +751,17 @@ body {
     display: flex;
     flex-direction: column;
     align-items: center;
-    gap: 6px;
-    text-decoration: none;
     color: var(--text-muted);
-    transition: all 0.2s ease;
-    width: 20%;
+    text-decoration: none;
+    font-size: 11px;
+    font-weight: 600;
+    gap: 4px;
+    transition: color 0.3s, transform 0.2s cubic-bezier(0.4, 0, 0.2, 1);
 }
 
-.nav-item i { font-size: 24px; }
-.nav-item span { font-size: 10px; font-weight: 600; }
+.nav-item:active {
+    transform: scale(0.9);
+}
 
 .nav-item.active {
     color: var(--primary-color);
@@ -1228,11 +1253,13 @@ body.dark-mode .nav-item.active {
 }
 
 body.dark-mode .app-header {
-    background: rgba(17, 24, 39, 0.8);
+    background: rgba(17, 24, 39, 0.85);
+    border-bottom: 1px solid rgba(255, 255, 255, 0.05);
 }
 
 body.dark-mode .bottom-nav {
-    background: rgba(17, 24, 39, 0.8);
+    background: rgba(17, 24, 39, 0.85);
+    border-top: 1px solid rgba(255, 255, 255, 0.05);
 }
 
 /* --- VIDEO LESSONS STYLES --- */
@@ -1513,6 +1540,50 @@ body.dark-mode input:checked + .slider {
     font-size: 12px;
 }
 
-.calendar-day.today:not(.active-streak) {
-    border: 2px solid var(--primary-color);
+/* --- MODERN ANIMATIONS --- */
+@keyframes fadeInSlideUp {
+    from {
+        opacity: 0;
+        transform: translateY(15px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
 }
+
+.app-section.active {
+    display: block;
+    animation: fadeInSlideUp 0.4s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+}
+
+@keyframes softPulse {
+    0% {
+        transform: scale(1);
+        box-shadow: 0 0 0 0 rgba(255, 215, 0, 0.4);
+    }
+    70% {
+        transform: scale(1.02);
+        box-shadow: 0 0 0 10px rgba(255, 215, 0, 0);
+    }
+    100% {
+        transform: scale(1);
+        box-shadow: 0 0 0 0 rgba(255, 215, 0, 0);
+    }
+}
+
+#btn-buy-premium {
+    animation: softPulse 2.5s infinite;
+}
+
+@keyframes firePulse {
+    0% { transform: scale(1); opacity: 0.9; }
+    50% { transform: scale(1.15); opacity: 1; text-shadow: 0 0 15px rgba(249, 115, 22, 0.8); }
+    100% { transform: scale(1); opacity: 0.9; }
+}
+
+.streak-badge i {
+    display: inline-block;
+    animation: firePulse 2s infinite ease-in-out;
+}
+
