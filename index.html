@@ -231,51 +231,11 @@
                 </div>
 
                 <div class="podium-container">
-                    <div class="podium-item second">
-                        <div class="avatar-circle"><img src="https://i.pravatar.cc/150?u=a042581f4e29026704d" alt="Avatar"></div>
-                        <div class="podium-rank silver">2</div>
-                        <div class="podium-name">Malika</div>
-                        <div class="podium-score">1240 xp</div>
-                    </div>
-                    <div class="podium-item first">
-                        <div class="avatar-circle"><img src="https://i.pravatar.cc/150?u=a042581f4e29026024d" alt="Avatar"></div>
-                        <div class="podium-rank gold">1</div>
-                        <div class="podium-name">Sardor</div>
-                        <div class="podium-score">1450 xp</div>
-                    </div>
-                    <div class="podium-item third">
-                        <div class="avatar-circle"><img src="https://i.pravatar.cc/150?u=a048581f4e29026701d" alt="Avatar"></div>
-                        <div class="podium-rank bronze">3</div>
-                        <div class="podium-name">Jasur</div>
-                        <div class="podium-score">1120 xp</div>
-                    </div>
+                    <!-- Podium will be dynamically injected by JS -->
                 </div>
 
                 <div class="leaderboard-list">
-                    <div class="lb-item">
-                        <div class="lb-rank">4</div>
-                        <div class="lb-user">
-                            <div class="lb-avatar"><img src="https://i.pravatar.cc/150?u=1" alt="Avatar"></div>
-                            <span class="lb-name">Zarina</span>
-                        </div>
-                        <div class="lb-score">980 xp</div>
-                    </div>
-                    <div class="lb-item current-user">
-                        <div class="lb-rank">5</div>
-                        <div class="lb-user">
-                            <div class="lb-avatar"><img src="https://i.pravatar.cc/150?u=2" alt="Avatar"></div>
-                            <span class="lb-name">You (Azizbek)</span>
-                        </div>
-                        <div class="lb-score">850 xp</div>
-                    </div>
-                    <div class="lb-item">
-                        <div class="lb-rank">6</div>
-                        <div class="lb-user">
-                            <div class="lb-avatar"><img src="https://i.pravatar.cc/150?u=3" alt="Avatar"></div>
-                            <span class="lb-name">Murod</span>
-                        </div>
-                        <div class="lb-score">720 xp</div>
-                    </div>
+                    <!-- List will be dynamically injected by JS -->
                 </div>
             </section>
 
@@ -571,14 +531,13 @@
                               <span class="slider"></span>
                           </label>
                       </div>
-                    <div class="menu-item" onclick="document.getElementById('avatar-upload').click()">
-                        <div class="menu-item-left">
-                            <div class="menu-icon bg-blue" style="background:#2563eb; color:white;"><i class="ph ph-image"></i></div>
-                            <span>Change Profile Picture</span>
-                            <input type="file" id="avatar-upload" accept="image/*" style="display:none;" onchange="uploadAvatar(event)">
-                        </div>
-                        <i class="ph ph-caret-right"></i>
-                    </div>
+                      <div class="menu-item" onclick="openEditProfileModal()">
+                          <div class="menu-item-left">
+                              <div class="menu-icon bg-blue" style="background:#2563eb; color:white;"><i class="ph ph-user-circle"></i></div>
+                              <span>Edit Profile</span>
+                          </div>
+                          <i class="ph ph-caret-right"></i>
+                      </div>
                 </div>
             </section>
 
@@ -679,6 +638,34 @@
                 <button onclick="processMockPayment('Payme')" style="display: flex; align-items: center; justify-content: center; gap: 10px; background: #33CCCC; color: #fff; border: none; border-radius: 12px; padding: 15px; font-weight: 700; font-size: 16px; cursor: pointer; transition: transform 0.2s;">
                     Pay with PAYME
                 </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Edit Profile Modal -->
+    <div id="edit-profile-modal" class="premium-overlay" style="display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.6); z-index: 1000; align-items: center; justify-content: center;">
+        <div class="premium-modal" style="text-align: center; max-width: 90%; width: 350px; background: var(--bg-card); padding: 20px; border-radius: 20px;">
+            <h2 style="margin-bottom: 20px; font-weight: 700;">Edit Profile</h2>
+            
+            <div style="margin-bottom: 20px;">
+                <div class="avatar-circle" style="width: 80px; height: 80px; margin: 0 auto; margin-bottom: 10px; cursor: pointer; position: relative;" onclick="document.getElementById('avatar-upload-input').click()">
+                    <img id="edit-profile-avatar-preview" src="https://i.pravatar.cc/150?u=a042581f4e29026704d" alt="Avatar" style="width: 100%; height: 100%; border-radius: 50%; object-fit: cover;">
+                    <div style="position: absolute; bottom: 0; right: 0; background: var(--primary-color); border-radius: 50%; padding: 6px; color: white; display:flex; align-items:center; justify-content:center;">
+                        <i class="ph-fill ph-camera"></i>
+                    </div>
+                </div>
+                <input type="file" id="avatar-upload-input" accept="image/*" style="display:none;" onchange="previewEditAvatar(event)">
+                <p style="font-size: 12px; color: var(--text-muted);">Tap to change avatar</p>
+            </div>
+
+            <div class="form-group text-left" style="text-align: left; margin-bottom: 20px;">
+                <label style="font-size: 14px; font-weight: 600; color: var(--text-muted);">Nickname</label>
+                <input type="text" id="edit-profile-name" class="custom-input" placeholder="Enter your name" style="margin-top: 5px; width: 100%; padding: 10px; border-radius: 8px; border: 1px solid #ccc;">
+            </div>
+
+            <div style="display: flex; gap: 10px;">
+                <button class="btn-outline w-100" onclick="closeEditProfileModal()" style="padding: 12px; border-radius: 12px; cursor: pointer;">Cancel</button>
+                <button class="btn-primary w-100" id="save-profile-btn" onclick="saveProfileChanges()" style="padding: 12px; border-radius: 12px; margin-top: 0; cursor: pointer;">Save</button>
             </div>
         </div>
     </div>
